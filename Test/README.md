@@ -6,8 +6,7 @@ To run it type
 <code>python3 ./train.py ./params</code>
 
 This will train a neural network, saving the weights in the folder 
-<code>params</code>
-
+<code>params</code>.
 Then, it is possible to launch the sparsifier running
 
 
