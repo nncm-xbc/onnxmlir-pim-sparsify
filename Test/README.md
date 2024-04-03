@@ -1,6 +1,9 @@
 # Test enviroment
 
-The following folder contains
-1. A training application for the generation of small (dense) MLP neural network
-2. A 
-3.
+The following folder contains a training application for the generation of small (dense) MLP neural network.
+To run it type
+<code>
+./train
+</code>
+
+
