@@ -27,7 +27,7 @@ in expression (doing so we mitigate the problem of zero-loss classifiers having 
 We define hence 
 
 $$
-d_{\mathscr W}(w,w') =  \mathbb E_{{\bf x} \sim \mathcal U(\Omega)} [ || \mathcal F(w)({\bf x}) - \mathcal F(w')({\bf x}) || ]
+d_{\mathscr W}(w,w') =  \mathbb E_{{\bf x} \sim \mathcal U(\Omega)} [ || \mathcal F(w)({\bf x}) - \mathcal F(w')({\bf x}) ||^2 ]
 $$
 
-Where $\Omega$ is the compact where data distribution appears. For example, in the case of the MNIST dataset could be $[0,255]^{28*28}$
+Where $\Omega$ is the compact where data distribution appears (for example, in the case of the MNIST dataset could be $[0,255]^{28*28}$)
