@@ -38,16 +38,51 @@ under the assumption that the map $\mathcal F : w \mapsto \mathcal F(w)$ is some
 (small distances in the euclidean space correspond to small distances in the parameter space, and the variety is differntiable almost everywhere)
 .
 
+## Local distance minimization
+Let $w,w' \in \mathscr W$ and $\theta,\theta'$ their image through the map $\varphi$ such that 
+
+$$
+	|| \varphi(w) - \varphi(w') ||_2 \textrm{ is "small"}  
+$$
+
+Then we can apply the assumption and we have that
+
+$$
+d_{\mathscr W}(w,w') =  \mathbb E_{{\bf x} \sim \mathcal U(\Omega)} [ || \mathcal F(w)({\bf x}) - \mathcal F(w')({\bf x}) ||^2 ]
+$$
+
+Which can be formulated also from the perspective of the eucliden representation, in this way
+
+$$
+d_{\mathscr W}(\theta,\theta') =  \mathbb E_{{\bf x} \sim \mathcal U(\Omega)} [ || \mathcal F(\varphi^{-1}(\theta))({\bf x}) - \mathcal F(\varphi^{-1}(\theta))({\bf x}) ||^2 ]
+$$
+
+(note that $\mathcal F \circ \varphi^{-1}$ is basically the actual python implementation of the network).
+We could construct, if the distance is differentiable the gradient of this distance
+
+$$
+\nabla_{\theta'} d_{\mathscr W}(\theta,\theta')
+$$
+
+and use it to minimize the actual distance between the two objects.
 
 ## Sparsity graph
 
 Let $w \in \mathscr W$. We say that $w' \in \mathscr W$ is a <b> neighbour </b> of $w$ if and only if 
 
 $$
-\exists n \le N : {\bf e}_n \varphi(w) = \varphi(w')
+\exists n \le N \land \varphi(w)_n \neq 0 : {\bf e}_n \odot \varphi(w) = \varphi(w')
 $$ 
 
 with ${\bf e}_n$ the $n-th$ vector in the canonical basis.
 This basically means that for each possible parameter we can construct a set of neighbours with its variations, where only a parameter is set to zero.
 Given the function $NZ: \mathbb R^N \rightarrow [0,N]$ that counts the non zero element in a vector, 
-We can assume that if $|NZ(w) - NZ(w')| = 1$ then also $|| \varphi(w) - \varphi(w') ||_2$ is sufficiently small, especially for "large" $NZ$
+We can assume that if $|NZ(w) - NZ(w')| = 1$ then also $|| \varphi(w) - \varphi(w') ||_2$ is sufficiently small, especially for "large" $NZ$.
+Therefore the Manifold Hypothesis should hold for all the neighbours, allowing to define a distance between the network and its neighbours.
+
+
+## The Algorithm
+The algorithm follows a simple greedy approach, in particular
+1. Find the neighbour which is closer (according to our special distance) to the original network
+2. Solve a constrained optimization problem to minimize the distance keeping the sparsity gained by taking a neighbour (which has a more rich saprsity pattern)
+3. Repeat until convergence (decay of the accuracy estimate)
