@@ -20,6 +20,7 @@ If you would like to modify the resolution of input images you can run, in the p
 <br>
 
 Which will generate for you a dataset that can be used to train a network with the given topology. Feel free to make experiments!
+
 <b> Hint : </b> do you want to try lighter or heavier networks? Just modify the topology csv and run this command. The next command are resilient to modifications of the settings,
 as long they are performed properly.
 # 2) Training of the network
