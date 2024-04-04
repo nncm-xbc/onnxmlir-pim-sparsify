@@ -24,7 +24,9 @@ If you got here you have now a complete dataset to train your model. Training is
 <br>
 <center>
 <code>python3 -m Test.train params_folder_name network_topology.csv</code>
-</center><br>
+</center>
+<br>
+<br>
 This will build a folder named "params_folder_name" inside the test folder, containing the result of the training, in terms of weights and biases.
 
 # 3) Sparsify your network
@@ -32,7 +34,9 @@ To lunch the procedure, run the following command
 <br>
 <center>
 <code>python3 -m Sparsifier.sparsifier ../Test/parametri ../Test/X_test_small.csv ../Test/Y_test_small.csv </code>
-</center><br>
+</center>
+<br>
+<br>
 Note that the presence of the dataset is offered only as a proof of concept of the correctness. It's not actually used into the pruning and adjust procedure,
 but only for the user to verify that everything was set up fine and proceeding in the correct way. (the provided datasets may even be very small portions of the original dataset,
 it is just to check visually during the pruning that everything is ok)
