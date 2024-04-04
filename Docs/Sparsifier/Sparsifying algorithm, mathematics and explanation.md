@@ -34,4 +34,20 @@ $$
 
 Where $\Omega$ is the compact where data distribution appears (for example, in the case of the MNIST dataset could be $[0,255]^{28*28}$).
 Morally speaking, we are taking the distance between the represented function as a (local)  distance. Mathematically speaking, this is possible
-under the assumption that the map $\mathcal F : w \mapsto \mathcal F(w)$ is some how differentiable with respect to $w$.
+under the assumption that the map $\mathcal F : w \mapsto \mathcal F(w)$ is some how differentiable with respect to $w$ 
+(small distances in the euclidean space correspond to small distances in the parameter space, and the variety is differntiable almost everywhere)
+.
+
+
+## Sparsity graph
+
+Let $w \in \mathscr W$. We say that $w' \in \mathscr W$ is a <b> neighbour </b> of $w$ if and only if 
+
+$$
+\exists n \le N : {\bf e}_n \varphi(w) = \varphi(w')
+$$ 
+
+with ${\bf e}_n$ the $n-th$ vector in the canonical basis.
+This basically means that for each possible parameter we can construct a set of neighbours with its variations, where only a parameter is set to zero.
+Given the function $NZ: \mathbb R^N \rightarrow [0,N]$ that counts the non zero element in a vector, 
+We can assume that if $|NZ(w) - NZ(w')| = 1$ then also $|| \varphi(w) - \varphi(w') ||_2$ is sufficiently small, especially for "large" $NZ$
