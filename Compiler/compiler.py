@@ -10,7 +10,7 @@ from MLP.mlp import *                  # Mini-Package for Multi Layer Perceptron
 __location__       = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
 args               = sys.argv
 parameters_folder  = __location__ + "/" + args[1]
-
+output_file        = __location__ + "/" + args[2]
 
 ################################################################################################################################
 
@@ -679,7 +679,7 @@ class Allocator:
         if(len(unconstrainedTemps) == 1):
             return association
         
-        decay = 1e-3 #decay = 1e-3
+        decay = 1e-2 #decay = 1e-3
         T = 10.
         T_end = 1e-3
         
@@ -1142,12 +1142,7 @@ def compiler(rete, registers, sparsify = False, r7offset = 0):
     reg_0 = registers[0]
     reg_1 = registers[1]
     
-    # debug, we don't actually read a file but we generate it randomly
-    #rete = Program([10,30,30,2], ["RELU","RELU","LINEAR"])
-    #rete.random_init_weights()
     intermediate_representation = IR(rete)
-    for i in intermediate_representation:
-        print(i.flatten())
     
     allocator   = Allocator(intermediate_representation , rete , registers[3:])
     input_mask  = allocator.get_input_mapping()    # dictionary that maps inputs entries to registers/memory units

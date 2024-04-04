@@ -53,7 +53,7 @@ This will build a folder named "params_folder_name" inside the test folder, cont
 To lunch the procedure, run the following command
 <br>
 <center>
-<code>python3 -m Sparsifier.sparsifier ../Test/parametri ../Test/X_test_small.csv ../Test/Y_test_small.csv </code>
+<code>python3 -m Sparsifier.sparsifier ../Test/parametri ../Test/parametri_sparse ../Test/X_test_small.csv ../Test/Y_test_small.csv </code>
 </center>
 <br>
 <br>
@@ -62,5 +62,17 @@ but only for the user to verify that everything was set up fine and proceeding i
 it is just to check visually during the pruning that everything is ok)
 
 
+# 4) Compile your sparsified network!
+You can use your newly generated parameters in order to run the compiler. Conceptually, your weights are the "source code" that the compiler sees!
+Compilation is a long phase, since it has to optimize several quantities, such as the position in memory of objects, the flows between layers, and the assignement of registers.
+<b> Work in progress </b> Allow to read a configuration file in order to set the compilation properties (e.g. Simulated Annealing Schedule)
+<br>
+<center>
+<code>
+python3  -m Compiler.compiler ../Test/parametri_sparse  myneuralnetwork
+</code>
+</center>
+<br>
+<br>
 
 
