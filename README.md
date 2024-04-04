@@ -2,8 +2,10 @@
 Simple (optimized) neural network compiler for the course of CTO
 
 # Test enviroment
-The following folder contains a training application for the generation of small (dense) MLP neural network.
-The execution can follow different steps
+The ```Test``` folder contains a training application for the generation of small (dense) MLP neural network.
+The enviroment provides a full use case for the sparsification and compilation, from the training to the execution
+of the Manifold Based Sparsifying Algorithm , arriving finally to the production of a fully working assembly code for ARM architecture, using an highly optimized ad hoc compiler.
+Technical details for the mathematics and the compiler design can be found in the documentation.
 
 # 1) Generation of a new dataset (Not mandatory)
 In the test folder you can find the ```network_topology.csv``` file, which basically describes the structure of the network.
