@@ -4,7 +4,7 @@ Simple (optimized) neural network compiler for the course of CTO.
 Different algorithms are able to produce, in an efficent way, sparse neural networks. Nonetheless, they often deal with in-training sparsification,
 helping the training to converge in the direction of a sparse result. The rationale behind this work is to offer a sparsification algorithm 
 able to deal with the problem of a-posteriori sparsification: how can we make a neural network sparser, in order to be less computationally heavy on 
-simpler architectures where massive parallelism is not possible? The method uses the <b>Manifold assumption</b> about parameters, namely the idea that
+simpler architectures where massive parallelism is not possible, and most of all without training AGAIN a new network? The method uses the <b>Manifold assumption</b> about parameters, namely the idea that
 every set of parameters induces locally (on the surface of the possible parameters) a distance that quantify the semantic difference represented by the networks.
 A greedy algorithm is therefore produced, in order to sparsify parameter by parameter the network and after each "epoch" use the differentiability 
 of the aforementioned distance in order to stabilize the noise introduced by the removal of a parameter.
