@@ -12,8 +12,14 @@ $$
 
 given the simple argument, that our representation of parameters is fundamentally based on floating point numbers.
 Given that the maps $\varphi$ represent the isomorphism between $\mathscr W$ and $\mathbb R^N$ we can hence consider the 
-metric space $(\mathscr W, w,w' \mapsto || \varphi(w) - \varphi(w') ||_2 )$, where $||\cdot||_2$ is the usual euclidean norm
+metric space $(\mathscr W, (w,w') \mapsto || \varphi(w) - \varphi(w') ||_2 )$, where $||\cdot||_2$ is the usual euclidean norm
 on the euclidean space $\mathbb R^N$ which is used in this case to induce a distance.
 We would like to define, also, a suitable distance that considers also the information regarding the realized neural network, through 
 the map $\mathcal F$.In fact, if we were able to produce such distance, we would be able to characterize --- in a quantitative manner ---
 the difference between two networks in terms of expression.
+The problem lies in the fact, in principle, two networks could have very different realization and perform realtively similarly, due to
+universal approximation theorem. This could imply , in principle, that we have zero (or almost zero,in practice) distance (according to this new notion)
+between different networks, violating the formal definition of distance.
+Our approach therefore, adds a further constraint; if two parameters $w$ and $w'$ are close to each other (according to the distance 
+inherited by the euclidean space for which exists an isomorphism) then it is possible to define a new distance, which is given by the difference 
+in expression (doing so we mitigate the problem of zero-loss classifiers having zero distance).
