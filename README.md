@@ -65,7 +65,8 @@ it is just to check visually during the pruning that everything is ok)
 # 4) Compile your sparsified network!
 You can use your newly generated parameters in order to run the compiler. Conceptually, your weights are the "source code" that the compiler sees!
 Compilation is a long phase, since it has to optimize several quantities, such as the position in memory of objects, the flows between layers, and the assignement of registers.
-
+The output of this command is an ARM source code and two "pseudodrivers" that describe how an input and an output periphery whould handle memory and register in order to interact
+with the neural network.
 <br>
 <center>
 <code>
