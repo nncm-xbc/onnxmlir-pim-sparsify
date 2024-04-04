@@ -13,7 +13,8 @@ If you would like to modify the resolution of input images you can run, in the p
 <br>
 <center>
 <code>python3 -m Test.dataeng network_topology.csv</code>
-</center><br>
+</center>
+<br>
 Which will generate for you a dataset that can be used to train a network with the given topology. Feel free to make experiments!
 
 # 2) Training of the network
