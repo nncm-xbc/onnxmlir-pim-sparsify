@@ -24,14 +24,12 @@ __location__ = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file
 ### Data Loading
 
 def load_data():
-    data_train       = np.genfromtxt(__location__ + '/mnist_train.csv', delimiter = ',', max_rows = 10000)
-    x_train, y_train = data_train[:,1:], data_train[:,0]
+    x_train       = np.genfromtxt(__location__ + '/X_train_small.csv', delimiter = ',', max_rows = 10000)
+    y_train       = np.genfromtxt(__location__ + '/Y_train_small.csv', delimiter = ',', max_rows = 10000)
     
-    data_test        = np.genfromtxt(__location__ + '/mnist_test.csv', delimiter = ',', max_rows = 1000)
-    x_test, y_test   = data_test[:,1:], data_test[:,0]
+    x_test        = np.genfromtxt(__location__ + '/X_test_small.csv', delimiter = ',', max_rows = 1000)
+    y_test        = np.genfromtxt(__location__ + '/Y_test_small.csv', delimiter = ',', max_rows = 1000)
     
-    x_train          = x_train.reshape(-1,28,28)
-    x_test           = x_test.reshape(-1,28,28)
     
     return (x_train,y_train),(x_test,y_test)
 
@@ -40,6 +38,8 @@ def main():
     # define the output folder through the command line
     args          = sys.argv
     output_folder = __location__ + "/" + args[1]	
+    topology_csv  = __location__ + "/" + args[2]
+    
     print("Selected folder %s" % output_folder)   
     
     # data loading
@@ -50,16 +50,6 @@ def main():
 
     # train-test split
     (x_train, y_train), (x_test, y_test) = load_data()
-
-    # image compression (just for the sake of speed)
-    x_train = np.array([ np.array(Image.fromarray(x).resize((14,14))) for x in x_train])
-    x_test  = np.array([ np.array(Image.fromarray(x).resize((14,14))) for x in x_test])
-
-    # flattening (MLP)
-    x_train = x_train.reshape(-1,14*14)
-    x_test  = x_test.reshape(-1,14*14)
-    y_test  = onehot(y_test)
-    y_train = onehot(y_train)
     
     print("Data loaded.")
     print("\tX_train.shape = %s" % str(x_train.shape))
@@ -76,7 +66,14 @@ def main():
     #    O>O/\O/\O
     #    O/
     
-    layer_sizes = [14*14, 10, 10, 10]
+    #layer_sizes = [14*14, 10, 10, 10]
+    # leggo la topologia dal file
+    layer_sizes  = np.genfromtxt(topology_csv, delimiter = ','); 
+    layer_sizes[0] = layer_sizes[0]**2
+    layer_sizes    = [ int(l) for l in layer_sizes]
+    print("Network Topology loaded")
+    print("\t %s " % layer_sizes)
+    
     
     mask, params = init_network_params(layer_sizes, random.PRNGKey(0))
     print("\n")    

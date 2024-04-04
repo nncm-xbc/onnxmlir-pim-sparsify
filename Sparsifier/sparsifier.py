@@ -109,51 +109,27 @@ def prune(params, mask, cmp_params, full_mask, doAdjust = True):
     
     return new_params
 ########################################################################################################################################
-
-def load_data():
-    data_train       = np.genfromtxt(__location__ + '/mnist_train.csv', delimiter = ',', max_rows = 10000)
-    x_train, y_train = data_train[:,:-1], data_train[:,0]
-    
-    data_test        = np.genfromtxt(__location__ + '/mnist_test.csv', delimiter = ',', max_rows = 1000)
-    x_test, y_test   = data_test[:,:-1], data_test[:,0]
-    
-    x_train          = x_train.reshape(-1,28,28)
-    x_test           = x_test.reshape(-1,28,28)
-    
-    return (x_train,y_train),(x_test,y_test)
-
     
     
 def main():
     args          = sys.argv
     input_folder  = __location__ + "/" + args[1]	
     x_test_file   = __location__ + "/" + args[2]	
+    y_test_file   = __location__ + "/" + args[3]
    
     print("Load the validation set for the user to evaluate to goodness")
-    data          = np.genfromtxt(x_test_file, delimiter = ',', max_rows = 1000)
-    x_test,y_test = data[:,1:],data[:,0]
-    x_test = x_test.reshape(-1,28,28)
-    x_test = np.array([ np.array(Image.fromarray(x).resize((14,14))) for x in x_test]).reshape(-1,14*14) # da togliere sta cosa, fare il resize nel file
-    
-    onehot = lambda y : np.concatenate([
-        (y == cifra)[:,None] * 1.
-    for cifra in np.arange(10)
-    ], axis = 1)
-    
-    y_test        = onehot(y_test)
+    x_test          = np.genfromtxt(x_test_file, delimiter = ',', max_rows = 1000)
+    y_test          = np.genfromtxt(y_test_file, delimiter = ',', max_rows = 1000)
 
     print("Load the parameters from the folder")
     params = load_network_params(input_folder)
     full_mask = get_full_mask(params)
     mask = get_full_mask(params)
-
+    print("")
     print("Accuracy in validation:", accuracy(params,mask,  x_test, y_test))
     print("Construct the mask for the sparsification")
-    
-
-
+    print("")
     params_perturbed = [ (p[0] + np.random.normal(size = p[0].shape) * .00001 ,p[1]) for p in params]
-    
     print("Compute the local distance between a random perturbation of the input network and the input network itself")
     print(">>>", d(params,full_mask,params_perturbed,full_mask))
     

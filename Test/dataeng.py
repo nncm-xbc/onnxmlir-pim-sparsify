@@ -5,8 +5,11 @@
 import numpy as np
 import os
 from PIL import Image
+import sys
 
-__location__ = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
+__location__  = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
+args          = sys.argv
+topology_csv  = __location__ + "/" + args[1]	
 
 def load_data():
     data_train       = np.genfromtxt(__location__ + '/mnist_train.csv', delimiter = ',')
@@ -29,10 +32,14 @@ onehot = lambda y : np.concatenate([
 for cifra in np.arange(10)
 ], axis = 1)
 
+# read the topology
+topology = np.genfromtxt(topology_csv, delimiter = ',')
+# width of the first layer
+w        = int(topology[0])
 
 # re-engineer data 
-x_train_small  = np.array([ np.array(Image.fromarray(x).resize((14,14))) for x in x_train]).reshape(-1,14*14)
-x_test_small   = np.array([ np.array(Image.fromarray(x).resize((14,14))) for x in x_test]).reshape(-1,14*14)
+x_train_small  = np.array([ np.array(Image.fromarray(x).resize((w,w))) for x in x_train]).reshape(-1,14*14)
+x_test_small   = np.array([ np.array(Image.fromarray(x).resize((w,w))) for x in x_test]).reshape(-1,14*14)
 y_train_small  = onehot(y_train)
 y_test_small   = onehot(y_test)
 
