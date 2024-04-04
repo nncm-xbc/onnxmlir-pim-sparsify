@@ -30,4 +30,6 @@ $$
 d_{\mathscr W}(w,w') =  \mathbb E_{{\bf x} \sim \mathcal U(\Omega)} [ || \mathcal F(w)({\bf x}) - \mathcal F(w')({\bf x}) ||^2 ]
 $$
 
-Where $\Omega$ is the compact where data distribution appears (for example, in the case of the MNIST dataset could be $[0,255]^{28*28}$)
+Where $\Omega$ is the compact where data distribution appears (for example, in the case of the MNIST dataset could be $[0,255]^{28*28}$).
+Morally speaking, we are taking the distance between the represented function as a (local)  distance. Mathematically speaking, this is possible
+under the assumption that the map $\mathcal F : w \mapsto \mathcal F(w)$ is some how differentiable with respect to $w$.
