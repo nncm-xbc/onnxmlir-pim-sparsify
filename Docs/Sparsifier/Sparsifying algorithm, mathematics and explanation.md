@@ -23,3 +23,11 @@ between different networks, violating the formal definition of distance.
 Our approach therefore, adds a further constraint; if two parameters $w$ and $w'$ are close to each other (according to the distance 
 inherited by the euclidean space for which exists an isomorphism) then it is possible to define a new distance, which is given by the difference 
 in expression (doing so we mitigate the problem of zero-loss classifiers having zero distance).
+
+We define hence 
+
+$$
+d_{\mathscr W}(w,w') =  \mathbb E_{{\bf x} \sim \mathcal U(\Omega)} [ || \mathcal F(w)({\bf x}) - \mathcal F(w')({\bf x}) || ]
+$$
+
+Where $\Omega$ is the compact where data distribution appears. For example, in the case of the MNIST dataset could be $[0,255]^{28*28}$
