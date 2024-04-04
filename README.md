@@ -65,7 +65,8 @@ it is just to check visually during the pruning that everything is ok)
 # 4) Compile your sparsified network!
 You can use your newly generated parameters in order to run the compiler. Conceptually, your weights are the "source code" that the compiler sees!
 Compilation is a long phase, since it has to optimize several quantities, such as the position in memory of objects, the flows between layers, and the assignement of registers.
-<b> Work in progress </b> Allow to read a configuration file in order to set the compilation properties (e.g. Simulated Annealing Schedule)
+
+<b> Work in progress: </b> Allow to read a configuration file in order to set the compilation properties (e.g. Simulated Annealing Schedule)
 <br>
 <center>
 <code>
