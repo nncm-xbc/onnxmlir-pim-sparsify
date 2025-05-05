@@ -4,7 +4,7 @@
 #######################################################################################################################
 ### Librerie
 
-import sys                             # for the CLI execution
+import sys                             # for the C3LI execution
 import os
 
 import jax.numpy as jnp                # Parallel computing / Autograd
@@ -14,7 +14,7 @@ from jax import random
 from MLP.mlp import *                  # Mini-Package for Multi Layer Perceptron
 
 
-from PIL import Image
+from PIL import Image 
 import matplotlib.pyplot as plt
 import numpy as np
 

@@ -1424,3 +1424,6 @@ rete = Program([10,30,30,2], ["RELU","RELU","LINEAR"])
 rete.random_init_weights()
 codice, input_mask, output_mask = compiler(rete, [ 's' + str(i) for i in range(16)] , r7offset = 0x1000000)
 print(codice)
+
+with open(output_file, "w") as out:
+  out.write(codice)

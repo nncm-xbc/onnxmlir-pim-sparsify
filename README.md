@@ -6,8 +6,7 @@ helping the training to converge in the direction of a sparse result. The ration
 able to deal with the problem of a-posteriori sparsification: how can we make a neural network sparser, in order to be less computationally heavy on 
 simpler architectures where massive parallelism is not possible, and most of all without training AGAIN a new network? The method uses the <b>Manifold assumption</b> about parameters, namely the idea that
 every set of parameters induces locally (on the surface of the possible parameters) a distance that quantify the semantic difference represented by the networks.
-A greedy algorithm is therefore produced, in order to sparsify parameter by parameter the network and after each "epoch" use the differentiability 
-of the aforementioned distance in order to stabilize the noise introduced by the removal of a parameter.
+A greedy algorithm is therefore produced, in order to sparsify parameter by parameter the network and after each "epoch" use the differentiability
 
 ## Compiler
 After sparsification, a fundamental key was the production of a compiler able to exploit the gained sparsity.
@@ -37,8 +36,8 @@ If you would like to modify the resolution of input images you can run, in the p
 
 Which will generate for you a dataset that can be used to train a network with the given topology. Feel free to make experiments!
 
-<b> Hint : </b> do you want to try lighter or heavier networks? Just modify the topology csv and run this command. The next command are resilient to modifications of the settings,
-as long they are performed properly.
+<b> Hint : </b> do you want to try lighter or heavier networks? Just modify the topology csv and run this command. The next command are resilient to modifications of the settings, as long they are performed properly.
+
 # 2) Training of the network
 If you got here you have now a complete dataset to train your model. Training is simple, just run --- again from the folder of the project --- the following
 <br>
@@ -57,16 +56,13 @@ To lunch the procedure, run the following command
 </center>
 <br>
 <br>
-Note that the presence of the dataset is offered only as a proof of concept of the correctness. It's not actually used into the pruning and adjust procedure,
-but only for the user to verify that everything was set up fine and proceeding in the correct way. (the provided datasets may even be very small portions of the original dataset,
-it is just to check visually during the pruning that everything is ok)
+Note that the presence of the dataset is offered only as a proof of concept of the correctness. It's not actually used into the pruning and adjust procedure, but only for the user to verify that everything was set up fine and proceeding in the correct way. (the provided datasets may even be very small portions of the original dataset, it is just to check visually during the pruning that everything is ok)
 
 
 # 4) Compile your sparsified network!
 You can use your newly generated parameters in order to run the compiler. Conceptually, your weights are the "source code" that the compiler sees!
 Compilation is a long phase, since it has to optimize several quantities, such as the position in memory of objects, the flows between layers, and the assignement of registers.
-The output of this command is an ARM source code and two "pseudodrivers" that describe how an input and an output periphery whould handle memory and register in order to interact
-with the neural network.
+The output of this command is an ARM source code and two "pseudodrivers" that describe how an input and an output periphery whould handle memory and register in order to interact with the neural network.
 <br>
 <center>
 <code>
@@ -75,6 +71,3 @@ python3  -m Compiler.compiler ../Test/parametri_sparse  myneuralnetwork
 </center>
 <br>
 <br>
-
-<b> Work in progress: </b> Allow to read a configuration file in order to set the compilation properties (e.g. Simulated Annealing Schedule)
-
