@@ -55,16 +55,19 @@ class Program:
                 self.W[layer][r,c] = 0.   # adding some sparsity
                 
             self.b[layer] = np.random.normal( size = self.topology[layer + 1] )
+
     def print(self):
         for i,layer in enumerate(self.topology[:-1]):
             print("layer %d->%d "%(i,i+1))
             print("W.shape = %s \t b.shape = %s" % (str(self.W[i].shape),str(self.b[i].shape)))
+            print("Activation functions = %s" % str(self.activation_functions_list[i]))
+
     def visualize_weights(self):
         for w in self.W:
             print(w.shape)
             plt.figure(figsize=(10,10))
             plt.imshow(w > 0.)        
-    
+
     def run(self, data):
         layer = data
         for f_name,weight,bias in zip(self.activation_functions_list,
@@ -78,10 +81,11 @@ class Program:
     def random_test(self):
         return self.run(np.random.randn(self.topology[0]))
         
-programma = Program(parameters_folder)
-programma.random_init_weights()
+network = Program(parameters_folder)
 print("Loading the neural network...")
-print("Random test: " , programma.random_test() )
+print("Random test: " , network.random_test())
+network.print()
+print("Network loaded")
 
 ################################################################################################################################
 #                                                   INTERMEDIATE REPRESENTATION                                                #
@@ -613,7 +617,7 @@ class Allocator:
         return 0
     
     ########################################################################################
-    # Memory allocation
+    # Memory allocation optimization
     ########################################################################################
 
     def compute_signals(self, ir):
@@ -808,7 +812,7 @@ class Allocator:
 
 ####################################################################################################################
 #####                  #############################################################################################
-#####   huge function  #############################################################################################
+#####   memory alloc   #############################################################################################
 #####                  #############################################################################################
 ####################################################################################################################
 
@@ -1148,8 +1152,10 @@ def compiler(rete, registers, sparsify = False, r7offset = 0):
     input_mask  = allocator.get_input_mapping()    # dictionary that maps inputs entries to registers/memory units
     output_mask = allocator.get_output_mapping()   # dictionary that maps outputs entries to register/memory units
     
-    
-    
+    #Save IR
+    with open(__location__ +"/IR", "w") as f:
+        for ir_statement in intermediate_representation:
+            f.write(str(ir_statement) + "\n")
     
     asm_code = []
     
@@ -1420,10 +1426,119 @@ def compiler(rete, registers, sparsify = False, r7offset = 0):
                 codeprint("FSTS %s,[r7, #%d] " % (buffer_register_2, address))
     return ret, input_mask, output_mask
 
-rete = Program([10,30,30,2], ["RELU","RELU","LINEAR"])
-rete.random_init_weights()
-codice, input_mask, output_mask = compiler(rete, [ 's' + str(i) for i in range(16)] , r7offset = 0x1000000)
-print(codice)
+
+
+
+def executable(rete, registers, sparsify = False, r7offset = 0x1000000):
+    asm_code, input_mask, output_mask = compiler(rete, registers, sparsify, r7offset)
+
+    formatted_asm = asm_code
+    formatted_asm = formatted_asm.replace("VMUL.F32 s", "vmul.f32 s")
+    formatted_asm = formatted_asm.replace("VADD.F32 s", "vadd.f32 s")
+    formatted_asm = formatted_asm.replace("VSUB.F32 s", "vsub.f32 s")
+    formatted_asm = formatted_asm.replace("VMOV.F32 s", "vmov.f32 s")
+    formatted_asm = formatted_asm.replace(",s", ", s")
+    formatted_asm = formatted_asm.replace(",r", ", r")
+    formatted_asm = formatted_asm.replace("FLDS s", "flds s")
+    formatted_asm = formatted_asm.replace("FSTS s", "fsts s")
+    formatted_asm = formatted_asm.replace(",[r", ", [r")
+
+    #function wrapper
+    wrapper = []
+    wrapper.append(".arch armv7-a")
+    wrapper.append(".fpu vfp")
+    wrapper.append(".section .text")
+    wrapper.append(".align 4")
+    wrapper.append(".global network_inference")
+    wrapper.append(".type network_inference, %function")
+    wrapper.append("")
+    wrapper.append("@ network_inference(float* input, float* output)")
+    wrapper.append("@ r0: input pointer")
+    wrapper.append("@ r1: output pointer")
+    wrapper.append("")
+    wrapper.append("network_inference:")
+    wrapper.append("    push {r4-r11, lr}       @ Save registers")
+    wrapper.append("    vpush {s16-s31}         @ Save VFP registers")
+
+    #load inputs to registers/memory
+    wrapper.append("")
+    wrapper.append("    @ Load inputs")
+    for idx, (loc_type, location) in input_mask.items():
+        if loc_type == "reg":
+            wrapper.append(f"    vldr {location}, [r0, #{idx*4}]")
+        else:  # memory location
+            wrapper.append(f"    vldr s0, [r0, #{idx*4}]")
+            wrapper.append(f"    vstr s0, [r7, #{location}]")
+
+    wrapper.append("")
+    wrapper.append("    @ Network computation")
+    wrapper.append(formatted_asm)
+
+    #store outputs
+    wrapper.append("")
+    wrapper.append("    @ Store outputs")
+    for idx, (loc_type, location) in output_mask.items():
+        if loc_type == "reg":
+            wrapper.append(f"    vstr {location}, [r1, #{idx*4}]")
+        else:  # memory location
+            wrapper.append(f"    vldr s0, [r7, #{location}]")
+            wrapper.append(f"    vstr s0, [r1, #{idx*4}]")
+    
+    wrapper.append("")
+    wrapper.append("    vpop {s16-s31}          @ Restore VFP registers")
+    wrapper.append("    pop {r4-r11, pc}        @ Restore registers and return")
+
+    executable_code = "\n".join(wrapper)
+    return asm_code, executable_code, input_mask, output_mask
+
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
+
+#compile to pytorch without mem and reg optimization
+def net_to_torch(network):
+    class Network(nn.Module):
+        def __init__(self):
+            super(Network, self).__init__()
+            self.layers = nn.ModuleList()
+            for i in range(len(network.topology) - 1):
+                layer = nn.Linear(network.topology[i], network.topology[i+1])
+                # weights and biases from network
+                with torch.no_grad():
+                    layer.weight.copy_(torch.tensor(network.W[i], dtype=torch.float32))
+                    layer.bias.copy_(torch.tensor(network.b[i], dtype=torch.float32))
+                setattr(self, f'fc{i+1}', layer)
+                self.layers.append(layer)
+
+        def forward(self, x):
+            for i, layer in enumerate(self.layers):
+                x = layer(x)
+                if i < len(self.layers) - 1:
+                    x = F.relu(x)
+            return x
+        
+    return Network()
+
+network = Program(parameters_folder)
+torchnet= net_to_torch(network)
+
+input_tensor = torch.randn(1, 196)
+
+print("Output from PyTorch model:")
+output_tensor = torchnet(input_tensor)
+print(output_tensor)
+
+print("Output from custom network:")
+output = network.run(input_tensor.numpy().squeeze(0))
+print(output)
+
+#codice, input_mask, output_mask = compiler(network, [ 's' + str(i) for i in range(16)] , r7offset = 0x1000000)
+codice, executable_code, input_mask, output_mask = executable(network, [ 's' + str(i) for i in range(16)] , r7offset = 0x1000000)
+
+with open(output_file+"_exe", "w") as out:
+  out.write(executable_code)
+
+#print(codice)
 
 with open(output_file, "w") as out:
   out.write(codice)

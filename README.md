@@ -42,17 +42,17 @@ Which will generate for you a dataset that can be used to train a network with t
 If you got here you have now a complete dataset to train your model. Training is simple, just run --- again from the folder of the project --- the following
 <br>
 <center>
-<code>python3 -m Test.train params_folder_name network_topology.csv</code>
+<code>python3 -m Test.train parameters network_topology.csv</code>
 </center>
 <br>
 <br>
-This will build a folder named "params_folder_name" inside the test folder, containing the result of the training, in terms of weights and biases.
+This will build a folder named "parameters" inside the test folder, containing the result of the training, in terms of weights and biases.
 
 # 3) Sparsify your network
 To lunch the procedure, run the following command
 <br>
 <center>
-<code>python3 -m Sparsifier.sparsifier ../Test/parametri ../Test/parametri_sparse ../Test/X_test_small.csv ../Test/Y_test_small.csv </code>
+<code>python3 -m Sparsifier.sparsifier ../Test/parameters ../Test/X_test_small.csv ../Test/Y_test_small.csv </code>
 </center>
 <br>
 <br>

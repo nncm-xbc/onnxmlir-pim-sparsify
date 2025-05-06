@@ -75,7 +75,7 @@ def adjust(params, mask, cmp_params, full_mask):
 #         input parameters but optimized to have minimal local distance
 #         in the manifold of parameters with respect to the cmp_params (params that we want to mimic)
 #
-def prune(params, mask, cmp_params, full_mask, doAdjust = True):
+def prune(params, mask, og_params, full_mask, doAdjust = True):
     minimo = 1e16
     minimo_idx = 0
     minimo_i   = 0
@@ -89,7 +89,7 @@ def prune(params, mask, cmp_params, full_mask, doAdjust = True):
                 if params[idx][0][i,j] != 0.:
                     new_params = clone_params(params)
                     new_params[idx][0][i,j] = 0.
-                    distanza =  d(cmp_params,full_mask,new_params,mask)
+                    distanza =  d(og_params,full_mask,new_params,mask)
                     if(distanza < minimo):
                         minimo = distanza
                         minimo_idx = idx
@@ -105,7 +105,7 @@ def prune(params, mask, cmp_params, full_mask, doAdjust = True):
     mask[minimo_idx][minimo_i,minimo_j]          = 0. # setto la maschera  a 0
     # ha bisogno di aggiustamento
     if doAdjust:
-        new_params = adjust(new_params, mask, cmp_params,full_mask)
+        new_params = adjust(new_params, mask, og_params,full_mask)
     
     return new_params
 ########################################################################################################################################
@@ -113,7 +113,8 @@ def prune(params, mask, cmp_params, full_mask, doAdjust = True):
     
 def main():
     args          = sys.argv
-    input_folder  = __location__ + "/" + args[1]	
+    input_folder  = __location__ + "/" + args[1]
+    output_folder = __location__ + "/" + args[1] + "/sparsified"	
     x_test_file   = __location__ + "/" + args[2]	
     y_test_file   = __location__ + "/" + args[3]
    
@@ -142,6 +143,14 @@ def main():
         NZ = np.sum([ (p[0] != 0).sum() for p in new_params]) # non zero entries
         print( "validation accuracy = %.3f" % accuracy(new_params,mask,  x_test, y_test) , " | non zero elements = %d" % NZ)
         new_params = prune(new_params, mask, params, full_mask, True)
+    
+    # Saving the data
+    if not os.path.exists(output_folder):
+        os.makedirs(output_folder)
+
+    for i,p in enumerate(new_params):
+        np.save(output_folder + "/W_%i.npy" % i, p[0])
+        np.save(output_folder + "/b_%i.npy" % i, p[1])
 
 
 if __name__ == "__main__":
