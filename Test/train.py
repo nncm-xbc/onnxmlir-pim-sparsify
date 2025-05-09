@@ -30,7 +30,6 @@ def load_data():
     x_test        = np.genfromtxt(__location__ + '/X_test_small.csv', delimiter = ',', max_rows = 1000)
     y_test        = np.genfromtxt(__location__ + '/Y_test_small.csv', delimiter = ',', max_rows = 1000)
     
-    
     return (x_train,y_train),(x_test,y_test)
 
 

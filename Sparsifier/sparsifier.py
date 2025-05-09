@@ -1,7 +1,10 @@
+# sparsifier.py
+
 from PIL import Image
 from MLP.mlp import *                  # Mini-Package for Multi Layer Perceptron
 import jax
 import sys 
+
 __location__ = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
 
 
@@ -119,8 +122,8 @@ def main():
     y_test_file   = __location__ + "/" + args[3]
    
     print("Load the validation set for the user to evaluate to goodness")
-    x_test          = np.genfromtxt(x_test_file, delimiter = ',', max_rows = 1000)
-    y_test          = np.genfromtxt(y_test_file, delimiter = ',', max_rows = 1000)
+    x_test = np.genfromtxt(x_test_file, delimiter = ',', max_rows = 1000)
+    y_test = np.genfromtxt(y_test_file, delimiter = ',', max_rows = 1000)
 
     print("Load the parameters from the folder")
     params = load_network_params(input_folder)
@@ -143,10 +146,14 @@ def main():
         NZ = np.sum([ (p[0] != 0).sum() for p in new_params]) # non zero entries
         print( "validation accuracy = %.3f" % accuracy(new_params,mask,  x_test, y_test) , " | non zero elements = %d" % NZ)
         new_params = prune(new_params, mask, params, full_mask, True)
-    
+ 
     # Saving the data
     if not os.path.exists(output_folder):
         os.makedirs(output_folder)
+
+    for i in range(len(new_params)):
+        if len(new_params[i]) > 0:
+            new_params[i] = (new_params[i][0] * mask[i][0], new_params[i][1])
 
     for i,p in enumerate(new_params):
         np.save(output_folder + "/W_%i.npy" % i, p[0])

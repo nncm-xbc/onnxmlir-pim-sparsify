@@ -58,7 +58,6 @@ To lunch the procedure, run the following command
 <br>
 Note that the presence of the dataset is offered only as a proof of concept of the correctness. It's not actually used into the pruning and adjust procedure, but only for the user to verify that everything was set up fine and proceeding in the correct way. (the provided datasets may even be very small portions of the original dataset, it is just to check visually during the pruning that everything is ok)
 
-
 # 4) Compile your sparsified network!
 You can use your newly generated parameters in order to run the compiler. Conceptually, your weights are the "source code" that the compiler sees!
 Compilation is a long phase, since it has to optimize several quantities, such as the position in memory of objects, the flows between layers, and the assignement of registers.
@@ -66,7 +65,7 @@ The output of this command is an ARM source code and two "pseudodrivers" that de
 <br>
 <center>
 <code>
-python3  -m Compiler.compiler ../Test/parametri_sparse  myneuralnetwork
+python3  -m Compiler.compiler ../Test/sparse_parameters  myneuralnetwork
 </code>
 </center>
 <br>

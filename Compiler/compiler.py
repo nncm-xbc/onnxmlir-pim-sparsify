@@ -1,10 +1,19 @@
 # Compiler.py
-import numpy as np
-import matplotlib.pyplot as plt
-import jax
-import jax.numpy as jnp
 import os
 import sys
+
+import matplotlib.pyplot as plt
+import networkx as nx
+
+import numpy as np
+import jax
+import jax.numpy as jnp
+
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
+
+from Compiler.network import Network
 from MLP.mlp import *                  # Mini-Package for Multi Layer Perceptron
 
 __location__       = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
@@ -29,7 +38,7 @@ class Program:
             for p in params:
                 self.W.append(p[0])
                 self.b.append(p[1])
-            
+           
             self.activation_functions_list = [ 'RELU' for w in self.W[:-1] ] + ['LINEAR']
             self.topology = [ w.shape[1] for w in self.W]  + [self.W[-1].shape[0]]    
 
@@ -39,8 +48,7 @@ class Program:
             self.activation_functions_list = activation_functions_list
             self.W = [ 0 for t in topology[:-1]]
             self.b = [ 0 for t in topology[:-1]]
-        
-        
+
         self.activation_functions = {}
         self.activation_functions['RELU']   = lambda x : jnp.maximum(0.,x)
         self.activation_functions['LINEAR'] = lambda x : x
@@ -81,11 +89,6 @@ class Program:
     def random_test(self):
         return self.run(np.random.randn(self.topology[0]))
         
-network = Program(parameters_folder)
-print("Loading the neural network...")
-print("Random test: " , network.random_test())
-network.print()
-print("Network loaded")
 
 ################################################################################################################################
 #                                                   INTERMEDIATE REPRESENTATION                                                #
@@ -494,7 +497,6 @@ class InterfaceCommunication:
 #                       *                       |
 #                       *                       +------->
 
-from sklearn.manifold import MDS
 
 class Allocator:
     def __init__(self, ir, program, register_names):
@@ -1005,7 +1007,6 @@ class Allocator:
 #                       * This kind of ciclyc dependency in the described way, generating the code that handles all the flows 
 #                       * between layers
       
-import networkx as nx
 def interfaces_manager(interface,buffer_register_1):
     global ret_
     ret_   = ""
@@ -1491,54 +1492,31 @@ def executable(rete, registers, sparsify = False, r7offset = 0x1000000):
     executable_code = "\n".join(wrapper)
     return asm_code, executable_code, input_mask, output_mask
 
-import torch
-import torch.nn as nn
-import torch.nn.functional as F
+def net_to_torch(network):   
+    return Network(network)
 
-#compile to pytorch without mem and reg optimization
-def net_to_torch(network):
-    class Network(nn.Module):
-        def __init__(self):
-            super(Network, self).__init__()
-            self.layers = nn.ModuleList()
-            for i in range(len(network.topology) - 1):
-                layer = nn.Linear(network.topology[i], network.topology[i+1])
-                # weights and biases from network
-                with torch.no_grad():
-                    layer.weight.copy_(torch.tensor(network.W[i], dtype=torch.float32))
-                    layer.bias.copy_(torch.tensor(network.b[i], dtype=torch.float32))
-                setattr(self, f'fc{i+1}', layer)
-                self.layers.append(layer)
 
-        def forward(self, x):
-            for i, layer in enumerate(self.layers):
-                x = layer(x)
-                if i < len(self.layers) - 1:
-                    x = F.relu(x)
-            return x
-        
-    return Network()
+if __name__ == "__main__":
 
-network = Program(parameters_folder)
-torchnet= net_to_torch(network)
+    network = Program(parameters_folder)
+    torchnet= net_to_torch(network)
 
-input_tensor = torch.randn(1, 196)
+    input_tensor = torch.randn(1, 196)
 
-print("Output from PyTorch model:")
-output_tensor = torchnet(input_tensor)
-print(output_tensor)
+    print("Output from PyTorch model:")
+    output_tensor = torchnet(input_tensor)
+    print(output_tensor)
+    torch.save(torchnet, output_file + "_pytorch.pt")
 
-print("Output from custom network:")
-output = network.run(input_tensor.numpy().squeeze(0))
-print(output)
+    print("Output from OG network:")
+    output = network.run(input_tensor.numpy().squeeze(0))
+    print(output)
 
-#codice, input_mask, output_mask = compiler(network, [ 's' + str(i) for i in range(16)] , r7offset = 0x1000000)
-codice, executable_code, input_mask, output_mask = executable(network, [ 's' + str(i) for i in range(16)] , r7offset = 0x1000000)
+    #codice, input_mask, output_mask = compiler(network, [ 's' + str(i) for i in range(16)] , r7offset = 0x1000000)
+    codice, executable_code, input_mask, output_mask = executable(network, [ 's' + str(i) for i in range(16)] , r7offset = 0x1000000)
 
-with open(output_file+"_exe", "w") as out:
-  out.write(executable_code)
+    with open(output_file+"_exe", "w") as out:
+        out.write(executable_code)
 
-#print(codice)
-
-with open(output_file, "w") as out:
-  out.write(codice)
+    with open(output_file, "w") as out:
+        out.write(codice)

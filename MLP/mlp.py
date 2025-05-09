@@ -33,7 +33,7 @@ def get_full_mask(params):
 def init_network_params(sizes, key):
   keys = random.split(key, len(sizes))
   return ( [init_mask(m,n) for m,n in zip(sizes[:-1],sizes[1:])],  [random_layer_params(m, n, k) for m, n, k in zip(sizes[:-1], sizes[1:], keys)])
-  
+
 def load_network_params(folder_name):
   # count how many files in the folder
   count = 0
@@ -51,12 +51,10 @@ def load_network_params(folder_name):
 ##########################################################################################################################################################
 
 # Activation function
-
 def relu(x):
     return jnp.maximum(0, x)
 
 # Inference function
-
 def predict(params, mask, image):
     # per-example predictions
     activations = image
@@ -70,15 +68,12 @@ def predict(params, mask, image):
 
 
 # Make a batched version of the `predict` function
-
 batched_predict = vmap(predict, in_axes=(None,None, 0))
 
 ##########################################################################################################################################################
 
 # Training utilities
 step_size = 0.01
-
-
 
 def one_hot(x, k, dtype=jnp.float32):
   """Create a one-hot encoding of x of size k."""
