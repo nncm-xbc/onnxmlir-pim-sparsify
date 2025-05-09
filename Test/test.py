@@ -7,6 +7,8 @@ import sys
 import numpy as np
 import torch
 import torch.nn as nn
+import onnx
+import onnxruntime as ort
 
 from Compiler.compiler import Program 
 from Compiler.network import Network
@@ -43,6 +45,22 @@ def main():
         total = y_test.size(0)
         accuracy = 100 * correct / total
         print(f'Test accuracy: {accuracy:.2f}%')
+
+    elif input_network.endswith('.onnx'):
+        onnx_model = onnx.load(input_network)
+        onnx.checker.check_model(onnx_model)
+
+        ort_session = ort.InferenceSession(input_network)
+
+        # onnx_inputs = np.random.randn(1, x_test.shape[1]).astype(np.float32)
+        results = []
+        for i in range(x_test.shape[0]):
+            onnx_inputs = x_test[i:i+1]
+
+            onnxruntime_inputs = {onnx_inputs}
+            onnxruntime_outputs = ort_session.run(None, onnxruntime_inputs)
+            
+            results.append(onnx_inputs)
 
     else:
 

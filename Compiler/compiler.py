@@ -1495,6 +1495,11 @@ def executable(rete, registers, sparsify = False, r7offset = 0x1000000):
 def net_to_torch(network):   
     return Network(network)
 
+def torch_to_onnx(network):
+    example_input = torch.randn(1, network.topology[0])
+    net_onnx = torch.onnx.export(network, example_input, dynamo=True)
+    net_onnx.optimize()
+    net_onnx.save(output_file + ".onnx")
 
 if __name__ == "__main__":
 
@@ -1506,7 +1511,9 @@ if __name__ == "__main__":
     print("Output from PyTorch model:")
     output_tensor = torchnet(input_tensor)
     print(output_tensor)
-    torch.save(torchnet, output_file + "_pytorch.pt")
+    torch.save(torchnet, output_file + ".pt")
+
+    torch_to_onnx(torchnet)
 
     print("Output from OG network:")
     output = network.run(input_tensor.numpy().squeeze(0))
