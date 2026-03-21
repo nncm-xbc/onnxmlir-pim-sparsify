@@ -84,5 +84,81 @@ Therefore the Manifold Hypothesis should hold for all the neighbours, allowing t
 ## The Algorithm
 The algorithm follows a simple greedy approach, in particular
 1. Find the neighbour which is closer (according to our special distance) to the original network
-2. Solve a constrained optimization problem to minimize the distance keeping the sparsity gained by taking a neighbour (which has a more rich saprsity pattern)
+2. Solve a constrained optimization problem to minimize the distance keeping the sparsity gained by taking a neighbour (which has a more rich sparsity pattern)
 3. Repeat until convergence (decay of the accuracy estimate)
+
+The following sections formalise each step and discuss the termination criterion and computational cost.
+
+### Notation
+
+Let $w^{(0)} \in \mathscr W$ be the original dense network. At each iteration $k$ we maintain a pair $(w^{(k)}, M^{(k)})$ where $w^{(k)}$ are the current parameters and $M^{(k)} \in \{0,1\}^N$ is a binary mask encoding the current sparsity pattern, with $M^{(k)}_n = 0$ iff parameter $n$ has been permanently removed. The set of still-active parameters is
+
+$$
+A^{(k)} = \{ n \le N : M^{(k)}_n = 1 \}
+$$
+
+and $N^{(k)} = |A^{(k)}|$ is the number of non-zero weights at step $k$. The forward pass of the network always evaluates $\mathcal F(\varphi^{-1}(M^{(k)} \odot \varphi(w^{(k)})))$, i.e.\ the mask is applied element-wise before any computation, so parameters outside $A^{(k)}$ are always invisible to the network.
+
+### Step 1 — Pruning
+
+The pruning step searches for the neighbour of $w^{(k)}$ that is closest to the original network $w^{(0)}$. Concretely, it selects the index
+
+$$
+n^* = \arg\min_{n \in A^{(k)}} \; d_{\mathscr W}\!\left(w^{(0)},\; \varphi^{-1}\!\left( (M^{(k)} - {\bf e}_n) \odot \varphi(w^{(k)}) \right)\right)
+$$
+
+That is, for each currently active parameter we tentatively zero it out and measure the resulting distance to the original network. The parameter whose removal causes the smallest increase in distance is selected. The updated parameters after this step are
+
+$$
+w^{(k + \tfrac{1}{2})} = \varphi^{-1}\!\left((M^{(k)} - {\bf e}_{n^*}) \odot \varphi(w^{(k)})\right), \qquad M^{(k+\tfrac{1}{2})} = M^{(k)} - {\bf e}_{n^*}
+$$
+
+If $d_{\mathscr W}(w^{(0)}, w^{(k+\tfrac{1}{2})}) = 0$ — meaning the removed weight was entirely redundant and no adjustment is needed — the iteration terminates early and $w^{(k+1)} = w^{(k+\tfrac{1}{2})}$.
+
+### Step 2 — Adjustment
+
+After pruning, the remaining active parameters are optimised to recover as much of the original network's behaviour as possible, subject to the fixed sparsity pattern $M^{(k+\tfrac{1}{2})}$. The problem is
+
+$$
+w^{(k+1)} = \arg\min_{\theta \,:\, M^{(k+\tfrac{1}{2})} \odot \varphi(\theta) = \varphi(\theta)} \; d_{\mathscr W}(w^{(0)}, \theta)
+$$
+
+Since $\mathcal F$ is differentiable almost everywhere (ReLU networks are piecewise linear), the objective is differentiable with respect to the active parameters. The gradient, computed via automatic differentiation, is
+
+$$
+\nabla_\theta \, d_{\mathscr W}(w^{(0)}, \theta) = 2 \,\mathbb E_{{\bf x} \sim \mathcal U(\Omega)} \!\left[ \left(\mathcal F(\theta)({\bf x}) - \mathcal F(w^{(0)})({\bf x})\right) \cdot \nabla_\theta \mathcal F(\theta)({\bf x}) \right]
+$$
+
+The sparsity constraint is maintained automatically: because the forward pass evaluates $M \odot \varphi(\theta)$, the partial derivative of $d_{\mathscr W}$ with respect to any masked-out parameter is exactly zero, so gradient updates leave those parameters unchanged.
+
+Minimisation proceeds by gradient descent with an adaptive step size $\alpha$. Starting from $\alpha_0 = 10^{-11}$, at each inner iteration the step is accepted if it decreases the objective, in which case $\alpha$ is gently increased ($\alpha \leftarrow 1.001 \cdot \alpha$), and rejected with a halving ($\alpha \leftarrow \alpha/2$) otherwise. The inner loop terminates when $\alpha < 10^{-14}$.
+
+### Monte Carlo approximation of the distance
+
+The expectation $\mathbb E_{{\bf x} \sim \mathcal U(\Omega)}$ cannot be computed exactly in practice. It is approximated by a fixed Monte Carlo sample of $B$ points drawn uniformly from $\Omega$ before the main loop begins:
+
+$$
+d_{\mathscr W}(w, w') \;\approx\; \frac{1}{B} \sum_{b=1}^{B} \left\| \mathcal F(w)({\bf x}_b) - \mathcal F(w')({\bf x}_b) \right\|^2
+$$
+
+The same sample is reused across all evaluations throughout the entire run. This introduces a fixed estimation bias but guarantees that the objective is consistent across iterations — a property that would be lost if the sample were redrawn at each step. In the current implementation $B = 10{,}000$ and $\Omega = [0, 255]^{14 \times 14}$.
+
+### Termination
+
+The outer loop runs for a fixed number of iterations $K$ (currently $K = 500$). A more principled stopping criterion is to halt when no single-weight removal can be compensated by adjustment to within a tolerance $\delta > 0$:
+
+$$
+\min_{n \in A^{(k)}} \; d_{\mathscr W}(w^{(0)},\; w^{(k+\tfrac{1}{2})}) \;>\; \delta
+$$
+
+At this point every remaining active parameter is $\delta$-<b>critical</b>: its removal causes an irreducible perturbation to the network's behaviour. This threshold marks the natural limit of the sparsification procedure and is directly connected to the notion of the <b>stupidity point</b> — the sparsity level beyond which further compression necessarily degrades the network's function.
+
+### Computational complexity
+
+Each pruning step evaluates $d_{\mathscr W}$ for all $N^{(k)}$ candidate neighbours, at a cost of $O(B \cdot C)$ per evaluation, where $C$ is the cost of a single forward pass. Each adjustment step performs $T$ gradient iterations, each also costing $O(B \cdot C)$. Over $K$ outer iterations the total cost is
+
+$$
+O\!\left(K \cdot B \cdot C \cdot \left(\bar{N} + T\right)\right)
+$$
+
+where $\bar{N} = \frac{1}{K}\sum_{k=0}^{K-1} N^{(k)}$ is the average number of active parameters. Since $N^{(k)}$ decreases by exactly one at each step, $\bar{N} \approx N^{(0)} - K/2$, and the pruning phase accelerates progressively as the network becomes sparser. The adjustment cost $T$ depends on the curvature of the objective near the optimum and is harder to bound analytically; in practice it is the dominant term at early iterations when the perturbation caused by pruning is largest.

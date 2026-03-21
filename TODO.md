@@ -278,7 +278,6 @@
 
 ### Resources Created
 - [Sparsification Stability Approaches](Docs/Proofs/Sparsification_Stability_Approaches.md) - Four detailed proof approaches
-- [Reading List](Docs/Proofs/Reading_List.md) - Comprehensive bibliography with reading order
 
 ### Key Concepts to Master
 1. Riemannian metrics on parameter manifolds
