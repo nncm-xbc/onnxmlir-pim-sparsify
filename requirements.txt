@@ -1,0 +1,20 @@
+# Core numerics
+numpy
+
+# JAX — CPU build; swap jaxlib for jax[cuda12] on GPU
+jax
+jaxlib
+
+# PyTorch — dynamo-based ONNX export requires >= 2.0
+torch>=2.0
+
+# ONNX
+onnx
+onnxruntime
+
+# Image processing (MNIST resize in dataeng.py)
+Pillow
+
+# Compiler visualisation
+matplotlib
+networkx
