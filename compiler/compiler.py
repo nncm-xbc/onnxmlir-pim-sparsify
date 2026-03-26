@@ -1501,8 +1501,8 @@ def torch_to_onnx(network, output_file):
 if __name__ == "__main__":
 
     args              = sys.argv
-    parameters_folder = __location__ + "/" + args[1]
-    output_file       = __location__ + "/" + args[2]
+    parameters_folder = os.path.abspath(args[1])
+    output_file       = os.path.abspath(args[2])
 
     network = Program(parameters_folder)
     torchnet= net_to_torch(network)

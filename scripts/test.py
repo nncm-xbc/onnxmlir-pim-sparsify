@@ -4,6 +4,8 @@
 
 import os
 import sys
+sys.path.insert(0, os.path.realpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..')))
+
 import numpy as np
 import torch
 import torch.nn as nn
@@ -18,9 +20,9 @@ __location__ = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file
 def main():
 
     args         = sys.argv
-    input_network = __location__ + "/" + args[1]
-    x_test_file  = __location__ + "/" + args[2]
-    y_test_file  = __location__ + "/" + args[3]
+    input_network = os.path.abspath(args[1])
+    x_test_file   = os.path.abspath(args[2])
+    y_test_file   = os.path.abspath(args[3])
 
     x_test = np.genfromtxt(x_test_file, delimiter = ',', max_rows = 1000)
     y_test = np.genfromtxt(y_test_file, delimiter = ',', max_rows = 1000)

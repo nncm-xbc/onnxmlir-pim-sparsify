@@ -16,3 +16,6 @@ rev = "v4.28.0"
 
 [[lean_lib]]
 name = "Proofs"
+
+[[lean_lib]]
+name = "mistral"

@@ -275,7 +275,7 @@ theorem example : P → Q := by
 
 ```lean
 -- Define a function that doubles a number
-def double (n : ℕ) : ℕ := sorry
+def double (n : ℕ) : ℕ := 2n -- Is this correct ? 
 
 -- Prove a property
 theorem double_zero : double 0 = 0 := by

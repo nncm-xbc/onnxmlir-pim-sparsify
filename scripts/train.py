@@ -4,8 +4,9 @@
 #######################################################################################################################
 ### Librerie
 
-import sys                             # for the C3LI execution
+import sys
 import os
+sys.path.insert(0, os.path.realpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..')))
 
 import jax.numpy as jnp                # Parallel computing / Autograd
 from jax import grad, jit, vmap
@@ -37,8 +38,8 @@ def load_data():
 def main():
     # define the output folder through the command line
     args          = sys.argv
-    output_folder = __location__ + "/" + args[1]	
-    topology_csv  = __location__ + "/" + args[2]
+    output_folder = os.path.abspath(args[1])
+    topology_csv  = os.path.abspath(args[2])
     
     print("Selected folder %s" % output_folder)   
     

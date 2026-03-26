@@ -115,10 +115,10 @@ def prune(params, mask, og_params, full_mask, doAdjust = True):
     
 def main():
     args          = sys.argv
-    input_folder  = __location__ + "/" + args[1]
-    output_folder = __location__ + "/" + args[1] + "/sparsified"	
-    x_test_file   = __location__ + "/" + args[2]	
-    y_test_file   = __location__ + "/" + args[3]
+    input_folder  = os.path.abspath(args[1])
+    output_folder = input_folder + "/sparsified"
+    x_test_file   = os.path.abspath(args[2])
+    y_test_file   = os.path.abspath(args[3])
    
     print("Load the validation set for the user to evaluate to goodness")
     x_test = np.genfromtxt(x_test_file, delimiter = ',', max_rows = 1000)
