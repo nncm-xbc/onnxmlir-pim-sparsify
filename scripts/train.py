@@ -12,7 +12,7 @@ import jax.numpy as jnp                # Parallel computing / Autograd
 from jax import grad, jit, vmap
 from jax import random
 
-from mlp.mlp import *                  # Mini-Package for Multi Layer Perceptron
+from MLP.mlp import *                  # Mini-Package for Multi Layer Perceptron
 
 
 from PIL import Image 

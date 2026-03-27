@@ -13,8 +13,8 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-from compiler.network import Network
-from mlp.mlp import *                  # Mini-Package for Multi Layer Perceptron
+from Compiler.network import Network
+from MLP.mlp import *                  # Mini-Package for Multi Layer Perceptron
 
 __location__ = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
 

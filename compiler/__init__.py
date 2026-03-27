@@ -1,2 +1,2 @@
-from compiler.compiler import Program
-from compiler.network import Network
+from Compiler.compiler import Program
+from Compiler.network import Network

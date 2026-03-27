@@ -1,6 +1,6 @@
 # sparsifier.py
 
-from mlp.mlp import *                  # Mini-Package for Multi Layer Perceptron
+from MLP.mlp import *                  # Mini-Package for Multi Layer Perceptron
 import jax
 import sys 
 

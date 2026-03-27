@@ -12,8 +12,8 @@ import torch.nn as nn
 import onnx
 import onnxruntime as ort
 
-from compiler.compiler import Program
-from compiler.network import Network
+from Compiler.compiler import Program
+from Compiler.network import Network
 
 __location__ = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
 
