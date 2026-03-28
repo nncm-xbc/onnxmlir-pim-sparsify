@@ -29,7 +29,7 @@ A greedy prune-and-adjust loop operating on a trained dense MLP:
 - Implemented in JAX for vectorised inference and automatic differentiation.
 - Validated on MNIST: a three-layer MLP retains **~95% test accuracy** after sparsification on a 14×14 input.
 
-### Compiler (`compiler/`)
+### Compiler (`backend/`)
 
 An optimising compiler that takes a sparse MLP (as weight matrices) and produces ARM assembly code. The compilation pipeline has two main phases:
 
@@ -58,7 +58,7 @@ Proof strategy and background are documented in [`Docs/Proofs/Sparsification_Sta
 ```
 mlp/            Pure JAX MLP primitives (forward pass, training, parameter I/O)
 sparsifier/     Manifold-based sparsification algorithm
-compiler/       IR, register/memory allocation, ARM code generation
+backend/        IR, register/memory allocation, ARM code generation
 scripts/        Entry-point scripts: dataeng.py, train.py, test.py
 data/           MNIST source CSVs and processed dataset splits
 artifacts/      Trained parameters, sparsified parameters, compiled outputs
@@ -102,7 +102,7 @@ Runs the prune-and-adjust loop for 500 iterations. The validation set is printed
 **4. Compile**
 
 ```bash
-python3 -m compiler.compiler <params_folder>/sparsified <output_name>
+python3 -m backend.compiler <params_folder>/sparsified <output_name>
 ```
 
 Produces `<output_name>` (ARM assembly), `<output_name>_exe` (executable form), and `<output_name>.onnx` / `<output_name>.pt` (for cross-validation).

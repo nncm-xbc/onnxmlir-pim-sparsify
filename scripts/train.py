@@ -1,8 +1,4 @@
-# @ Train.py
-# Trains a simple MNIST classifier
-
-#######################################################################################################################
-### Librerie
+# train.py — trains a simple MLP classifier on MNIST
 
 import sys
 import os
@@ -12,7 +8,7 @@ import jax.numpy as jnp                # Parallel computing / Autograd
 from jax import grad, jit, vmap
 from jax import random
 
-from MLP.mlp import *                  # Mini-Package for Multi Layer Perceptron
+from mlp.mlp import *
 
 
 from PIL import Image 
@@ -21,9 +17,6 @@ import numpy as np
 
 __location__ = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
 _data_dir    = os.path.realpath(os.path.join(__location__, '..', 'data'))
-
-#######################################################################################################################
-### Data Loading
 
 def load_data():
     x_train       = np.genfromtxt(_data_dir + '/X_train_small.csv', delimiter = ',', max_rows = 10000)
@@ -43,7 +36,6 @@ def main():
     
     print("Selected folder %s" % output_folder)   
     
-    # data loading
     onehot = lambda y : np.concatenate([
         (y == cifra)[:,None] * 1.
     for cifra in np.arange(10)
@@ -59,17 +51,7 @@ def main():
     print("\tY_test.shape  = %s" % str(y_test.shape))
     
 
-    # Define the network topology // an extremely simple topology, just for testing
-    
-    #    O\
-    #    O>O\/O\/O
-    #    O>O><O><O
-    #    O>O/\O/\O
-    #    O/
-    
-    #layer_sizes = [14*14, 10, 10, 10]
-    # leggo la topologia dal file
-    layer_sizes  = np.genfromtxt(topology_csv, delimiter = ','); 
+    layer_sizes  = np.genfromtxt(topology_csv, delimiter = ',');
     layer_sizes[0] = layer_sizes[0]**2
     layer_sizes    = [ int(l) for l in layer_sizes]
     print("Network Topology loaded")
@@ -105,7 +87,6 @@ def main():
             print("\t \t Training set accuracy {:0.5f}".format(train_acc))
             print("\t \t Test set accuracy {:0.5f}".format(test_acc))
             print("---------------------------------------------------------")
-    # Controllo se la cartella esiste
     if not os.path.exists(output_folder):
         os.makedirs(output_folder)
         

@@ -1,4 +1,4 @@
-# network.py
+# network.py — PyTorch Network wrapper for ONNX/PT export
 
 import torch
 import torch.nn as nn

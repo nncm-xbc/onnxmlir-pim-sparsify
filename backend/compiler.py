@@ -1,4 +1,4 @@
-# Compiler.py
+# compiler.py — IR generation, register/memory allocation, ARM code generation
 import os
 import sys
 
@@ -13,8 +13,8 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-from Compiler.network import Network
-from MLP.mlp import *                  # Mini-Package for Multi Layer Perceptron
+from backend.network import Network
+from mlp.mlp import *
 
 __location__ = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
 

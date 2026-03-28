@@ -1,6 +1,6 @@
 # sparsifier.py
 
-from MLP.mlp import *                  # Mini-Package for Multi Layer Perceptron
+from mlp.mlp import *
 import jax
 import sys 
 
@@ -17,7 +17,6 @@ d = jax.jit(d)
 d_grad = jax.grad(d)
 d_grad = jax.jit(d_grad)
 
-# trovo il peso piú piccolo
 import numpy as np
 
 # construct a copy of the parameters
@@ -97,15 +96,13 @@ def prune(params, mask, og_params, full_mask, doAdjust = True):
                         minimo_idx = idx
                         minimo_i   = i
                         minimo_j   = j
-                    if minimo == 0:         # if the minimum becomes zero then the current weight doees not affect distance in P space
-                        # non ha bisogno di aggiustamento
-                        mask[minimo_idx][minimo_i,minimo_j]          = 0. # setto la maschera  a 0
+                    if minimo == 0:         # if the minimum becomes zero then the current weight does not affect distance in P space
+                        mask[minimo_idx][minimo_i,minimo_j]          = 0.
                         return new_params
     new_params = clone_params(params)
     new_params[minimo_idx][0][minimo_i,minimo_j] = 0.
     
-    mask[minimo_idx][minimo_i,minimo_j]          = 0. # setto la maschera  a 0
-    # ha bisogno di aggiustamento
+    mask[minimo_idx][minimo_i,minimo_j]          = 0.
     if doAdjust:
         new_params = adjust(new_params, mask, og_params,full_mask)
     

@@ -1,6 +1,4 @@
-# tester.py
-
-###########################################################################################################################################################
+# test.py — evaluates a trained network (.pt, .onnx, or parameter folder)
 
 import os
 import sys
@@ -12,8 +10,8 @@ import torch.nn as nn
 import onnx
 import onnxruntime as ort
 
-from Compiler.compiler import Program
-from Compiler.network import Network
+from backend.compiler import Program
+from backend.network import Network
 
 __location__ = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
 

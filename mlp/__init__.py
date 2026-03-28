@@ -1,4 +1,4 @@
-from MLP.mlp import (
+from mlp.mlp import (
     random_layer_params,
     init_mask,
     get_full_mask,
