@@ -1,6 +1,7 @@
 from sparsifier.sparsifier import (
     d,
-    clone_params,
+    make_omega,
+    clone_network,
     adjust,
     prune,
 )

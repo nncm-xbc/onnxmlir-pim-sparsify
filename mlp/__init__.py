@@ -1,7 +1,6 @@
 from mlp.mlp import (
+    Layer,
     random_layer_params,
-    init_mask,
-    get_full_mask,
     init_network_params,
     load_network_params,
     relu,
