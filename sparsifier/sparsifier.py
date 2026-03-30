@@ -82,26 +82,41 @@ def prune(net, og_net, omega, doAdjust=True):
     minimo_i   = 0
     minimo_j   = 0
 
+    probe_net   = clone_network(net)  # single copy shared across all candidates
+    search_done = False
     for idx, layer in enumerate(net):
-        for i, row in enumerate(layer.W):
-            for j, el in enumerate(row):
-                if net[idx].W[i, j] != 0.:
-                    new_net = clone_network(net)
-                    new_net[idx] = _zero_weight(new_net[idx], i, j)
-                    distanza = d(og_net, new_net, omega)
-                    if distanza < minimo:
-                        minimo     = distanza
-                        minimo_idx = idx
-                        minimo_i   = i
-                        minimo_j   = j
-                    if minimo == 0:  # weight does not affect distance in parameter space
-                        new_net[minimo_idx] = _zero_weight(new_net[minimo_idx], minimo_i, minimo_j)
-                        return new_net
-    new_net = clone_network(net)
-    new_net[minimo_idx] = _zero_weight(new_net[minimo_idx], minimo_i, minimo_j)
-    if doAdjust:
-        new_net = adjust(new_net, og_net, omega)
-    return new_net
+        for i in range(layer.W.shape[0]):
+            for j in range(layer.W.shape[1]):
+                if layer.W[i, j] == 0.:
+                    continue
+                # zero candidate in-place, evaluate, restore
+                saved_W    = probe_net[idx].W[i, j]
+                saved_mask = probe_net[idx].mask[i, j]
+                probe_net[idx].W[i, j]    = 0.
+                probe_net[idx].mask[i, j] = 0.
+                distanza = d(og_net, probe_net, omega)
+                probe_net[idx].W[i, j]    = saved_W
+                probe_net[idx].mask[i, j] = saved_mask
+
+                if distanza < minimo:
+                    minimo     = distanza
+                    minimo_idx = idx
+                    minimo_i   = i
+                    minimo_j   = j
+                    if minimo == 0:  # weight does not affect distance — exit early
+                        search_done = True
+                        break
+            if search_done:
+                break
+        if search_done:
+            break
+
+    # apply the winning zero permanently
+    probe_net[minimo_idx].W[minimo_i, minimo_j]    = 0.
+    probe_net[minimo_idx].mask[minimo_i, minimo_j] = 0.
+    if doAdjust and minimo > 0:
+        probe_net = adjust(probe_net, og_net, omega)
+    return probe_net
 ########################################################################################################################################
 
 
