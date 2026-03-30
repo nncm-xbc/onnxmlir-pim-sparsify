@@ -1,5 +1,5 @@
 # tests/test_topology.py
-import os, tempfile, pytest
+import os, pytest
 import sys
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 
@@ -50,3 +50,19 @@ def test_load_four_layer(tmp_path):
     sizes, acts = load_topology(path)
     assert sizes == [196, 10, 10, 10]
     assert acts == ["relu", "relu", "linear"]
+
+def test_save_topology_validates_length(tmp_path):
+    """save_topology rejects activations list with wrong length."""
+    with pytest.raises(ValueError, match="length"):
+        save_topology(str(tmp_path / "t.csv"), [196, 64, 10], ["relu"])
+
+def test_save_topology_validates_unknown_activation(tmp_path):
+    """save_topology rejects unknown activation names."""
+    with pytest.raises(ValueError, match="swish"):
+        save_topology(str(tmp_path / "t.csv"), [196, 64, 10], ["relu", "swish"])
+
+def test_load_empty_file_raises(tmp_path):
+    """Empty CSV raises a clear ValueError."""
+    path = write_csv(tmp_path, "")
+    with pytest.raises(ValueError, match="empty"):
+        load_topology(path)

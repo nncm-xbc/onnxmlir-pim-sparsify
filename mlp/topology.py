@@ -20,7 +20,18 @@ def load_topology(csv_path: str) -> tuple:
             if line:
                 rows.append([tok.strip() for tok in line.split(",")])
 
-    sizes = [int(x) for x in rows[0]]
+    if len(rows) == 0:
+        raise ValueError(f"Topology CSV is empty or has no data rows: {csv_path}")
+
+    try:
+        sizes = [int(x) for x in rows[0]]
+    except ValueError as e:
+        for x in rows[0]:
+            try:
+                int(x)
+            except ValueError:
+                raise ValueError(f"Non-integer token '{x}' in sizes row of {csv_path}") from e
+        raise
     n_layers = len(sizes) - 1
 
     if len(rows) >= 2:
@@ -43,7 +54,24 @@ def load_topology(csv_path: str) -> tuple:
 
 
 def save_topology(csv_path: str, sizes: list, activations: list) -> None:
-    """Write a two-row topology CSV."""
+    """Write a two-row topology CSV.
+
+    Validates that activations has the correct length (len(sizes) - 1) and
+    that all activation names are in _VALID_ACTIVATIONS.
+    """
+    n_layers = len(sizes) - 1
+    if len(activations) != n_layers:
+        raise ValueError(
+            f"Activations row length {len(activations)} does not match topology "
+            f"weight matrices {n_layers} (len(sizes)-1). They must match."
+        )
+    for act in activations:
+        if act not in _VALID_ACTIVATIONS:
+            raise ValueError(
+                f"Unknown activation '{act}'. "
+                f"Supported: {sorted(_VALID_ACTIVATIONS)}"
+            )
+
     with open(csv_path, "w") as f:
         f.write(",".join(str(s) for s in sizes) + "\n")
         f.write(",".join(activations) + "\n")
