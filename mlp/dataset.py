@@ -45,7 +45,7 @@ def _load_csv(folder: str):
     if y_train.ndim == 1 or (y_train.ndim == 2 and y_train.shape[1] == 1):
         y_train = y_train.ravel()
         y_test  = y_test.ravel()
-        n_classes = int(max(y_train.max(), y_test.max())) + 1
+        n_classes = len(np.unique(y_train))
         y_train = _one_hot(y_train.astype(int), n_classes)
         y_test  = _one_hot(y_test.astype(int),  n_classes)
     else:

@@ -49,8 +49,22 @@ def test_csv_label_encoded_y(tmp_path):
     np.savetxt(str(tmp_path / "Y_test.csv"),  y, delimiter=",")
     (_, y_tr), _, stats = load_dataset(str(tmp_path), source="csv")
     assert y_tr.ndim == 2
-    assert y_tr.shape[1] == 4   # 4 classes
-    assert stats.n_classes == 4
+    assert y_tr.shape[1] == 3   # 3 unique classes in seed 1: {0, 2, 3}
+    assert stats.n_classes == 3
+
+def test_csv_label_encoded_noncontiguous(tmp_path):
+    """n_classes is inferred from unique values, not max+1."""
+    rng = np.random.default_rng(2)
+    x = rng.random((20, 3)).astype(np.float32)
+    # Non-contiguous labels: only classes 0, 2, 5 — max+1 would give 6, correct is 3
+    y = np.array([0, 2, 5, 0, 2, 5, 0, 2, 5, 0, 2, 5, 0, 2, 5, 0, 2, 5, 0, 2], dtype=np.float32)
+    np.savetxt(str(tmp_path / "X_train.csv"), x, delimiter=",")
+    np.savetxt(str(tmp_path / "Y_train.csv"), y, delimiter=",")
+    np.savetxt(str(tmp_path / "X_test.csv"),  x[:5], delimiter=",")
+    np.savetxt(str(tmp_path / "Y_test.csv"),  y[:5], delimiter=",")
+    (_, y_tr), _, stats = load_dataset(str(tmp_path), source="csv")
+    assert stats.n_classes == 3
+    assert y_tr.shape[1] == 3
 
 def test_unknown_source_raises():
     with pytest.raises(ValueError, match="source"):
