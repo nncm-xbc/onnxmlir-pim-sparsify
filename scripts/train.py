@@ -2,6 +2,8 @@
 
 import sys
 import os
+import csv
+import time
 sys.path.insert(0, os.path.realpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..')))
 
 import jax.numpy as jnp                # Parallel computing / Autograd
@@ -10,8 +12,6 @@ from jax import random
 
 from mlp.mlp import *
 
-from PIL import Image
-import matplotlib.pyplot as plt
 import numpy as np
 
 __location__ = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
@@ -65,8 +65,14 @@ def main():
 
     print("---------------------------------------------------------")
 
+    if not os.path.exists(output_folder):
+        os.makedirs(output_folder)
+    log_path = os.path.join(output_folder, "training_log.csv")
+    log_file = open(log_path, 'w', newline='')
+    writer = csv.writer(log_file)
+    writer.writerow(['epoch', 'train_acc', 'test_acc', 'train_loss', 'epoch_time_s'])
+
     # Training loop
-    import time
     network = init_network_params(layer_sizes, random.PRNGKey(0))
     for epoch in range(num_epochs):
         start_time = time.time()
@@ -74,18 +80,22 @@ def main():
             batch = np.random.choice(len(x_train), size = 500)
             x,y = x_train[batch],y_train[batch]
             network = update(network, x, y)
-
         epoch_time = time.time() - start_time
 
-        train_acc = accuracy(network, x_train, y_train)
-        test_acc = accuracy(network, x_test, y_test)
+        train_acc  = float(accuracy(network, x_train, y_train))
+        test_acc   = float(accuracy(network, x_test, y_test))
+        train_loss = float(loss(network, x_train, y_train))
+        writer.writerow([epoch, round(train_acc, 6), round(test_acc, 6),
+                         round(train_loss, 6), round(epoch_time, 3)])
+        log_file.flush()
         if epoch % batch_epochs == 0:
             print("\t \t Epoch {} of {} in {:0.2f} sec".format(epoch,num_epochs,epoch_time))
             print("\t \t Training set accuracy {:0.5f}".format(train_acc))
             print("\t \t Test set accuracy {:0.5f}".format(test_acc))
             print("---------------------------------------------------------")
-    if not os.path.exists(output_folder):
-        os.makedirs(output_folder)
+
+    log_file.close()
+    print("Training log saved to:", log_path)
 
     # Saving the data
     for i, layer in enumerate(network):

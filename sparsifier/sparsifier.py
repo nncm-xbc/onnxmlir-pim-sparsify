@@ -1,6 +1,7 @@
 # sparsifier.py
 
 from mlp.mlp import *
+import csv
 import jax
 import sys
 
@@ -35,7 +36,6 @@ def _zero_weight(layer, i, j):
     return Layer(W=new_W, b=layer.b, mask=new_mask)
 
 
-########################################################################################################################################
 # Adjust Function : minimize the distance on the plane locally isomorphic to the manifold of parameters.
 # given
 #       - a network not adjusted
@@ -59,10 +59,7 @@ def adjust(net, cmp_net, omega):
         else:
             alfa *= 0.5
     return net
-########################################################################################################################################
 
-
-########################################################################################################################################
 # Prune Function : function for increasing the sparsity pattern of a network
 # given
 #       - a network
@@ -133,31 +130,49 @@ def main():
 
     print("Load the parameters from the folder")
     og_net = load_network_params(input_folder)
-    print("")
-    print("Accuracy in validation:", accuracy(og_net, x_test, y_test))
-    print("Construct the omega sample for the sparsification")
-    print("")
+    print("Accuracy in validation: %.4f" % float(accuracy(og_net, x_test, y_test)))
+    total_W = int(sum(l.W.size for l in og_net))
+    print("Total parameters: %d" % total_W)
     perturbed_net = [Layer(W=l.W + np.random.normal(size=l.W.shape) * .00001, b=l.b, mask=l.mask) for l in og_net]
-    print("Compute the local distance between a random perturbation of the input network and the input network itself")
     omega = make_omega(og_net)
-    print(">>>", d(og_net, perturbed_net, omega))
+    print("Perturbation distance (sanity check): %.4e" % float(d(og_net, perturbed_net, omega)))
 
     print("Starting sparsification loop")
     print("At every iteration the network gets:")
     print("\t 1. Pruned   — remove the least influential parameter")
     print("\t 2. Adjusted — compensate via remaining parameters")
     net = clone_network(og_net)
-    for i in range(500):
-        NZ = np.sum([(l.W != 0).sum() for l in net])  # non-zero entries
-        print("validation accuracy = %.3f" % accuracy(net, x_test, y_test),
-              " | non zero elements = %d" % NZ)
-        omega = make_omega(net)  # fresh sample each iteration
-        net = prune(net, og_net, omega, True)
 
-    # Saving the data
     if not os.path.exists(output_folder):
         os.makedirs(output_folder)
+    log_path = os.path.join(output_folder, "sparsification_log.csv")
+    with open(log_path, 'w', newline='') as log_file:
+        writer = csv.writer(log_file)
+        writer.writerow(['step', 'NZ', 'total_W', 'sparsity', 'val_acc', 'd_manifold', 'd_W'])
 
+        for i in range(500):
+            NZ         = int(np.sum([(l.W != 0).sum() for l in net]))
+            sparsity   = 1.0 - NZ / total_W
+            val_acc    = float(accuracy(net, x_test, y_test))
+            omega      = make_omega(net)
+            d_manifold = float(d(net, og_net, omega))
+
+            print("step {:4d} | acc={:.4f} | NZ={:6d} | sparsity={:.4f} | d_m={:.4e}".format(
+                i, val_acc, NZ, sparsity, d_manifold))
+
+            W_snapshot = [np.array(l.W).copy() for l in net]
+            net = prune(net, og_net, omega, True)
+            d_W = float(np.sqrt(sum(
+                np.sum((np.array(l.W) - w) ** 2) for l, w in zip(net, W_snapshot)
+            )))
+
+            writer.writerow([i, NZ, total_W, round(sparsity, 6), round(val_acc, 6),
+                             "{:.6e}".format(d_manifold), "{:.6e}".format(d_W)])
+            log_file.flush()
+
+    print("Sparsification log saved to:", log_path)
+
+    # Saving the data
     for i, l in enumerate(net):
         np.save(output_folder + "/W_%i.npy" % i, l.W)
         np.save(output_folder + "/b_%i.npy" % i, l.b)
