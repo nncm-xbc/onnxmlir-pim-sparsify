@@ -1,6 +1,7 @@
 # sparsifier.py
 
 from mlp.mlp import *
+from typing import NamedTuple
 import csv
 import jax
 import sys
@@ -14,6 +15,7 @@ class PruneMeta(NamedTuple):
     distanza:      float
     prune_time_s:  float
     adjust_time_s: float
+
 
 __location__ = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
 
