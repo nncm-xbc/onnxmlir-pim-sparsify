@@ -114,3 +114,18 @@ def test_parse_log_basic():
         assert len(df) == 5
     finally:
         os.unlink(path)
+
+def test_load_checkpoint_returns_correct_layers():
+    """load_checkpoint() must return a list of numpy arrays matching saved shapes."""
+    import tempfile
+    from visualize.plot_weights import load_checkpoint
+    shapes = [(10, 5), (3, 10), (2, 3)]
+    with tempfile.TemporaryDirectory() as tmp:
+        for i, shape in enumerate(shapes):
+            np.save(os.path.join(tmp, f'W_{i}.npy'),
+                    np.random.default_rng(i).random(shape).astype(np.float32))
+        weights = load_checkpoint(tmp)
+    assert len(weights) == 3
+    for w, shape in zip(weights, shapes):
+        assert w.shape == shape, f"Expected {shape}, got {w.shape}"
+        assert w.dtype == np.float32
