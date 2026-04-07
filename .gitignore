@@ -1,0 +1,12 @@
+.claude/
+.git/
+.ropeproject/
+**/__pycache__/
+.gitignore
+artifacts/
+artifacts/*
+artifacts/**
+TODO.md
+THESIS_ROADMAP.md
+.pytest_cache/
+.worktrees/
