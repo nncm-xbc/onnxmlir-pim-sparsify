@@ -96,3 +96,21 @@ def test_extended_log_has_timing_and_candidate_columns():
         assert required.issubset(set(df.columns)), f"Missing: {required - set(df.columns)}"
     finally:
         os.unlink(path)
+
+def test_parse_log_basic():
+    """parse_log() must return a DataFrame with correct columns and row count."""
+    import pandas as pd, tempfile, csv as csv_mod
+    cols = ['step','NZ','total_W','sparsity','val_acc','d_manifold','d_W',
+            'prune_time_s','adjust_time_s','candidate_layer','candidate_i','candidate_j',
+            'layer_0_NZ','layer_1_NZ']
+    rows = [[i, 100-i, 100, i/100, 0.9, 0.0, 0.01, 0.5, 0.1, 0, i%4, i%3, 60-i, 40-i]
+            for i in range(5)]
+    with tempfile.NamedTemporaryFile(mode='w', suffix='.csv', delete=False, newline='') as f:
+        w = csv_mod.writer(f); w.writerow(cols); w.writerows(rows); path = f.name
+    try:
+        from visualize.plot_run import parse_log
+        df = parse_log(path)
+        assert list(df.columns) == cols
+        assert len(df) == 5
+    finally:
+        os.unlink(path)
