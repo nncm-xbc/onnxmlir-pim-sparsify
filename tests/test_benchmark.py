@@ -37,6 +37,39 @@ def test_prune_meta_candidate_is_valid():
     assert 0 <= meta.j < layer.W.shape[1]
     assert layer.W[meta.i, meta.j] == 0., "chosen weight must be zeroed in result"
 
+def test_compare_one_step_returns_expected_keys():
+    """compare_one_step() must return exhaustive + gradient_top_k entries."""
+    from benchmark.correctness_check import compare_one_step
+    net   = _tiny_net()
+    omega = make_omega(net, n_samples=50)
+    x     = np.random.default_rng(0).random((20, 3)).astype(np.float32)
+    y     = np.zeros((20, 2), dtype=np.float32)
+    y[np.arange(20), np.random.default_rng(0).integers(0, 2, 20)] = 1.
+    result = compare_one_step(net, net, omega, x, y, top_k_values=(1, 5))
+    assert 'exhaustive' in result
+    assert 'gradient_top_1' in result
+    assert 'gradient_top_5' in result
+    for key in ('candidate', 'time_s', 'd_after', 'acc_after'):
+        assert key in result['exhaustive'], f"missing '{key}' in exhaustive"
+    for key in ('candidate', 'time_s', 'd_after', 'acc_after', 'candidate_match', 'speedup'):
+        assert key in result['gradient_top_1'], f"missing '{key}' in gradient_top_1"
+
+def test_gradient_topk_full_equals_exhaustive():
+    """When top_k >= NZ, gradient-top-k must select the same weight as exhaustive."""
+    from benchmark.correctness_check import compare_one_step
+    net   = _tiny_net()
+    # distinct og_net so search is non-trivial
+    og_net = [Layer(W=np.array(l.W) + np.random.default_rng(7).random(l.W.shape).astype(np.float32) * 0.1,
+                    b=l.b, mask=l.mask) for l in net]
+    omega = make_omega(net, n_samples=50)
+    x     = np.random.default_rng(1).random((20, 3)).astype(np.float32)
+    y     = np.zeros((20, 2), dtype=np.float32)
+    y[np.arange(20), np.random.default_rng(1).integers(0, 2, 20)] = 1.
+    NZ    = int(sum((np.array(l.W) != 0).sum() for l in net))
+    result = compare_one_step(net, og_net, omega, x, y, top_k_values=(NZ,))
+    assert result[f'gradient_top_{NZ}']['candidate_match'], \
+        "With top_k=NZ, gradient ranking evaluates all candidates and must match exhaustive"
+
 def test_extended_log_has_timing_and_candidate_columns():
     """The extended log written by main() must include timing and candidate columns."""
     import pandas as pd, tempfile, csv as csv_mod
