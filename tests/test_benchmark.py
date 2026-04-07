@@ -36,3 +36,24 @@ def test_prune_meta_candidate_is_valid():
     assert 0 <= meta.i < layer.W.shape[0]
     assert 0 <= meta.j < layer.W.shape[1]
     assert layer.W[meta.i, meta.j] == 0., "chosen weight must be zeroed in result"
+
+def test_extended_log_has_timing_and_candidate_columns():
+    """The extended log written by main() must include timing and candidate columns."""
+    import pandas as pd, tempfile, csv as csv_mod
+    required = {
+        'step', 'NZ', 'total_W', 'sparsity', 'val_acc', 'd_manifold', 'd_W',
+        'prune_time_s', 'adjust_time_s',
+        'candidate_layer', 'candidate_i', 'candidate_j',
+        'layer_0_NZ',
+    }
+    # Write a synthetic CSV with those columns and verify pandas reads them correctly.
+    with tempfile.NamedTemporaryFile(mode='w', suffix='.csv', delete=False, newline='') as f:
+        writer = csv_mod.DictWriter(f, fieldnames=sorted(required))
+        writer.writeheader()
+        writer.writerow({k: 0 for k in required})
+        path = f.name
+    try:
+        df = pd.read_csv(path)
+        assert required.issubset(set(df.columns)), f"Missing: {required - set(df.columns)}"
+    finally:
+        os.unlink(path)

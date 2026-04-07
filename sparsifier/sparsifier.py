@@ -173,13 +173,19 @@ def main():
     log_path = os.path.join(output_folder, "sparsification_log.csv")
     with open(log_path, 'w', newline='') as log_file:
         writer = csv.writer(log_file)
-        writer.writerow(['step', 'NZ', 'total_W', 'sparsity', 'val_acc', 'd_manifold', 'd_W'])
+        layer_NZ_cols = ['layer_%d_NZ' % li for li in range(len(og_net))]
+        header = (
+            ['step', 'NZ', 'total_W', 'sparsity', 'val_acc', 'd_manifold', 'd_W',
+             'prune_time_s', 'adjust_time_s',
+             'candidate_layer', 'candidate_i', 'candidate_j']
+            + layer_NZ_cols
+        )
+        writer.writerow(header)
 
         for i in range(500):
             NZ         = int(np.sum([(l.W != 0).sum() for l in net]))
             sparsity   = 1.0 - NZ / total_W
             val_acc    = float(accuracy(net, x_test, y_test))
-            omega      = make_omega(net)
             d_manifold = float(d(net, og_net, omega))
 
             print("step {:4d} | acc={:.4f} | NZ={:6d} | sparsity={:.4f} | d_m={:.4e}".format(
@@ -191,9 +197,22 @@ def main():
                 np.sum((np.array(l.W) - w) ** 2) for l, w in zip(net, W_snapshot)
             )))
 
-            writer.writerow([i, NZ, total_W, round(sparsity, 6), round(val_acc, 6),
-                             "{:.6e}".format(d_manifold), "{:.6e}".format(d_W)])
+            layer_nz_vals = [int((l.W != 0).sum()) for l in net]
+            writer.writerow(
+                [i, NZ, total_W, round(sparsity, 6), round(val_acc, 6),
+                 "{:.6e}".format(d_manifold), "{:.6e}".format(d_W),
+                 round(meta.prune_time_s, 4), round(meta.adjust_time_s, 4),
+                 meta.layer_idx, meta.i, meta.j]
+                + layer_nz_vals
+            )
             log_file.flush()
+
+            # save weight snapshots every 50 steps for heatmap visualizations
+            if i % 50 == 0:
+                ckpt_dir = os.path.join(output_folder, 'checkpoints', 'step_%04d' % i)
+                os.makedirs(ckpt_dir, exist_ok=True)
+                for li, layer in enumerate(net):
+                    np.save(os.path.join(ckpt_dir, 'W_%d.npy' % li), layer.W)
 
     print("Sparsification log saved to:", log_path)
 
