@@ -55,10 +55,12 @@ def test_compare_one_step_returns_expected_keys():
         assert key in result['gradient_top_1'], f"missing '{key}' in gradient_top_1"
 
 def test_gradient_topk_full_equals_exhaustive():
-    """When top_k >= NZ, gradient-top-k must select the same weight as exhaustive."""
+    """When top_k >= NZ, gradient-top-k evaluates all candidates.
+    The resulting d_after must equal exhaustive (same optimal distance),
+    even if a different weight was chosen under ties.
+    """
     from benchmark.correctness_check import compare_one_step
     net   = _tiny_net()
-    # distinct og_net so search is non-trivial
     og_net = [Layer(W=np.array(l.W) + np.random.default_rng(7).random(l.W.shape).astype(np.float32) * 0.1,
                     b=l.b, mask=l.mask) for l in net]
     omega = make_omega(net, n_samples=50)
@@ -67,8 +69,12 @@ def test_gradient_topk_full_equals_exhaustive():
     y[np.arange(20), np.random.default_rng(1).integers(0, 2, 20)] = 1.
     NZ    = int(sum((np.array(l.W) != 0).sum() for l in net))
     result = compare_one_step(net, og_net, omega, x, y, top_k_values=(NZ,))
-    assert result[f'gradient_top_{NZ}']['candidate_match'], \
-        "With top_k=NZ, gradient ranking evaluates all candidates and must match exhaustive"
+    ex_d   = result['exhaustive']['d_after']
+    topk_d = result[f'gradient_top_{NZ}']['d_after']
+    assert abs(ex_d - topk_d) < 1e-5, (
+        f"With top_k=NZ, both methods evaluate all candidates — "
+        f"d_after must be equal. Got exhaustive={ex_d:.6e}, gradient_top_{NZ}={topk_d:.6e}"
+    )
 
 def test_extended_log_has_timing_and_candidate_columns():
     """The extended log written by main() must include timing and candidate columns."""

@@ -21,6 +21,8 @@ def prune_gradient_topk(net, og_net, omega, top_k, doAdjust=False):
 
     One gradient call ranks all active weights by first-order importance
     |grad_W[i,j] * W[i,j]|. Only the top_k least important are evaluated exactly.
+
+    Note: defaults doAdjust=False (unlike prune() which defaults True) — benchmarking use.
     """
     t0 = time.perf_counter()
 
@@ -37,6 +39,9 @@ def prune_gradient_topk(net, og_net, omega, top_k, doAdjust=False):
                 candidates.append((predicted_delta, idx, i, j))
 
     candidates.sort(key=lambda x: x[0])
+
+    if not candidates:
+        raise ValueError("prune_gradient_topk: no non-zero weights remain — network is fully pruned")
 
     minimo     = 1e16
     minimo_idx = candidates[0][1]
