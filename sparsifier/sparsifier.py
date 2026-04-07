@@ -4,6 +4,16 @@ from mlp.mlp import *
 import csv
 import jax
 import sys
+import time
+
+
+class PruneMeta(NamedTuple):
+    layer_idx:     int
+    i:             int
+    j:             int
+    distanza:      float
+    prune_time_s:  float
+    adjust_time_s: float
 
 __location__ = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
 
@@ -81,6 +91,7 @@ def prune(net, og_net, omega, doAdjust=True):
 
     probe_net   = clone_network(net)  # single copy shared across all candidates
     search_done = False
+    prune_t0 = time.perf_counter()
     for idx, layer in enumerate(net):
         for i in range(layer.W.shape[0]):
             for j in range(layer.W.shape[1]):
@@ -107,13 +118,25 @@ def prune(net, og_net, omega, doAdjust=True):
                 break
         if search_done:
             break
+    prune_time_s = time.perf_counter() - prune_t0
 
     # apply the winning zero permanently
     probe_net[minimo_idx].W[minimo_i, minimo_j]    = 0.
     probe_net[minimo_idx].mask[minimo_i, minimo_j] = 0.
+    adjust_t0 = time.perf_counter()
     if doAdjust and minimo > 0:
         probe_net = adjust(probe_net, og_net, omega)
-    return probe_net
+    adjust_time_s = time.perf_counter() - adjust_t0
+
+    meta = PruneMeta(
+        layer_idx=minimo_idx,
+        i=minimo_i,
+        j=minimo_j,
+        distanza=float(minimo),
+        prune_time_s=prune_time_s,
+        adjust_time_s=adjust_time_s,
+    )
+    return probe_net, meta
 ########################################################################################################################################
 
 
@@ -161,7 +184,7 @@ def main():
                 i, val_acc, NZ, sparsity, d_manifold))
 
             W_snapshot = [np.array(l.W).copy() for l in net]
-            net = prune(net, og_net, omega, True)
+            net, meta = prune(net, og_net, omega, True)
             d_W = float(np.sqrt(sum(
                 np.sum((np.array(l.W) - w) ** 2) for l, w in zip(net, W_snapshot)
             )))
