@@ -29,6 +29,9 @@ def plot_run(log_path: str, out_dir: str = None, show: bool = True) -> plt.Figur
       [1,0] Non-zero weight count vs step
       [1,1] Per-layer NZ over time (if extended log)
       [1,2] Timing breakdown: search vs adjust (if extended log)
+
+    Note: with the Agg backend (set at module level), show=True is a silent no-op.
+    Pass show=False when saving to file to be explicit.
     """
     df  = parse_log(log_path)
     fig, axes = plt.subplots(2, 3, figsize=(15, 8))
@@ -100,6 +103,7 @@ def plot_run(log_path: str, out_dir: str = None, show: bool = True) -> plt.Figur
         print(f"Saved: {out_path}")
     if show:
         plt.show()
+    plt.close(fig)
     return fig
 
 
