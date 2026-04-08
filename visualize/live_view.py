@@ -152,7 +152,7 @@ if __name__ == '__main__':
     try:
         matplotlib.use('TkAgg')
     except Exception:
-        pass   # fall back to whatever is available
+        pass   # fall back to default — may be non-interactive (Agg) on headless systems
 
     log  = sys.argv[1]
     ckpt = sys.argv[2] if len(sys.argv) > 2 else None
