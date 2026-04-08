@@ -60,7 +60,6 @@ def run_strategy(name, strategy_fn, og_net, x_test, y_test, omega, n_steps, out_
                   f'search={meta.prune_time_s:.2f}s')
 
     print(f'Saved: {log_path}')
-    return log_path
 
 
 def main():

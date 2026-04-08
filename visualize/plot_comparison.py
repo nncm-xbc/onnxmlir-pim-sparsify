@@ -34,7 +34,7 @@ def plot_strategy_comparison(csv_dir: str, out_dir: str = None,
     """
     csv_files = sorted(f for f in os.listdir(csv_dir) if f.endswith('.csv'))
     if not csv_files:
-        raise FileNotFoundError(f'No CSV files found in: {csv_dir}')
+        raise ValueError(f'No CSV files found in: {csv_dir}')
 
     fig, axes = plt.subplots(1, 3, figsize=(14, 5))
     fig.suptitle('Strategy Comparison', fontsize=13)
@@ -46,8 +46,15 @@ def plot_strategy_comparison(csv_dir: str, out_dir: str = None,
         kw   = dict(label=name, color=c, linewidth=1.5)
 
         axes[0].plot(df['sparsity'] * 100, df['val_acc'] * 100, **kw)
-        axes[1].plot(df['step'], df['prune_time_s'], **kw)
-        axes[2].plot(df['step'], df['prune_time_s'] + df['adjust_time_s'], **kw)
+
+        if 'prune_time_s' in df.columns and 'adjust_time_s' in df.columns:
+            axes[1].plot(df['step'], df['prune_time_s'], **kw)
+            axes[2].plot(df['step'], df['prune_time_s'] + df['adjust_time_s'], **kw)
+        else:
+            axes[1].text(0.5, 0.5, f'{name}: no timing data',
+                         ha='center', va='center', transform=axes[1].transAxes, fontsize=8)
+            axes[2].text(0.5, 0.5, f'{name}: no timing data',
+                         ha='center', va='center', transform=axes[2].transAxes, fontsize=8)
 
     labels = [
         ('Sparsity (%)',  'Val Accuracy (%)',    'Accuracy vs Sparsity'),
