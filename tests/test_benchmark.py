@@ -148,4 +148,4 @@ def test_live_view_imports_without_error():
     import importlib
     mod = importlib.import_module('visualize.live_view')
     assert hasattr(mod, 'live_view'), "live_view() function must be defined"
-    assert hasattr(mod, 'live_view'), "live_view() function must be defined"
+    assert callable(mod.live_view), "live_view must be callable"
