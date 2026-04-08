@@ -142,3 +142,10 @@ def test_load_checkpoint_empty_dir_raises():
     with tempfile.TemporaryDirectory() as tmp:
         with pytest.raises(ValueError):
             load_checkpoint(tmp)
+
+def test_live_view_imports_without_error():
+    """live_view.py must be importable — catches syntax errors and missing deps."""
+    import importlib
+    mod = importlib.import_module('visualize.live_view')
+    assert hasattr(mod, 'live_view'), "live_view() function must be defined"
+    assert hasattr(mod, 'live_view'), "live_view() function must be defined"
