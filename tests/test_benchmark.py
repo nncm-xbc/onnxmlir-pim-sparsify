@@ -129,3 +129,16 @@ def test_load_checkpoint_returns_correct_layers():
     for w, shape in zip(weights, shapes):
         assert w.shape == shape, f"Expected {shape}, got {w.shape}"
         assert w.dtype == np.float32
+
+def test_load_checkpoint_missing_dir_raises():
+    from visualize.plot_weights import load_checkpoint
+    import pytest
+    with pytest.raises(FileNotFoundError):
+        load_checkpoint("/nonexistent/path/that/does/not/exist_xyz123")
+
+def test_load_checkpoint_empty_dir_raises():
+    import tempfile, pytest
+    from visualize.plot_weights import load_checkpoint
+    with tempfile.TemporaryDirectory() as tmp:
+        with pytest.raises(ValueError):
+            load_checkpoint(tmp)

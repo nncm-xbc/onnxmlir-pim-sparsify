@@ -44,6 +44,8 @@ def plot_weight_heatmaps(ckpt_dirs: list, step_labels: list = None,
     Row 2*l+1: binary mask (black = pruned, white = active)
 
     Note: with the Agg backend (set at module level), show=True is a silent no-op.
+    The returned Figure is closed (deregistered from pyplot). Use fig.savefig()
+    directly on the returned object rather than pyplot state-machine functions.
 
     Args:
         ckpt_dirs:   list of checkpoint directory paths
@@ -57,6 +59,12 @@ def plot_weight_heatmaps(ckpt_dirs: list, step_labels: list = None,
     checkpoints = [load_checkpoint(d) for d in ckpt_dirs]
     n_layers = len(checkpoints[0])
     n_ckpts  = len(checkpoints)
+
+    if not all(len(c) == n_layers for c in checkpoints):
+        raise ValueError(
+            f"All checkpoints must have the same number of layers. "
+            f"Got: {[len(c) for c in checkpoints]}"
+        )
 
     fig, axes = plt.subplots(
         n_layers * 2, n_ckpts,
@@ -72,7 +80,8 @@ def plot_weight_heatmaps(ckpt_dirs: list, step_labels: list = None,
 
             # Weight magnitude — log scale
             ax_w = axes[li * 2][ci]
-            norm = mcolors.LogNorm(vmin=max(vmax * 1e-4, 1e-9), vmax=max(vmax, 1e-9))
+            safe_vmax = max(vmax, 1e-9)
+            norm = mcolors.LogNorm(vmin=max(vmax * 1e-4, 1e-12), vmax=safe_vmax)
             im = ax_w.imshow(np.abs(W), aspect='auto', cmap='viridis', norm=norm)
             ax_w.set_title(f'{label}\nL{li} |W| ({W.shape[0]}×{W.shape[1]})', fontsize=7)
             ax_w.axis('off')
