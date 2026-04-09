@@ -40,11 +40,24 @@ def load_network_params(folder_name):
 def relu(x):
     return jnp.maximum(0, x)
 
+# Activation registry — extend here to support new activations.
+_ACTS = {
+    'relu':    relu,
+    'tanh':    jnp.tanh,
+    'sigmoid': jax.nn.sigmoid,
+    'linear':  lambda x: x,
+}
+
+# Hidden-layer activation used by predict().
+# Set this (e.g. mlp.hidden_activation = mlp._ACTS['tanh']) before
+# the first JAX trace — i.e., before any training or sparsification call.
+hidden_activation = relu
+
 def predict(network, image):
     activations = image
     for layer in network[:-1]:
         outputs = jnp.dot(lax.stop_gradient(layer.mask) * layer.W, activations) + layer.b
-        activations = relu(outputs)
+        activations = hidden_activation(outputs)
     final = network[-1]
     logits = jnp.dot(lax.stop_gradient(final.mask) * final.W, activations) + final.b
     return logits - logsumexp(logits)

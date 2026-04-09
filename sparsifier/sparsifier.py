@@ -1,6 +1,7 @@
 # sparsifier.py
 
 import csv
+import json
 import sys
 import time
 from typing import NamedTuple
@@ -188,15 +189,29 @@ def prune(net, og_net, omega, activations=None, doAdjust=True):
 
 
 def main():
-    args = sys.argv
-    input_folder = os.path.abspath(args[1])
-    output_folder = input_folder + "/sparsified"
-    x_test_file = os.path.abspath(args[2])
-    y_test_file = os.path.abspath(args[3])
+    cfg_path = os.path.abspath(sys.argv[1])
+    with open(cfg_path) as f:
+        cfg = json.load(f)
 
-    print("Load the validation set for the user to evaluate the goodness")
-    x_test = np.genfromtxt(x_test_file, delimiter=",", max_rows=1000)
-    y_test = np.genfromtxt(y_test_file, delimiter=",", max_rows=1000)
+    # paths in config are relative to the repo root (parent of experiments/)
+    repo_root     = os.path.dirname(os.path.dirname(cfg_path))
+    input_folder  = os.path.join(repo_root, 'artifacts', cfg['name'])
+    output_folder = os.path.join(input_folder, 'sparsified')
+
+    def resolve(p):
+        return os.path.join(repo_root, p)
+
+    x_test = np.genfromtxt(resolve(cfg['data']['x_test']), delimiter=",", max_rows=1000)
+    y_test = np.genfromtxt(resolve(cfg['data']['y_test']), delimiter=",", max_rows=1000)
+
+    sp = cfg['sparsify']
+
+    # Set hidden activation before the first JAX trace.
+    import mlp.mlp as _mlp
+    _mlp.hidden_activation = _mlp._ACTS[cfg.get('hidden_activation', 'relu')]
+    # Activation list for the C++ extension (one entry per layer).
+    act_name   = cfg.get('hidden_activation', 'relu')
+    activations = [act_name] * (len(cfg['topology']) - 1) + ['linear']
 
     print("Load the parameters from the folder")
     og_net = load_network_params(input_folder)
@@ -207,7 +222,7 @@ def main():
         Layer(W=l.W + np.random.normal(size=l.W.shape) * 0.00001, b=l.b, mask=l.mask)
         for l in og_net
     ]
-    omega = make_omega(og_net)
+    omega = make_omega(og_net, n_samples=sp['omega_samples'])
     print(
         "Perturbation distance (sanity check): %.4e"
         % float(d(og_net, perturbed_net, omega))
@@ -241,7 +256,7 @@ def main():
         ] + layer_NZ_cols
         writer.writerow(header)
 
-        for i in range(500):
+        for i in range(sp['steps']):
             NZ = int(np.sum([(l.W != 0).sum() for l in net]))
             sparsity = 1.0 - NZ / total_W
             val_acc = float(accuracy(net, x_test, y_test))
@@ -254,7 +269,7 @@ def main():
             )
 
             W_snapshot = [np.array(l.W).copy() for l in net]
-            net, meta = prune(net, og_net, omega, doAdjust=True)
+            net, meta = prune(net, og_net, omega, activations=activations, doAdjust=sp['do_adjust'])
             d_W = float(
                 np.sqrt(
                     sum(
@@ -284,8 +299,8 @@ def main():
             )
             log_file.flush()
 
-            # save weight snapshots every 50 steps for heatmap visualizations
-            if i % 50 == 0:
+            # save weight snapshots every N steps for heatmap visualizations
+            if i % sp['checkpoint_every'] == 0:
                 ckpt_dir = os.path.join(output_folder, "checkpoints", "step_%04d" % i)
                 os.makedirs(ckpt_dir, exist_ok=True)
                 for li, layer in enumerate(net):
@@ -293,10 +308,9 @@ def main():
 
     print("Sparsification log saved to:", log_path)
 
-    # Saving the data
     for i, l in enumerate(net):
-        np.save(output_folder + "/W_%i.npy" % i, l.W)
-        np.save(output_folder + "/b_%i.npy" % i, l.b)
+        np.save(os.path.join(output_folder, "W_%i.npy" % i), l.W)
+        np.save(os.path.join(output_folder, "b_%i.npy" % i), l.b)
 
 
 if __name__ == "__main__":

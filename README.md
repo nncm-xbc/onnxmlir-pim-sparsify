@@ -1,6 +1,6 @@
 # Manifold-Based Neural Network Sparsification with an Optimizing ARM Compiler
 
-Master's thesis. The project develops a **post-training sparsification algorithm** grounded in manifold geometry, together with an **optimizing compiler** that translates the resulting sparse networks into ARM assembly code. The target application is inference on resource-constrained architectures where memory bandwidth is the primary bottleneck, including Processing-In-Memory (PIM) devices.
+The project develops a **post-training sparsification algorithm** grounded in manifold geometry, together with an **optimizing compiler** that translates the resulting sparse networks into ARM assembly code. The target application is inference on resource-constrained architectures where memory bandwidth is the primary bottleneck, including Processing-In-Memory (PIM) devices.
 
 ---
 
@@ -36,8 +36,8 @@ An optimising compiler that takes a sparse MLP (as weight matrices) and produces
 1. **IR generation** — the network is lowered to a lightweight tree-based intermediate representation. Only non-zero weights generate instructions, directly exploiting the sparsity.
 
 2. **Register and memory allocation** — a two-stage optimisation targeting minimal data movement:
-   - *Register allocation* tracks the lifetime of every intermediate value and assigns ARM registers to minimise spills.
-   - *Memory allocation* places values that must cross layer boundaries using a moving-window density metric, optimised by a **simulated annealing** procedure. The goal is to keep the number of memory transfers $\mathcal{O}(R)$ where $R$ is the register count — independent of the network width.
+    - _Register allocation_ tracks the lifetime of every intermediate value and assigns ARM registers to minimise spills.
+    - _Memory allocation_ places values that must cross layer boundaries using a moving-window density metric, optimised by a **simulated annealing** procedure. The goal is to keep the number of memory transfers $\mathcal{O}(R)$ where $R$ is the register count — independent of the network width.
 
 The compiler outputs an ARM assembly file and two interface descriptors (input and output masks) specifying how a peripheral driver should handle memory and registers to feed data into and read results from the network. The output has been validated with the **Unicorn ARM emulator**.
 
@@ -75,7 +75,7 @@ Docs/
 
 All commands are run from the repository root. Pre-trained parameters and a processed dataset are already present in `artifacts/` and `data/` respectively, so steps 1 and 2 are optional.
 
-**1. Prepare the dataset** *(optional — only needed to change the network topology)*
+**1. Prepare the dataset** _(optional — only needed to change the network topology)_
 
 ```bash
 python3 scripts/dataeng.py network_topology.csv
@@ -83,7 +83,7 @@ python3 scripts/dataeng.py network_topology.csv
 
 Reads `data/mnist_train.csv` and `data/mnist_test.csv`, resizes images to the resolution specified in `data/network_topology.csv`, and writes the processed splits back to `data/`. The topology file stores the first-layer size as its square root (e.g. `14` for a 196-input layer) to enforce a square input shape.
 
-**2. Train a dense network** *(optional)*
+**2. Train a dense network** _(optional)_
 
 ```bash
 python3 scripts/train.py <output_folder> data/network_topology.csv
