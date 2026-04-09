@@ -254,7 +254,7 @@ def main():
             )
 
             W_snapshot = [np.array(l.W).copy() for l in net]
-            net, meta = prune(net, og_net, omega, True)
+            net, meta = prune(net, og_net, omega, doAdjust=True)
             d_W = float(
                 np.sqrt(
                     sum(
