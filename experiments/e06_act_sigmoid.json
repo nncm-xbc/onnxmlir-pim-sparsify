@@ -1,0 +1,30 @@
+{
+  "name": "e06_act_sigmoid",
+  "topology": [196, 10, 10, 10],
+  "hidden_activation": "sigmoid",
+  "data": {
+    "x_train": "data/X_train_small.csv",
+    "y_train": "data/Y_train_small.csv",
+    "x_test":  "data/X_test_small.csv",
+    "y_test":  "data/Y_test_small.csv"
+  },
+  "train": {
+    "epochs":     1000,
+    "batch_size": 128,
+    "seed":       0
+  },
+  "sparsify": {
+    "steps":            500,
+    "do_adjust":        true,
+    "omega_samples":    10000,
+    "checkpoint_every": 50
+  },
+  "_experiment": {
+    "id": "E6b",
+    "description": "Activation function sweep — sigmoid. More severely saturating than tanh: sigmoid maps all inputs to (0,1) and its derivative sigma'(x) = sigma(x)(1-sigma(x)) is at most 0.25. The adjust step gradient is expected to vanish more quickly than for either ReLU or tanh, resulting in the worst sparsity curve of the three activations. The d_manifold evolution plot should show this directly: faster growth = less effective compensation.",
+    "literature": [
+      "Amari 1998 (Natural Gradient): the geometry of the parameter space depends on the activation function through the Fisher information matrix — tanh and ReLU induce different manifold curvatures",
+      "Li et al. 2018 (loss landscape visualisation): activation choice strongly affects loss landscape geometry, which governs how the adjust gradient step navigates the manifold"
+    ]
+  }
+}

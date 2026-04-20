@@ -1,0 +1,29 @@
+{
+  "name": "e10_seed_3",
+  "topology": [196, 10, 10, 10],
+  "hidden_activation": "relu",
+  "data": {
+    "x_train": "data/X_train_small.csv",
+    "y_train": "data/Y_train_small.csv",
+    "x_test":  "data/X_test_small.csv",
+    "y_test":  "data/Y_test_small.csv"
+  },
+  "train": {
+    "epochs":     1000,
+    "batch_size": 128,
+    "seed":       3
+  },
+  "sparsify": {
+    "steps":            500,
+    "do_adjust":        true,
+    "omega_samples":    10000,
+    "checkpoint_every": 50
+  },
+  "_experiment": {
+    "id": "E10c",
+    "description": "Training seed variance — seed=3. See e10_seed_1 for full description. Part of a 5-run ensemble (seeds 0-4) for computing mean +/- std of the sparsity curve.",
+    "literature": [
+      "Blalock et al. 2020 (survey): highlights that many pruning results in the literature are single-run and lack variance estimates — this experiment addresses that gap for the thesis results"
+    ]
+  }
+}

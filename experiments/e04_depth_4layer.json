@@ -1,0 +1,30 @@
+{
+  "name": "e04_depth_4layer",
+  "topology": [196, 10, 10, 10, 10],
+  "hidden_activation": "relu",
+  "data": {
+    "x_train": "data/X_train_small.csv",
+    "y_train": "data/Y_train_small.csv",
+    "x_test":  "data/X_test_small.csv",
+    "y_test":  "data/Y_test_small.csv"
+  },
+  "train": {
+    "epochs":     1000,
+    "batch_size": 128,
+    "seed":       0
+  },
+  "sparsify": {
+    "steps":            500,
+    "do_adjust":        true,
+    "omega_samples":    10000,
+    "checkpoint_every": 50
+  },
+  "_experiment": {
+    "id": "E4b",
+    "description": "Depth scaling — deep network with 3 hidden layers [196,10,10,10,10]. Total prunable weights: 196*10 + 10*10 + 10*10 + 10*10 = 2260. Deeper networks have longer gradient chains in the adjust step, potentially causing the compensation to be less effective for early layers (gradient vanishing). The per-layer NZ columns will reveal whether the algorithm concentrates pruning in the later layers where gradients are stronger.",
+    "literature": [
+      "Dong et al. 2017 (layer-wise OBS): motivates layer-wise decomposition precisely because global second-order methods scale poorly with depth — this experiment probes where global manifold-based adjust starts to degrade",
+      "Molchanov et al. 2019 (importance estimation): finds that cross-layer importance interactions matter — depth is the key variable"
+    ]
+  }
+}

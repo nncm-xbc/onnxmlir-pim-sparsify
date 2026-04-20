@@ -1,0 +1,30 @@
+{
+  "name": "e05_stupidity_point",
+  "topology": [196, 10, 10, 10],
+  "hidden_activation": "relu",
+  "data": {
+    "x_train": "data/X_train_small.csv",
+    "y_train": "data/Y_train_small.csv",
+    "x_test":  "data/X_test_small.csv",
+    "y_test":  "data/Y_test_small.csv"
+  },
+  "train": {
+    "epochs":     1000,
+    "batch_size": 128,
+    "seed":       0
+  },
+  "sparsify": {
+    "steps":            2160,
+    "do_adjust":        true,
+    "omega_samples":    10000,
+    "checkpoint_every": 50
+  },
+  "_experiment": {
+    "id": "E5",
+    "description": "Stupidity point mapping. Steps set to 2160 = total number of prunable weight entries (196*10 + 10*10 + 10*10) to drive the network toward complete sparsity. The stupidity point is defined formally in ch_proofs (sec_proof_stupidity) as the step at which the adjustment step can no longer compensate for any further removal — i.e., where d_manifold begins growing monotonically and accuracy collapses irreversibly. The experiment provides the empirical evidence for the formal result. The exact step of collapse, the shape of d_manifold just before it, and which layer loses its last weight are all reportable quantities.",
+    "literature": [
+      "Thesis sec_proof_stupidity: formal definition and proof of the stupidity point — this experiment is the empirical counterpart",
+      "LeCun et al. 1989 (OBD): notes that pruning beyond a certain saliency threshold degrades accuracy catastrophically — the stupidity point is the manifold-metric analogue of that threshold"
+    ]
+  }
+}

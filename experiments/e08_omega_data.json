@@ -1,0 +1,31 @@
+{
+  "name": "e08_omega_data",
+  "topology": [196, 10, 10, 10],
+  "hidden_activation": "relu",
+  "data": {
+    "x_train": "data/X_train_small.csv",
+    "y_train": "data/Y_train_small.csv",
+    "x_test":  "data/X_test_small.csv",
+    "y_test":  "data/Y_test_small.csv"
+  },
+  "train": {
+    "epochs":     1000,
+    "batch_size": 128,
+    "seed":       0
+  },
+  "sparsify": {
+    "steps":            500,
+    "do_adjust":        true,
+    "omega_samples":    10000,
+    "omega_source":     "data",
+    "checkpoint_every": 50
+  },
+  "_experiment": {
+    "id": "E8",
+    "description": "Data-driven omega: sample the Monte Carlo set Omega from the actual training data distribution (real MNIST pixels) instead of the uniform distribution U([0,255]^196). The thesis claims data-free operation as a key advantage (sec:discussion). If the sparsity curve is meaningfully better with real data, the data-free claim requires qualification. If similar, the claim is strongly supported. NOTE: requires code change — add omega_source field handling to make_omega() in sparsifier.py to sample from x_train when omega_source='data'.",
+    "literature": [
+      "Lazarevich et al. 2021 (layer-wise calibration): uses a small unlabelled calibration set to reconstruct each layer — the direct data-using baseline this experiment compares against",
+      "Thesis sec:discussion: explicitly claims data-free operation as a strength — this experiment is the empirical test of that claim"
+    ]
+  }
+}

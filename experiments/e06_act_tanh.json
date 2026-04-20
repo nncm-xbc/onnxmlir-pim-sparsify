@@ -1,0 +1,30 @@
+{
+  "name": "e06_act_tanh",
+  "topology": [196, 10, 10, 10],
+  "hidden_activation": "tanh",
+  "data": {
+    "x_train": "data/X_train_small.csv",
+    "y_train": "data/Y_train_small.csv",
+    "x_test":  "data/X_test_small.csv",
+    "y_test":  "data/Y_test_small.csv"
+  },
+  "train": {
+    "epochs":     1000,
+    "batch_size": 128,
+    "seed":       0
+  },
+  "sparsify": {
+    "steps":            500,
+    "do_adjust":        true,
+    "omega_samples":    10000,
+    "checkpoint_every": 50
+  },
+  "_experiment": {
+    "id": "E6a",
+    "description": "Activation function sweep — tanh. The manifold distance d_W and its gradient (used by the adjust step) depend on the activation: tanh is saturating, so neurons with large pre-activations contribute near-zero gradient signal. The adjust step may be less effective for tanh networks, causing the sparsity curve to degrade earlier than ReLU. The dense baseline accuracy may also differ. Both the network trained with tanh and the sparsification use the same activation, ensuring consistency.",
+    "literature": [
+      "Amari 1998 (Natural Gradient): the geometry of the parameter space depends on the activation function through the Fisher information matrix — tanh and ReLU induce different manifold curvatures",
+      "Li et al. 2018 (loss landscape visualisation): activation choice strongly affects loss landscape geometry, which governs how the adjust gradient step navigates the manifold"
+    ]
+  }
+}

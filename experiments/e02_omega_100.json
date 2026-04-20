@@ -1,0 +1,29 @@
+{
+  "name": "e02_omega_100",
+  "topology": [196, 10, 10, 10],
+  "hidden_activation": "relu",
+  "data": {
+    "x_train": "data/X_train_small.csv",
+    "y_train": "data/Y_train_small.csv",
+    "x_test":  "data/X_test_small.csv",
+    "y_test":  "data/Y_test_small.csv"
+  },
+  "train": {
+    "epochs":     1000,
+    "batch_size": 128,
+    "seed":       0
+  },
+  "sparsify": {
+    "steps":            500,
+    "do_adjust":        true,
+    "omega_samples":    100,
+    "checkpoint_every": 50
+  },
+  "_experiment": {
+    "id": "E2a",
+    "description": "Omega sample size sensitivity — B=100. The manifold distance d_W is a Monte Carlo estimate over B uniform samples from Omega=[0,255]^196. At B=100 the estimate is highly noisy: the search step may select a suboptimal weight to prune because the distance ranking is unreliable. Compare the sparsity curve against e02_omega_1000, e02_omega_10000 (baseline), and e02_omega_100000 to identify the minimum B for stable pruning decisions.",
+    "literature": [
+      "Thesis ch_manifold: d_W(w,w') = E_{x~U(Omega)}[||F(w)(x) - F(w')(x)||^2] — the expectation is approximated by Monte Carlo; this experiment characterises the approximation error"
+    ]
+  }
+}

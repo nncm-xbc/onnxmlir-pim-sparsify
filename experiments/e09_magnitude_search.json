@@ -1,0 +1,31 @@
+{
+  "name": "e09_magnitude_search",
+  "topology": [196, 10, 10, 10],
+  "hidden_activation": "relu",
+  "data": {
+    "x_train": "data/X_train_small.csv",
+    "y_train": "data/Y_train_small.csv",
+    "x_test":  "data/X_test_small.csv",
+    "y_test":  "data/Y_test_small.csv"
+  },
+  "train": {
+    "epochs":     1000,
+    "batch_size": 128,
+    "seed":       0
+  },
+  "sparsify": {
+    "steps":            500,
+    "do_adjust":        true,
+    "omega_samples":    10000,
+    "search":           "magnitude",
+    "checkpoint_every": 50
+  },
+  "_experiment": {
+    "id": "E9",
+    "description": "Magnitude-based search criterion with the same manifold adjust step. Instead of selecting the weight that minimises d_W(og_net, pruned_net) at each step, select the weight with the smallest absolute value |w_ij|. The adjust step remains identical. Any difference in the sparsity curve between this and the baseline is attributable solely to the choice of search criterion: manifold distance minimisation vs magnitude heuristic. This is the core ablation for the thesis's central claim that d_W is a better pruning criterion than magnitude. NOTE: requires code change — add search field handling to prune() in sparsifier.py.",
+    "literature": [
+      "Blalock et al. 2020 (survey): magnitude pruning is shown to be surprisingly competitive when paired with fine-tuning — this experiment checks whether the same holds when paired with the manifold adjust step instead of retraining",
+      "Molchanov et al. 2019 (importance estimation): systematic comparison of magnitude, first-order Taylor, and second-order importance metrics — this experiment adds the d_W criterion to that comparison"
+    ]
+  }
+}

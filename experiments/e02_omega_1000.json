@@ -1,0 +1,29 @@
+{
+  "name": "e02_omega_1000",
+  "topology": [196, 10, 10, 10],
+  "hidden_activation": "relu",
+  "data": {
+    "x_train": "data/X_train_small.csv",
+    "y_train": "data/Y_train_small.csv",
+    "x_test":  "data/X_test_small.csv",
+    "y_test":  "data/Y_test_small.csv"
+  },
+  "train": {
+    "epochs":     1000,
+    "batch_size": 128,
+    "seed":       0
+  },
+  "sparsify": {
+    "steps":            500,
+    "do_adjust":        true,
+    "omega_samples":    1000,
+    "checkpoint_every": 50
+  },
+  "_experiment": {
+    "id": "E2b",
+    "description": "Omega sample size sensitivity — B=1000. Intermediate sample count between the noisy B=100 case and the baseline B=10000. Expect the sparsity curve to be slightly noisier than the baseline but substantially better than B=100.",
+    "literature": [
+      "Thesis ch_manifold: d_W(w,w') = E_{x~U(Omega)}[||F(w)(x) - F(w')(x)||^2] — the expectation is approximated by Monte Carlo; this experiment characterises the approximation error"
+    ]
+  }
+}

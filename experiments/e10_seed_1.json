@@ -1,0 +1,29 @@
+{
+  "name": "e10_seed_1",
+  "topology": [196, 10, 10, 10],
+  "hidden_activation": "relu",
+  "data": {
+    "x_train": "data/X_train_small.csv",
+    "y_train": "data/Y_train_small.csv",
+    "x_test":  "data/X_test_small.csv",
+    "y_test":  "data/Y_test_small.csv"
+  },
+  "train": {
+    "epochs":     1000,
+    "batch_size": 128,
+    "seed":       1
+  },
+  "sparsify": {
+    "steps":            500,
+    "do_adjust":        true,
+    "omega_samples":    10000,
+    "checkpoint_every": 50
+  },
+  "_experiment": {
+    "id": "E10a",
+    "description": "Training seed variance — seed=1. Identical to baseline (seed=0) in all other settings. Run alongside e10_seed_2, e10_seed_3, e10_seed_4 and the baseline (seed=0) to obtain 5 independent sparsity curves. Plot mean +/- std across seeds to establish whether results are statistically stable. High variance across seeds would undermine the reliability of all single-run results reported in the thesis. The sparsification omega is also re-sampled per run (numpy random state differs), so this measures end-to-end variance.",
+    "literature": [
+      "Blalock et al. 2020 (survey): highlights that many pruning results in the literature are single-run and lack variance estimates — this experiment addresses that gap for the thesis results"
+    ]
+  }
+}

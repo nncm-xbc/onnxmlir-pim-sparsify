@@ -1,0 +1,30 @@
+{
+  "name": "e07_fullres_784",
+  "topology": [784, 10, 10, 10],
+  "hidden_activation": "relu",
+  "data": {
+    "x_train": "data/X_train_full.csv",
+    "y_train": "data/Y_train_full.csv",
+    "x_test":  "data/X_test_full.csv",
+    "y_test":  "data/Y_test_full.csv"
+  },
+  "train": {
+    "epochs":     1000,
+    "batch_size": 128,
+    "seed":       0
+  },
+  "sparsify": {
+    "steps":            500,
+    "do_adjust":        true,
+    "omega_samples":    10000,
+    "checkpoint_every": 50
+  },
+  "_experiment": {
+    "id": "E7",
+    "description": "Full resolution MNIST (28x28 = 784 inputs) vs the baseline 14x14 (196 inputs). The first layer grows from 196*10=1960 to 784*10=7840 weights, making the network 3.6x larger. The search step cost grows proportionally (more candidates per step). The question is whether the higher-dimensional input creates more or less redundancy: more input features means more potential zero-weight columns in L0, but the adjust step must now compensate over a 784-dimensional input domain. NOTE: requires full-resolution MNIST data files (X_train_full.csv etc.) — generate from raw MNIST if not present.",
+    "literature": [
+      "LeCun et al. 1998 (MNIST): the standard 28x28 full-resolution benchmark — the thesis uses a downsampled version; this experiment validates results at standard resolution",
+      "Thesis sec:exp_setup: explicitly flags the 14x14 downsampling as a preprocessing choice — this experiment removes that choice"
+    ]
+  }
+}

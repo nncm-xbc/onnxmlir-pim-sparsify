@@ -1,6 +1,7 @@
 # mlp.py — JAX MLP primitives: parameter init, forward pass, training utilities
 
 from typing import NamedTuple
+import jax
 import jax.numpy as jnp
 from jax import grad, jit, lax, vmap
 from jax import random

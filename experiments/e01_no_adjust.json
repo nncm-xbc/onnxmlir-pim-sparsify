@@ -1,0 +1,30 @@
+{
+  "name": "e01_no_adjust",
+  "topology": [196, 10, 10, 10],
+  "hidden_activation": "relu",
+  "data": {
+    "x_train": "data/X_train_small.csv",
+    "y_train": "data/Y_train_small.csv",
+    "x_test":  "data/X_test_small.csv",
+    "y_test":  "data/Y_test_small.csv"
+  },
+  "train": {
+    "epochs":     1000,
+    "batch_size": 128,
+    "seed":       0
+  },
+  "sparsify": {
+    "steps":            500,
+    "do_adjust":        false,
+    "omega_samples":    10000,
+    "checkpoint_every": 50
+  },
+  "_experiment": {
+    "id": "E1",
+    "description": "Adjust step ablation. Identical to baseline but with do_adjust=false: the algorithm selects the weight that minimises d_W at each step but performs no gradient compensation afterward. Isolates the contribution of the OBS-style correction step from the search criterion. Expected result: accuracy degrades sharply much earlier than the baseline, confirming that the adjust step is responsible for the flat region of the sparsity curve.",
+    "literature": [
+      "LeCun et al. 1989 (OBD): prunes by Hessian-diagonal saliency with no weight correction — the no-adjust case is the OBD analogue in the manifold framework",
+      "Dong et al. 2017 (layer-wise OBS): identifies the weight-correction step delta_w = -(w_q / [H^-1]_qq) * H^-1 * e_q as the key OBS innovation over OBD — this experiment tests the manifold equivalent"
+    ]
+  }
+}

@@ -57,7 +57,7 @@ def main():
     writer = csv.writer(log_file)
     writer.writerow(['epoch', 'train_acc', 'test_acc', 'train_loss', 'epoch_time_s'])
 
-    network = init_network_params(layer_sizes, random.PRNGKey(0))
+    network = init_network_params(layer_sizes, random.PRNGKey(cfg['train'].get('seed', 0)))
     for epoch in range(epochs):
         start_time = time.time()
         for _ in range(10):

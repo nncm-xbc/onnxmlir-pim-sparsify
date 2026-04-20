@@ -1,0 +1,30 @@
+{
+  "name": "e04_depth_2layer",
+  "topology": [196, 10, 10],
+  "hidden_activation": "relu",
+  "data": {
+    "x_train": "data/X_train_small.csv",
+    "y_train": "data/Y_train_small.csv",
+    "x_test":  "data/X_test_small.csv",
+    "y_test":  "data/Y_test_small.csv"
+  },
+  "train": {
+    "epochs":     1000,
+    "batch_size": 128,
+    "seed":       0
+  },
+  "sparsify": {
+    "steps":            500,
+    "do_adjust":        true,
+    "omega_samples":    10000,
+    "checkpoint_every": 50
+  },
+  "_experiment": {
+    "id": "E4a",
+    "description": "Depth scaling — shallow network with 1 hidden layer [196,10,10]. Total prunable weights: 196*10 + 10*10 = 2060. With fewer layers, the adjust step's gradient flows through fewer multiplications, so compensation should be more effective (less vanishing gradient through the chain). However there is less redundancy to exploit. Compare sparsity curve shape against the 3-layer baseline and the 4-layer variant.",
+    "literature": [
+      "Dong et al. 2017 (layer-wise OBS): observes that layer-wise independence approximations become less valid as depth increases — shallower networks are the case where global vs layer-wise approaches should agree most",
+      "Molchanov et al. 2019 (importance estimation): finds that cross-layer importance interactions matter — depth is the key variable"
+    ]
+  }
+}

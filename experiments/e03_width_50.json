@@ -1,0 +1,30 @@
+{
+  "name": "e03_width_50",
+  "topology": [196, 50, 50, 10],
+  "hidden_activation": "relu",
+  "data": {
+    "x_train": "data/X_train_small.csv",
+    "y_train": "data/Y_train_small.csv",
+    "x_test":  "data/X_test_small.csv",
+    "y_test":  "data/Y_test_small.csv"
+  },
+  "train": {
+    "epochs":     1000,
+    "batch_size": 128,
+    "seed":       0
+  },
+  "sparsify": {
+    "steps":            500,
+    "do_adjust":        true,
+    "omega_samples":    10000,
+    "checkpoint_every": 50
+  },
+  "_experiment": {
+    "id": "E3a",
+    "description": "Width scaling — hidden layers widened from 10 to 50 neurons. Total prunable weights: 196*50 + 50*50 + 50*10 = 12300, vs 2160 in the baseline. The Lottery Ticket Hypothesis predicts that wider overparameterised networks contain more redundant sub-networks, so the flat (compensation-complete) region of the sparsity curve should extend much further before accuracy degrades. The per-layer NZ columns in the log reveal which layer the algorithm preferentially prunes.",
+    "literature": [
+      "Wang et al. 2020 (Lottery Ticket): winning tickets exist in overparameterised networks — wider networks should have more tickets and thus tolerate more pruning",
+      "Blalock et al. 2020 (survey): compression ratios in the literature are frequently not accompanied by measured latency improvements — this experiment establishes what sparsity ratio is achievable"
+    ]
+  }
+}

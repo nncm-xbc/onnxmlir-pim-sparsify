@@ -1,0 +1,30 @@
+{
+  "name": "e03_width_200",
+  "topology": [196, 200, 200, 10],
+  "hidden_activation": "relu",
+  "data": {
+    "x_train": "data/X_train_small.csv",
+    "y_train": "data/Y_train_small.csv",
+    "x_test":  "data/X_test_small.csv",
+    "y_test":  "data/Y_test_small.csv"
+  },
+  "train": {
+    "epochs":     1000,
+    "batch_size": 128,
+    "seed":       0
+  },
+  "sparsify": {
+    "steps":            500,
+    "do_adjust":        true,
+    "omega_samples":    10000,
+    "checkpoint_every": 50
+  },
+  "_experiment": {
+    "id": "E3b",
+    "description": "Width scaling — hidden layers widened from 10 to 200 neurons. Total prunable weights: 196*200 + 200*200 + 200*10 = 81200. At 500 steps, sparsity ratio will be very low (~0.6%), so consider increasing steps to 5000 for a meaningful curve. Dense baseline accuracy should be substantially higher than the narrow baseline, providing more room for the algorithm to preserve accuracy while pruning. Expect a very long flat region.",
+    "literature": [
+      "Wang et al. 2020 (Lottery Ticket): winning tickets exist in overparameterised networks — wider networks should have more tickets and thus tolerate more pruning",
+      "Blalock et al. 2020 (survey): compression ratios in the literature are frequently not accompanied by measured latency improvements — this experiment establishes what sparsity ratio is achievable"
+    ]
+  }
+}
