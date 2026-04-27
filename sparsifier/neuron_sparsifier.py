@@ -1,9 +1,12 @@
-# sparsifier/neuron_sparsifier.py
-# Manifold-distance-scored neuron pruning — structured counterpart to sparsifier.py.
-#
-# Prunes entire hidden neurons (row of W[l] + column of W[l+1] + bias b[l][i])
-# rather than individual weights. Uses the same d() and adjust() functions as
-# weight pruning so results are directly comparable.
+"""Manifold-distance-scored *neuron* pruning — structured counterpart to :mod:`sparsifier.sparsifier`.
+
+Prunes entire hidden neurons (row of ``W[l]`` + column of ``W[l+1]`` +
+bias ``b[l][i]``) rather than individual weights. Reuses :func:`d` and
+:func:`adjust` from :mod:`sparsifier.sparsifier` so results are directly
+comparable with weight-level pruning.
+
+Public API: :func:`prune_neuron`, :class:`NeuronPruneMeta`.
+"""
 
 import csv
 import json
@@ -11,6 +14,8 @@ import os
 import sys
 import time
 from typing import NamedTuple
+
+sys.path.insert(0, os.path.realpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..')))
 
 import numpy as np
 
@@ -21,7 +26,7 @@ from sparsifier.sparsifier import adjust, clone_network, d, make_omega
 class NeuronPruneMeta(NamedTuple):
     layer_idx: int      # weight-matrix index l; neuron is row W[l][neuron_idx, :]
     neuron_idx: int     # neuron index i within that layer
-    distanza: float     # d(og_net, probe_net, omega) at the winning candidate
+    distance: float     # d(og_net, probe_net, omega) at the winning candidate
     prune_time_s: float
     adjust_time_s: float
 
@@ -41,9 +46,9 @@ def prune_neuron(net, og_net, omega, doAdjust=True):
     if len(net) < 2:
         raise ValueError("Network must have at least 2 weight matrices (one hidden layer).")
 
-    minimo = 1e16
-    minimo_layer = 0
-    minimo_neuron = 0
+    min_dist = 1e16
+    min_dist_layer = 0
+    min_dist_neuron = 0
 
     probe_net = clone_network(net)
     prune_t0 = time.perf_counter()
@@ -67,7 +72,7 @@ def prune_neuron(net, og_net, omega, doAdjust=True):
             probe_net[l + 1].W[:, i]    = 0.0
             probe_net[l + 1].mask[:, i] = 0.0
 
-            distanza = float(d(og_net, probe_net, omega))
+            distance = float(d(og_net, probe_net, omega))
 
             # Restore
             probe_net[l].W[i, :]        = saved_W_row
@@ -76,29 +81,29 @@ def prune_neuron(net, og_net, omega, doAdjust=True):
             probe_net[l + 1].W[:, i]    = saved_W_col
             probe_net[l + 1].mask[:, i] = saved_mask_col
 
-            if distanza < minimo:
-                minimo        = distanza
-                minimo_layer  = l
-                minimo_neuron = i
+            if distance < min_dist:
+                min_dist        = distance
+                min_dist_layer  = l
+                min_dist_neuron = i
 
     prune_time_s = time.perf_counter() - prune_t0
 
     # Apply winning neuron permanently
-    probe_net[minimo_layer].W[minimo_neuron, :]        = 0.0
-    probe_net[minimo_layer].mask[minimo_neuron, :]     = 0.0
-    probe_net[minimo_layer].b[minimo_neuron]           = 0.0
-    probe_net[minimo_layer + 1].W[:, minimo_neuron]    = 0.0
-    probe_net[minimo_layer + 1].mask[:, minimo_neuron] = 0.0
+    probe_net[min_dist_layer].W[min_dist_neuron, :]        = 0.0
+    probe_net[min_dist_layer].mask[min_dist_neuron, :]     = 0.0
+    probe_net[min_dist_layer].b[min_dist_neuron]           = 0.0
+    probe_net[min_dist_layer + 1].W[:, min_dist_neuron]    = 0.0
+    probe_net[min_dist_layer + 1].mask[:, min_dist_neuron] = 0.0
 
     adjust_t0 = time.perf_counter()
-    if doAdjust and minimo > 0:
+    if doAdjust and min_dist > 0:
         probe_net = adjust(probe_net, og_net, omega)
     adjust_time_s = time.perf_counter() - adjust_t0
 
     meta = NeuronPruneMeta(
-        layer_idx=minimo_layer,
-        neuron_idx=minimo_neuron,
-        distanza=float(minimo),
+        layer_idx=min_dist_layer,
+        neuron_idx=min_dist_neuron,
+        distance=float(min_dist),
         prune_time_s=prune_time_s,
         adjust_time_s=adjust_time_s,
     )

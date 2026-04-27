@@ -1,12 +1,22 @@
-# network.py — PyTorch Network wrapper for ONNX/PT export
+"""PyTorch ``nn.Module`` mirror of :class:`backend.compiler.Program`.
+
+Used as an intermediate representation for ``.pt`` checkpointing and
+``.onnx`` export. Layers are ``nn.Linear`` initialised from the
+``Program``'s ``W``/``b`` arrays; activation is hard-coded to ReLU on
+hidden layers and identity on the output (matching the rest of the
+toolchain).
+"""
 
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
+
 class Network(nn.Module):
+    """``nn.Module`` initialised from a :class:`backend.compiler.Program`."""
+
     def __init__(self, network):
-        super(Network, self).__init__()
+        super().__init__()
         self.layers = nn.ModuleList()
         self.topology = network.topology.copy()
 

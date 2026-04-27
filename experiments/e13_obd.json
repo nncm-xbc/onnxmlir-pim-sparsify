@@ -1,0 +1,29 @@
+{
+  "name": "e13_obd",
+  "topology": [196, 10, 10, 10],
+  "hidden_activation": "relu",
+  "data": {
+    "x_train": "data/X_train_small.csv",
+    "y_train": "data/Y_train_small.csv",
+    "x_test":  "data/X_test_small.csv",
+    "y_test":  "data/Y_test_small.csv"
+  },
+  "train": {
+    "epochs":     1000,
+    "batch_size": 128,
+    "seed":       0
+  },
+  "sparsify": {
+    "steps":            500,
+    "do_adjust":        true,
+    "omega_samples":    10000,
+    "checkpoint_every": 50
+  },
+  "_experiment": {
+    "id": "E13",
+    "description": "OBD baseline: diagonal-Hessian saliency 0.5·H_ii·w_ij², global selection, same manifold adjust step. For ReLU networks H_ii = 2·(∂d_W/∂w_i)² so OBD≡Kwon on ReLU; they diverge on tanh/sigmoid. Run via: python -m sparsifier.obd_sparsifier experiments/e13_obd.json",
+    "literature": [
+      "LeCun, Denker & Solla 1989 (lecun1989optimal): Optimal Brain Damage — second-order saliency for structured pruning"
+    ]
+  }
+}

@@ -1,3 +1,0 @@
-/Users/simonhgt/Documents/repos/onnxmlir-pim-sparsify/prune_ext/build/CMakeFiles/prune_ext.dir
-/Users/simonhgt/Documents/repos/onnxmlir-pim-sparsify/prune_ext/build/CMakeFiles/edit_cache.dir
-/Users/simonhgt/Documents/repos/onnxmlir-pim-sparsify/prune_ext/build/CMakeFiles/rebuild_cache.dir

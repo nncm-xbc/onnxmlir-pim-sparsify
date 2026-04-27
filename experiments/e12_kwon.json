@@ -1,0 +1,29 @@
+{
+  "name": "e12_kwon",
+  "topology": [196, 10, 10, 10],
+  "hidden_activation": "relu",
+  "data": {
+    "x_train": "data/X_train_small.csv",
+    "y_train": "data/Y_train_small.csv",
+    "x_test":  "data/X_test_small.csv",
+    "y_test":  "data/Y_test_small.csv"
+  },
+  "train": {
+    "epochs":     1000,
+    "batch_size": 128,
+    "seed":       0
+  },
+  "sparsify": {
+    "steps":            500,
+    "do_adjust":        true,
+    "omega_samples":    10000,
+    "checkpoint_every": 50
+  },
+  "_experiment": {
+    "id": "E12",
+    "description": "Kwon 2022 baseline: Fisher-weighted importance score (∂d_W/∂w_ij)²·w_ij², global selection, same manifold adjust step. Run via: python -m sparsifier.kwon_sparsifier experiments/e12_kwon.json",
+    "literature": [
+      "Kwon et al. 2022 (kwon2022fastposttrainingpruningframework): fast post-training pruning via Fisher importance for transformers, adapted here to MLP weight-level pruning"
+    ]
+  }
+}

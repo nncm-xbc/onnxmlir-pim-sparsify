@@ -43,10 +43,10 @@ def prune_gradient_topk(net, og_net, omega, top_k, doAdjust=False):
     if not candidates:
         raise ValueError("prune_gradient_topk: no non-zero weights remain — network is fully pruned")
 
-    minimo     = 1e16
-    minimo_idx = candidates[0][1]
-    minimo_i   = candidates[0][2]
-    minimo_j   = candidates[0][3]
+    min_dist     = 1e16
+    min_dist_idx = candidates[0][1]
+    min_dist_i   = candidates[0][2]
+    min_dist_j   = candidates[0][3]
 
     probe_net = clone_network(net)
     for _, idx, i, j in candidates[:top_k]:
@@ -54,32 +54,32 @@ def prune_gradient_topk(net, og_net, omega, top_k, doAdjust=False):
         saved_mask = probe_net[idx].mask[i, j]
         probe_net[idx].W[i, j]    = 0.
         probe_net[idx].mask[i, j] = 0.
-        distanza = d(og_net, probe_net, omega)
+        distance = d(og_net, probe_net, omega)
         probe_net[idx].W[i, j]    = saved_W
         probe_net[idx].mask[i, j] = saved_mask
-        if distanza < minimo:
-            minimo     = distanza
-            minimo_idx = idx
-            minimo_i   = i
-            minimo_j   = j
-            if minimo == 0:
+        if distance < min_dist:
+            min_dist     = distance
+            min_dist_idx = idx
+            min_dist_i   = i
+            min_dist_j   = j
+            if min_dist == 0:
                 break
 
     t_prune = time.perf_counter() - t0
 
-    probe_net[minimo_idx].W[minimo_i, minimo_j]    = 0.
-    probe_net[minimo_idx].mask[minimo_i, minimo_j] = 0.
+    probe_net[min_dist_idx].W[min_dist_i, min_dist_j]    = 0.
+    probe_net[min_dist_idx].mask[min_dist_i, min_dist_j] = 0.
 
     t_adj_start = time.perf_counter()
-    if doAdjust and minimo > 0:
+    if doAdjust and min_dist > 0:
         probe_net = adjust(probe_net, og_net, omega)
     t_adj = time.perf_counter() - t_adj_start
 
     meta = PruneMeta(
-        layer_idx    = minimo_idx,
-        i            = minimo_i,
-        j            = minimo_j,
-        distanza     = float(minimo),
+        layer_idx    = min_dist_idx,
+        i            = min_dist_i,
+        j            = min_dist_j,
+        distance     = float(min_dist),
         prune_time_s = t_prune,
         adjust_time_s= t_adj,
     )

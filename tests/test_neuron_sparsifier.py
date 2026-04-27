@@ -25,12 +25,12 @@ def _tiny_net():
 
 def test_neuron_prune_meta_fields():
     meta = NeuronPruneMeta(
-        layer_idx=1, neuron_idx=2, distanza=0.5,
+        layer_idx=1, neuron_idx=2, distance=0.5,
         prune_time_s=0.1, adjust_time_s=0.2,
     )
     assert meta.layer_idx == 1
     assert meta.neuron_idx == 2
-    assert meta.distanza == 0.5
+    assert meta.distance == 0.5
     assert meta.prune_time_s == 0.1
     assert meta.adjust_time_s == 0.2
 

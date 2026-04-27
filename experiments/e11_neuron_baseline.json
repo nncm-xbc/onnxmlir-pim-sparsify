@@ -1,0 +1,20 @@
+{
+  "name": "e11_euron_baseline",
+  "topology": [196, 10, 10, 10],
+  "hidden_activation": "relu",
+  "data": {
+    "x_test": "data/X_test_small.csv",
+    "y_test": "data/Y_test_small.csv"
+  },
+  "sparsify": {
+    "steps": 15,
+    "do_adjust": true,
+    "omega_samples": 10000,
+    "checkpoint_every": 5
+  },
+  "_experiment": {
+    "id": "e11_neuron_baseline",
+    "description": "Neuron-level pruning on the reference [196,10,10,10] network. Structured counterpart to the weight-level baseline: removes one hidden neuron per step (row of W[l] + column of W[l+1] + bias b[l][i]) using the same manifold-distance criterion d_W. 15 steps covers 75% of the 20 hidden neurons before catastrophic collapse. Compare sparsification_log.csv (weight) vs neuron_sparsification_log.csv (neuron) on val_acc vs neuron_sparsity axes.",
+    "literature": []
+  }
+}

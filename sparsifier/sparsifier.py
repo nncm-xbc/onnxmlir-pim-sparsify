@@ -1,4 +1,17 @@
-# sparsifier.py
+"""Manifold-distance-scored weight pruning.
+
+Implements iterative post-training sparsification: at each step the weight
+that minimally perturbs the network's behaviour on a sample Ω from the
+input manifold is removed (and optionally compensated by ``adjust``).
+
+Distance is measured as ``d(net_1, net_2, omega) = sum((y1 - y2)**2)`` on
+the shared sample, so the metric is differentiable and JIT-compiled via
+``jax.jit`` (and ``jax.grad`` for the gradient-guided strategies in
+:mod:`benchmark.correctness_check`).
+
+Public API: :func:`prune`, :func:`adjust`, :func:`make_omega`, :func:`d`,
+:func:`d_grad`, :func:`clone_network`, :class:`PruneMeta`.
+"""
 
 import csv
 import json
@@ -25,7 +38,7 @@ class PruneMeta(NamedTuple):
     layer_idx: int
     i: int
     j: int
-    distanza: float
+    distance: float
     prune_time_s: float
     adjust_time_s: float
 
@@ -42,13 +55,13 @@ def make_omega(network, n_samples=10000):
 
 # Estimate the manifold distance between two networks by comparing
 # their outputs over a shared sample from Ω.
-def d(net_1, net_2, omega):
+def _d_impl(net_1, net_2, omega):
     return jnp.sum((batched_predict(net_1, omega) - batched_predict(net_2, omega)) ** 2)
 
 
-d = jax.jit(d)
-d_grad = jax.grad(d)
-d_grad = jax.jit(d_grad)
+d = jax.jit(_d_impl)
+d_grad = jax.jit(jax.grad(_d_impl))
+_d_val_grad = jax.jit(jax.value_and_grad(_d_impl))
 
 
 # construct a copy of the network
@@ -80,18 +93,24 @@ def _zero_weight(layer, i, j):
 #         in the manifold of parameters with respect to the cmp_net
 
 
-def adjust(net, cmp_net, omega):
+def adjust(net, cmp_net, omega, max_iters=500, tol=1e-9):
     net = clone_network(net)
     alfa = 1e-11
-    while alfa > 1e-14:
-        gradiente = d_grad(net, cmp_net, omega)
+    curr_val, gradiente = _d_val_grad(net, cmp_net, omega)
+    for _ in range(max_iters):
+        if alfa <= 1e-14:
+            break
         new_net = [
             Layer(W=l.W - alfa * g.W, b=l.b - alfa * g.b, mask=l.mask)
             for l, g in zip(net, gradiente)
         ]
-        if d(new_net, cmp_net, omega) < d(net, cmp_net, omega):
-            net = new_net
-            alfa *= 1.001
+        new_val, new_grad = _d_val_grad(new_net, cmp_net, omega)
+        if new_val < curr_val:
+            if curr_val - new_val < tol * curr_val:
+                net = new_net
+                break
+            net, curr_val, gradiente = new_net, new_val, new_grad
+            alfa = min(alfa * 1.2, 1.0)
         else:
             alfa *= 0.5
     return net
@@ -114,10 +133,10 @@ def prune(net, og_net, omega, activations=None, doAdjust=True):
     if activations is None:
         activations = ["relu"] * (len(net) - 1) + ["linear"]
 
-    minimo = 1e16
-    minimo_idx = 0
-    minimo_i = 0
-    minimo_j = 0
+    min_dist = 1e16
+    min_dist_idx = 0
+    min_dist_i = 0
+    min_dist_j = 0
 
     probe_net = clone_network(net)
     prune_t0 = time.perf_counter()
@@ -134,10 +153,10 @@ def prune(net, og_net, omega, activations=None, doAdjust=True):
             for l, act in zip(net, activations)
         ]
         omega_f32 = np.asarray(omega, dtype=np.float32)
-        minimo_idx, minimo_i, minimo_j, minimo = _prune_ext.find_best_candidate(
+        min_dist_idx, min_dist_i, min_dist_j, min_dist = _prune_ext.find_best_candidate(
             layers_ext, og_outputs, omega_f32
         )
-        minimo = float(minimo)
+        min_dist = float(min_dist)
     else:
         search_done = False
         for idx, layer in enumerate(net):
@@ -150,16 +169,16 @@ def prune(net, og_net, omega, activations=None, doAdjust=True):
                     saved_mask = probe_net[idx].mask[i, j]
                     probe_net[idx].W[i, j] = 0.0
                     probe_net[idx].mask[i, j] = 0.0
-                    distanza = d(og_net, probe_net, omega)
+                    distance = d(og_net, probe_net, omega)
                     probe_net[idx].W[i, j] = saved_W
                     probe_net[idx].mask[i, j] = saved_mask
 
-                    if distanza < minimo:
-                        minimo = distanza
-                        minimo_idx = idx
-                        minimo_i = i
-                        minimo_j = j
-                        if minimo == 0:  # weight does not affect distance — exit early
+                    if distance < min_dist:
+                        min_dist = distance
+                        min_dist_idx = idx
+                        min_dist_i = i
+                        min_dist_j = j
+                        if min_dist == 0:  # weight does not affect distance — exit early
                             search_done = True
                             break
                 if search_done:
@@ -170,18 +189,18 @@ def prune(net, og_net, omega, activations=None, doAdjust=True):
     prune_time_s = time.perf_counter() - prune_t0
 
     # apply the winning zero permanently
-    probe_net[minimo_idx].W[minimo_i, minimo_j] = 0.0
-    probe_net[minimo_idx].mask[minimo_i, minimo_j] = 0.0
+    probe_net[min_dist_idx].W[min_dist_i, min_dist_j] = 0.0
+    probe_net[min_dist_idx].mask[min_dist_i, min_dist_j] = 0.0
     adjust_t0 = time.perf_counter()
-    if doAdjust and minimo > 0:
+    if doAdjust and min_dist > 0:
         probe_net = adjust(probe_net, og_net, omega)
     adjust_time_s = time.perf_counter() - adjust_t0
 
     meta = PruneMeta(
-        layer_idx=minimo_idx,
-        i=minimo_i,
-        j=minimo_j,
-        distanza=float(minimo),
+        layer_idx=min_dist_idx,
+        i=min_dist_i,
+        j=min_dist_j,
+        distance=float(min_dist),
         prune_time_s=prune_time_s,
         adjust_time_s=adjust_time_s,
     )
