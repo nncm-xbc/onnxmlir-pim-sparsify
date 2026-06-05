@@ -47,17 +47,15 @@ class OBDPruneMeta(NamedTuple):
 def _diag_hessian(net, og_net, omega):
     """Diagonal of Hessian of d_W w.r.t. all W parameters.
 
-    Flattens all weight matrices to a single vector, computes the full
-    Hessian via jax.hessian, returns its diagonal reshaped to match each
-    layer's W matrix.
-
-    og_net outputs are precomputed outside the differentiated function to
-    avoid differentiating through the constant reference network.
+    Uses N forward-over-reverse JVP calls (one per parameter) instead of
+    jax.hessian so the full N×N matrix is never allocated.
+    Peak memory: O(N) instead of O(N²).
 
     Returns list of arrays (one per layer) with shape matching W.
     """
     W_shapes = [l.W.shape for l in net]
     W_flat   = jnp.concatenate([jnp.array(l.W).ravel() for l in net])
+    N        = int(W_flat.shape[0])
 
     og_out = jax.lax.stop_gradient(batched_predict(og_net, omega))
 
@@ -72,8 +70,16 @@ def _diag_hessian(net, og_net, omega):
         pred = batched_predict(new_net, omega)
         return jnp.sum((pred - og_out) ** 2)
 
-    H      = np.array(jax.hessian(d_of_W_flat)(W_flat))
-    H_diag = np.diag(H)
+    grad_f  = jax.grad(d_of_W_flat)
+    hvp_jit = jax.jit(lambda v: jax.jvp(grad_f, (W_flat,), (v,))[1])
+
+    W_dtype = np.array(W_flat).dtype
+    H_diag  = np.zeros(N, dtype=W_dtype)
+    for i in range(N):
+        e_i       = np.zeros(N, dtype=W_dtype)
+        e_i[i]    = 1.0
+        hvp_i     = hvp_jit(jnp.array(e_i))
+        H_diag[i] = float(hvp_i[i])
 
     idx    = 0
     result = []

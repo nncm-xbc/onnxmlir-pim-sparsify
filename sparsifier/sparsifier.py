@@ -50,7 +50,7 @@ __location__ = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file
 # input_dim is inferred from the first layer weight matrix shape (out, in).
 def make_omega(network, n_samples=10000):
     input_dim = network[0].W.shape[1]
-    return np.random.randint(0, 256, size=(n_samples, input_dim)).astype(np.float32)
+    return np.random.randint(0, 256, size=(n_samples, input_dim)).astype(np.float64)
 
 
 # Estimate the manifold distance between two networks by comparing
@@ -142,19 +142,19 @@ def prune(net, og_net, omega, activations=None, doAdjust=True):
     prune_t0 = time.perf_counter()
 
     if _USE_EXT:
-        og_outputs = np.array(batched_predict(og_net, omega), dtype=np.float32)
+        og_outputs = np.array(batched_predict(og_net, omega), dtype=np.float64)
         layers_ext = [
             (
-                np.asarray(l.W, dtype=np.float32),
-                np.asarray(l.b, dtype=np.float32),
-                np.asarray(l.mask, dtype=np.float32),
+                np.asarray(l.W, dtype=np.float64),
+                np.asarray(l.b, dtype=np.float64),
+                np.asarray(l.mask, dtype=np.float64),
                 act,
             )
             for l, act in zip(net, activations)
         ]
-        omega_f32 = np.asarray(omega, dtype=np.float32)
+        omega_f64 = np.asarray(omega, dtype=np.float64)
         min_dist_idx, min_dist_i, min_dist_j, min_dist = _prune_ext.find_best_candidate(
-            layers_ext, og_outputs, omega_f32
+            layers_ext, og_outputs, omega_f64
         )
         min_dist = float(min_dist)
     else:
@@ -162,7 +162,7 @@ def prune(net, og_net, omega, activations=None, doAdjust=True):
         for idx, layer in enumerate(net):
             for i in range(layer.W.shape[0]):
                 for j in range(layer.W.shape[1]):
-                    if layer.W[i, j] == 0.0:
+                    if layer.mask[i, j] == 0.0:
                         continue
                     # zero candidate in-place, evaluate, restore
                     saved_W = probe_net[idx].W[i, j]

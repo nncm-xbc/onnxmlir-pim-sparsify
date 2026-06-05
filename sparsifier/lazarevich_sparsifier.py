@@ -56,7 +56,9 @@ def main():
     # uniform random noise.  This matches Lazarevich et al.'s use of an
     # unlabelled calibration set.
     n_omega = min(sp['omega_samples'], len(x_test))
-    omega   = x_test[:n_omega].astype(np.float32)
+    if n_omega < sp['omega_samples']:
+        print("WARNING: omega_samples=%d requested but only %d calibration images available; using all %d." % (sp['omega_samples'], len(x_test), n_omega))
+    omega   = x_test[:n_omega].astype(np.float64)
     print("Omega: %d real calibration images (data-driven)" % n_omega)
 
     print(

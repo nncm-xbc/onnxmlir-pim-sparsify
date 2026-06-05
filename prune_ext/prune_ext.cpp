@@ -14,7 +14,7 @@
 #endif
 
 namespace py = pybind11;
-using Arr = py::array_t<float, py::array::c_style | py::array::forcecast>;
+using Arr = py::array_t<double, py::array::c_style | py::array::forcecast>;
 
 struct Candidate {
     int layer_idx, i, j;
@@ -46,9 +46,9 @@ py::tuple find_best_candidate(py::list layers_list, Arr og_outputs, Arr omega) {
         auto mask_info = mask_arrs.back().request();
 
         LayerData ld;
-        ld.W          = static_cast<const float*>(W_info.ptr);
-        ld.b          = static_cast<const float*>(b_info.ptr);
-        ld.mask       = static_cast<const float*>(mask_info.ptr);
+        ld.W          = static_cast<const double*>(W_info.ptr);
+        ld.b          = static_cast<const double*>(b_info.ptr);
+        ld.mask       = static_cast<const double*>(mask_info.ptr);
         ld.n_out      = (int)W_info.shape[0];
         ld.n_in       = (int)W_info.shape[1];
         ld.is_last    = (li == n_layers - 1);
@@ -61,8 +61,8 @@ py::tuple find_best_candidate(py::list layers_list, Arr og_outputs, Arr omega) {
     int n_samples = (int)og_info.shape[0];
     int n_classes = (int)og_info.shape[1];
     int input_dim = (int)om_info.shape[1];
-    const float* og_ptr = static_cast<const float*>(og_info.ptr);
-    const float* om_ptr = static_cast<const float*>(om_info.ptr);
+    const double* og_ptr = static_cast<const double*>(og_info.ptr);
+    const double* om_ptr = static_cast<const double*>(om_info.ptr);
 
     // Build flat candidate list: every (layer_idx, i, j) where W[i,j] != 0.
     std::vector<Candidate> candidates;
@@ -70,7 +70,7 @@ py::tuple find_best_candidate(py::list layers_list, Arr og_outputs, Arr omega) {
         const LayerData& ld = layers[li];
         for (int i = 0; i < ld.n_out; i++)
             for (int j = 0; j < ld.n_in; j++)
-                if (ld.W[i * ld.n_in + j] != 0.f)
+                if (ld.mask[i * ld.n_in + j] != 0.0)
                     candidates.push_back({li, i, j});
     }
     if (candidates.empty())
@@ -85,7 +85,7 @@ py::tuple find_best_candidate(py::list layers_list, Arr og_outputs, Arr omega) {
     int   best_layer = candidates[0].layer_idx;
     int   best_i     = candidates[0].i;
     int   best_j     = candidates[0].j;
-    float best_dist  = std::numeric_limits<float>::max();
+    double best_dist  = std::numeric_limits<double>::max();
 
 #ifdef USE_OPENMP
     #pragma omp parallel
@@ -93,13 +93,13 @@ py::tuple find_best_candidate(py::list layers_list, Arr og_outputs, Arr omega) {
         int   local_layer = candidates[0].layer_idx;
         int   local_i     = candidates[0].i;
         int   local_j     = candidates[0].j;
-        float local_min   = std::numeric_limits<float>::max();
-        std::vector<float> buf(max_width * 2);
+        double local_min   = std::numeric_limits<double>::max();
+        std::vector<double> buf(max_width * 2);
 
         #pragma omp for schedule(dynamic, 32)
         for (int c = 0; c < n_candidates; c++) {
             const Candidate& cand = candidates[c];
-            float dist = 0.f;
+            double dist = 0.0;
             for (int s = 0; s < n_samples; s++)
                 dist += forward_sse_one(
                     layers,
@@ -124,10 +124,10 @@ py::tuple find_best_candidate(py::list layers_list, Arr og_outputs, Arr omega) {
         }
     }
 #else
-    std::vector<float> buf(max_width * 2);
+    std::vector<double> buf(max_width * 2);
     for (int c = 0; c < n_candidates; c++) {
         const Candidate& cand = candidates[c];
-        float dist = 0.f;
+        double dist = 0.0;
         for (int s = 0; s < n_samples; s++)
             dist += forward_sse_one(
                 layers,
@@ -156,13 +156,13 @@ PYBIND11_MODULE(prune_ext, m) {
 Find the single non-zero weight whose removal minimises SSE distance to og_outputs.
 
 Args:
-    layers:     list of (W, b, mask, activation_name) tuples (numpy float32).
+    layers:     list of (W, b, mask, activation_name) tuples (numpy float64).
                 W shape [n_out, n_in], b [n_out], mask [n_out, n_in].
                 Activation names: "relu", "tanh", "sigmoid", "linear".
                 The last layer always applies log-softmax regardless of activation_name.
-    og_outputs: precomputed original-network outputs, float32 [n_samples, n_classes].
-                Compute once with: np.array(batched_predict(og_net, omega), dtype=np.float32)
-    omega:      input sample matrix, float32 [n_samples, input_dim].
+    og_outputs: precomputed original-network outputs, float64 [n_samples, n_classes].
+                Compute once with: np.array(batched_predict(og_net, omega), dtype=np.float64)
+    omega:      input sample matrix, float64 [n_samples, input_dim].
 
 Returns:
     (layer_idx, i, j, min_distance) as a Python tuple.

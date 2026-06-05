@@ -1,4 +1,14 @@
-# test.py — evaluates a trained network (.pt, .onnx, or parameter folder)
+"""Evaluate a trained network on a held-out set.
+
+Accepts three input formats:
+
+- ``.pt`` — PyTorch checkpoint loaded via ``torch.load``.
+- ``.onnx`` — ONNX model evaluated with ``onnxruntime``.
+- folder — :class:`backend.compiler.Program` reconstructed from saved
+  ``W_*.npy`` / ``b_*.npy`` parameter files.
+
+Prints classification accuracy on the supplied ``x_test`` / ``y_test`` CSVs.
+"""
 
 import os
 import sys
@@ -6,7 +16,6 @@ sys.path.insert(0, os.path.realpath(os.path.join(os.path.dirname(os.path.abspath
 
 import numpy as np
 import torch
-import torch.nn as nn
 import onnx
 import onnxruntime as ort
 
@@ -76,8 +85,8 @@ def main():
 
 
     else:
-
-        #TODO: emulate arm architecture and run the assembly code of the network
+        # Plain parameter-folder evaluation. ARM emulation of the generated
+        # assembly is intentionally out of scope here.
         print("Loading OG network")
         results = []
         model = Program(input_network)

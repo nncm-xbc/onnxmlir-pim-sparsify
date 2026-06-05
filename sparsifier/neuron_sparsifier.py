@@ -55,7 +55,7 @@ def prune_neuron(net, og_net, omega, doAdjust=True):
 
     for l in range(len(net) - 1):           # hidden-layer indices: 0 to len(net)-2
         for i in range(net[l].W.shape[0]):  # neurons = rows of W[l]
-            if np.all(net[l].W[i, :] == 0.0):
+            if np.all(net[l].mask[i, :] == 0.0):
                 continue  # neuron already pruned — skip
 
             # Save entries that will be temporarily zeroed
@@ -129,6 +129,9 @@ def main():
     y_test = np.genfromtxt(resolve(cfg['data']['y_test']), delimiter=',', max_rows=1000)
 
     sp = cfg['sparsify']
+
+    import mlp.mlp as _mlp
+    _mlp.hidden_activation = _mlp._ACTS[cfg.get('hidden_activation', 'relu')]
 
     print("Load the parameters from the folder")
     og_net = load_network_params(input_folder)

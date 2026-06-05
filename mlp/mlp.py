@@ -2,6 +2,7 @@
 
 from typing import NamedTuple
 import jax
+jax.config.update("jax_enable_x64", True)
 import jax.numpy as jnp
 from jax import grad, jit, lax, vmap
 from jax import random
@@ -35,7 +36,7 @@ def load_network_params(folder_name):
     for i in range(count):
         W = np.load(folder_name + "/W_%d.npy" % i)
         b = np.load(folder_name + "/b_%d.npy" % i)
-        layers.append(Layer(W=W, b=b, mask=np.ones_like(W)))
+        layers.append(Layer(W=W, b=b, mask=(W != 0).astype(W.dtype)))
     return layers
 
 def relu(x):
