@@ -91,11 +91,17 @@ inline void cache_forward_one(
 }
 
 // SSE contribution of one sample with weight (zero_layer, zero_i, zero_j)
-// treated as zero. Reuses the cache: layers before the candidate are never
-// recomputed; only row zero_i of the candidate layer plus the downstream
-// layers are. Two exact shortcuts return the cached baseline SSE outright:
+// treated as zero. Incremental evaluation against the cache:
+//   * candidate pre-activation:  z'_i = z_i − W[i,j]·src[j]            O(1)
+//   * first downstream layer:    z'   = z + (mask·W)[:,i]·(a'_i − a_i)  O(n_out)
+//   * remaining layers:          full matvec (every input changed)
+// Two exact shortcuts return the cached baseline SSE outright:
 //   * the candidate weight's input is 0.0 (zeroing it changes nothing), or
 //   * the candidate unit's post-activation is unchanged (e.g. dead ReLU).
+// The delta updates are algebraically identical to a full re-forward but
+// round differently in the last ulps, so per-candidate distances are not
+// bit-equal to an exhaustive re-evaluation (selection ties at *exactly*
+// equal distances are unaffected — both sides hit the shortcuts).
 //
 // buf: thread-local scratch, >= 2 * max_width doubles.
 inline double candidate_sse_one(
@@ -116,10 +122,10 @@ inline double candidate_sse_one(
     if (src[zero_j] == 0.0)
         return cache.base_sse[s];
 
-    double zi = row_preact(ld, zero_i, src, zero_j);
+    const double* z_row = cache.z[zero_layer].data() + (size_t)s * ld.n_out;
+    double zi = z_row[zero_i] - ld.W[(size_t)zero_i * ld.n_in + zero_j] * src[zero_j];
 
     if (ld.is_last) {
-        const double* z_row = cache.z[zero_layer].data() + (size_t)s * ld.n_out;
         for (int k = 0; k < ld.n_out; k++) buf[k] = z_row[k];
         buf[zero_i] = zi;
         log_softmax_inplace(buf, ld.n_out);
@@ -130,22 +136,36 @@ inline double candidate_sse_one(
     const double* a_row = cache.a[zero_layer].data() + (size_t)s * ld.n_out;
     if (ai == a_row[zero_i])
         return cache.base_sse[s];
+    double da = ai - a_row[zero_i];
 
-    double* dst = buf + (zero_layer % 2) * max_width;  // keep ping-pong parity
-    for (int k = 0; k < ld.n_out; k++) dst[k] = a_row[k];
-    dst[zero_i] = ai;
+    // First downstream layer: input differs only at unit zero_i, so update
+    // the cached pre-activations by the (masked) column times the delta.
+    int li = zero_layer + 1;
+    const LayerData& nl = layers[li];
+    const double* nz_row = cache.z[li].data() + (size_t)s * nl.n_out;
+    double* nxt = buf + (li % 2) * max_width;
+    for (int o = 0; o < nl.n_out; o++) {
+        size_t w_idx = (size_t)o * nl.n_in + zero_i;
+        nxt[o] = nz_row[o] + nl.mask[w_idx] * nl.W[w_idx] * da;
+    }
+    if (nl.is_last) {
+        log_softmax_inplace(nxt, nl.n_out);
+        return sse_row(nxt, og_out_row, nl.n_out);
+    }
+    for (int o = 0; o < nl.n_out; o++) nxt[o] = nl.activation(nxt[o]);
+    const double* cur = nxt;
 
-    const double* cur = dst;
-    for (size_t li = zero_layer + 1; li < layers.size(); li++) {
-        const LayerData& nl = layers[li];
-        double* nxt = buf + (li % 2) * max_width;
-        for (int o = 0; o < nl.n_out; o++)
-            nxt[o] = row_preact(nl, o, cur, -1);
-        if (nl.is_last)
-            log_softmax_inplace(nxt, nl.n_out);
+    // Remaining layers: every input changed — full forward.
+    for (li = zero_layer + 2; li < (int)layers.size(); li++) {
+        const LayerData& fl = layers[li];
+        double* out = buf + (li % 2) * max_width;
+        for (int o = 0; o < fl.n_out; o++)
+            out[o] = row_preact(fl, o, cur, -1);
+        if (fl.is_last)
+            log_softmax_inplace(out, fl.n_out);
         else
-            for (int o = 0; o < nl.n_out; o++) nxt[o] = nl.activation(nxt[o]);
-        cur = nxt;
+            for (int o = 0; o < fl.n_out; o++) out[o] = fl.activation(out[o]);
+        cur = out;
     }
     return sse_row(cur, og_out_row, layers.back().n_out);
 }

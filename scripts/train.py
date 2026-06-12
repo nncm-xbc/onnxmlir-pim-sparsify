@@ -57,11 +57,13 @@ def main():
     writer = csv.writer(log_file)
     writer.writerow(['epoch', 'train_acc', 'test_acc', 'train_loss', 'epoch_time_s'])
 
-    network = init_network_params(layer_sizes, random.PRNGKey(cfg['train'].get('seed', 0)))
+    seed    = cfg['train'].get('seed', 0)
+    network = init_network_params(layer_sizes, random.PRNGKey(seed))
+    rng     = np.random.default_rng(seed)  # batch sampling was unseeded before
     for epoch in range(epochs):
         start_time = time.time()
         for _ in range(10):
-            batch   = np.random.choice(len(x_train), size=batch_size)
+            batch   = rng.choice(len(x_train), size=batch_size)
             x, y    = x_train[batch], y_train[batch]
             network = update(network, x, y)
         epoch_time = time.time() - start_time
