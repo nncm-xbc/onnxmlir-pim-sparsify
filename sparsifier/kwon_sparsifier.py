@@ -61,17 +61,17 @@ def prune_kwon(net, og_net, omega, doAdjust=True):
     min_i     = 0
     min_j     = 0
 
+    # Vectorised argmin; ties resolve to the first index in row-major scan
+    # order (np.argmin), matching an explicit per-entry scan.
     for l, (layer, glayer) in enumerate(zip(net, grads)):
-        for i in range(layer.W.shape[0]):
-            for j in range(layer.W.shape[1]):
-                if layer.mask[i, j] == 0.0:
-                    continue
-                score = float(glayer.W[i, j]) ** 2 * float(layer.W[i, j]) ** 2
-                if score < min_score:
-                    min_score = score
-                    min_layer = l
-                    min_i     = i
-                    min_j     = j
+        scores = np.asarray(glayer.W) ** 2 * np.asarray(layer.W) ** 2
+        scores[np.asarray(layer.mask) == 0.0] = np.inf
+        flat  = int(np.argmin(scores))
+        score = float(scores.flat[flat])
+        if score < min_score:
+            min_score = score
+            min_layer = l
+            min_i, min_j = (int(v) for v in np.unravel_index(flat, scores.shape))
 
     prune_time_s = time.perf_counter() - prune_t0
 

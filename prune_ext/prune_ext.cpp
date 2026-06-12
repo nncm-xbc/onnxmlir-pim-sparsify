@@ -3,15 +3,12 @@
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
 
+#include <cstdint>
 #include <limits>
 #include <stdexcept>
 #include <vector>
 
 #include "forward.hpp"
-
-#ifdef USE_OPENMP
-#include <omp.h>
-#endif
 
 namespace py = pybind11;
 using Arr = py::array_t<double, py::array::c_style | py::array::forcecast>;
@@ -64,87 +61,89 @@ py::tuple find_best_candidate(py::list layers_list, Arr og_outputs, Arr omega) {
     const double* og_ptr = static_cast<const double*>(og_info.ptr);
     const double* om_ptr = static_cast<const double*>(om_info.ptr);
 
-    // Build flat candidate list: every (layer_idx, i, j) where W[i,j] != 0.
+    // Build flat candidate list: every (layer_idx, i, j) where mask != 0.
     std::vector<Candidate> candidates;
     for (int li = 0; li < n_layers; li++) {
         const LayerData& ld = layers[li];
         for (int i = 0; i < ld.n_out; i++)
             for (int j = 0; j < ld.n_in; j++)
-                if (ld.mask[i * ld.n_in + j] != 0.0)
+                if (ld.mask[(size_t)i * ld.n_in + j] != 0.0)
                     candidates.push_back({li, i, j});
     }
     if (candidates.empty())
         throw std::runtime_error(
             "No non-zero weights found — network is fully pruned.");
 
-    int n_candidates = (int)candidates.size();
-    int max_width    = 0;
+    int64_t n_candidates = (int64_t)candidates.size();
+    int max_width = 0;
     for (const auto& ld : layers)
         max_width = std::max(max_width, ld.n_out);
 
-    int   best_layer = candidates[0].layer_idx;
-    int   best_i     = candidates[0].i;
-    int   best_j     = candidates[0].j;
-    double best_dist  = std::numeric_limits<double>::max();
+    // Precompute per-sample activations and baseline SSE of the unmodified
+    // network once; candidate evaluation reuses everything upstream of the
+    // zeroed weight instead of re-running the full forward pass.
+    ForwardCache cache;
+    cache.z.resize(n_layers);
+    cache.a.resize(n_layers);
+    for (int li = 0; li < n_layers; li++) {
+        cache.z[li].resize((size_t)n_samples * layers[li].n_out);
+        cache.a[li].resize((size_t)n_samples * layers[li].n_out);
+    }
+    cache.base_sse.resize(n_samples);
+
+#ifdef USE_OPENMP
+    #pragma omp parallel for schedule(static)
+#endif
+    for (int s = 0; s < n_samples; s++)
+        cache_forward_one(layers, om_ptr + (size_t)s * input_dim,
+                          og_ptr + (size_t)s * n_classes, s, cache);
+
+    // Deterministic reduction: lexicographic min over (distance, candidate
+    // index), so exact ties resolve to the first candidate in scan order —
+    // identical to the serial and pure-Python searches regardless of thread
+    // scheduling.
+    int64_t best_cand = 0;
+    double  best_dist = std::numeric_limits<double>::max();
 
 #ifdef USE_OPENMP
     #pragma omp parallel
+#endif
     {
-        int   local_layer = candidates[0].layer_idx;
-        int   local_i     = candidates[0].i;
-        int   local_j     = candidates[0].j;
-        double local_min   = std::numeric_limits<double>::max();
-        std::vector<double> buf(max_width * 2);
+        int64_t local_cand = n_candidates;
+        double  local_min  = std::numeric_limits<double>::max();
+        std::vector<double> buf((size_t)max_width * 2);
 
+#ifdef USE_OPENMP
         #pragma omp for schedule(dynamic, 32)
-        for (int c = 0; c < n_candidates; c++) {
+#endif
+        for (int64_t c = 0; c < n_candidates; c++) {
             const Candidate& cand = candidates[c];
             double dist = 0.0;
             for (int s = 0; s < n_samples; s++)
-                dist += forward_sse_one(
-                    layers,
-                    om_ptr + s * input_dim,
-                    og_ptr + s * n_classes,
-                    cand.layer_idx, cand.i, cand.j,
+                dist += candidate_sse_one(
+                    layers, cache,
+                    om_ptr + (size_t)s * input_dim,
+                    og_ptr + (size_t)s * n_classes,
+                    s, cand.layer_idx, cand.i, cand.j,
                     buf.data(), max_width);
-            if (dist < local_min) {
-                local_min   = dist;
-                local_layer = cand.layer_idx;
-                local_i     = cand.i;
-                local_j     = cand.j;
+            if (dist < local_min || (dist == local_min && c < local_cand)) {
+                local_min  = dist;
+                local_cand = c;
             }
         }
 
+#ifdef USE_OPENMP
         #pragma omp critical
-        if (local_min < best_dist) {
-            best_dist  = local_min;
-            best_layer = local_layer;
-            best_i     = local_i;
-            best_j     = local_j;
-        }
-    }
-#else
-    std::vector<double> buf(max_width * 2);
-    for (int c = 0; c < n_candidates; c++) {
-        const Candidate& cand = candidates[c];
-        double dist = 0.0;
-        for (int s = 0; s < n_samples; s++)
-            dist += forward_sse_one(
-                layers,
-                om_ptr + s * input_dim,
-                og_ptr + s * n_classes,
-                cand.layer_idx, cand.i, cand.j,
-                buf.data(), max_width);
-        if (dist < best_dist) {
-            best_dist  = dist;
-            best_layer = cand.layer_idx;
-            best_i     = cand.i;
-            best_j     = cand.j;
-        }
-    }
 #endif
+        if (local_min < best_dist ||
+            (local_min == best_dist && local_cand < best_cand)) {
+            best_dist = local_min;
+            best_cand = local_cand;
+        }
+    }
 
-    return py::make_tuple(best_layer, best_i, best_j, best_dist);
+    const Candidate& best = candidates[best_cand];
+    return py::make_tuple(best.layer_idx, best.i, best.j, best_dist);
 }
 
 PYBIND11_MODULE(prune_ext, m) {
@@ -166,5 +165,7 @@ Args:
 
 Returns:
     (layer_idx, i, j, min_distance) as a Python tuple.
+    Ties on min_distance resolve to the first candidate in
+    (layer, row, column) scan order, deterministically.
         )doc");
 }

@@ -27,15 +27,18 @@ def prune_gradient_topk(net, og_net, omega, top_k, doAdjust=False):
     t0 = time.perf_counter()
 
     gradients = d_grad(net, og_net, omega)
+    # Materialise on host once — per-element reads of a JAX array each
+    # trigger a device sync.
+    grad_W = [np.asarray(g.W) for g in gradients]
 
     candidates = []
-    for idx, (layer, glayer) in enumerate(zip(net, gradients)):
+    for idx, (layer, gW) in enumerate(zip(net, grad_W)):
         for i in range(layer.W.shape[0]):
             for j in range(layer.W.shape[1]):
                 if layer.W[i, j] == 0.:
                     continue
                 # First-order Taylor: zeroing W[i,j] changes d by ≈ -W[i,j]*grad[i,j]
-                predicted_delta = -float(layer.W[i, j]) * float(glayer.W[i, j])
+                predicted_delta = -float(layer.W[i, j]) * float(gW[i, j])
                 candidates.append((predicted_delta, idx, i, j))
 
     candidates.sort(key=lambda x: x[0])

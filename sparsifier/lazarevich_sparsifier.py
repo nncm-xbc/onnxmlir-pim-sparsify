@@ -42,8 +42,9 @@ def main():
     _mlp.hidden_activation = _mlp._ACTS[cfg.get('hidden_activation', 'relu')]
 
     # Activation list for C++ extension (one entry per layer).
+    # A topology of T sizes has T-1 weight layers: T-2 hidden + 1 output.
     act_name    = cfg.get('hidden_activation', 'relu')
-    activations = [act_name] * (len(cfg['topology']) - 1) + ['linear']
+    activations = [act_name] * (len(cfg['topology']) - 2) + ['linear']
 
     print("Load the parameters from the folder")
     og_net = load_network_params(input_folder)

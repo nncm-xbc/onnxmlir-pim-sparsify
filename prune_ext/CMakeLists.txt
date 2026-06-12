@@ -57,4 +57,8 @@ else()
     message(WARNING "OpenMP not found — serial C++ search (still faster than Python due to og_outputs precomputation)")
 endif()
 
-target_compile_options(prune_ext PRIVATE -O3 -march=native)
+# -ffp-contract=off: forbid FMA contraction so the cached forward pass and
+# the per-candidate row recomputation round identically (the candidate search
+# relies on bit-equal values to reuse cached activations), and so results are
+# reproducible across refactors of the loop structure.
+target_compile_options(prune_ext PRIVATE -O3 -march=native -ffp-contract=off)

@@ -46,17 +46,17 @@ def prune_magnitude(net, og_net, omega, doAdjust=True):
     min_j = 0
 
     prune_t0 = time.perf_counter()
+    # Vectorised argmin; ties resolve to the first index in row-major scan
+    # order (np.argmin), matching an explicit per-entry scan.
     for l, layer in enumerate(net):
-        for i in range(layer.W.shape[0]):
-            for j in range(layer.W.shape[1]):
-                if layer.mask[i, j] == 0.0:
-                    continue
-                mag = abs(float(layer.W[i, j]))
-                if mag < min_mag:
-                    min_mag = mag
-                    min_layer = l
-                    min_i = i
-                    min_j = j
+        mags = np.abs(np.asarray(layer.W, dtype=np.float64))
+        mags[np.asarray(layer.mask) == 0.0] = np.inf
+        flat = int(np.argmin(mags))
+        mag  = float(mags.flat[flat])
+        if mag < min_mag:
+            min_mag = mag
+            min_layer = l
+            min_i, min_j = (int(v) for v in np.unravel_index(flat, mags.shape))
     prune_time_s = time.perf_counter() - prune_t0
 
     result_net = clone_network(net)

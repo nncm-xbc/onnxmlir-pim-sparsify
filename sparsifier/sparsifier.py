@@ -61,7 +61,17 @@ def _d_impl(net_1, net_2, omega):
 
 d = jax.jit(_d_impl)
 d_grad = jax.jit(jax.grad(_d_impl))
-_d_val_grad = jax.jit(jax.value_and_grad(_d_impl))
+
+
+# Same distance, but against precomputed reference outputs: callers that
+# evaluate many networks against one fixed network (prune candidates, adjust
+# iterations) compute the reference forward pass once instead of per call.
+def _d_to_outputs_impl(net, ref_out, omega):
+    return jnp.sum((batched_predict(net, omega) - ref_out) ** 2)
+
+
+_d_to_outputs = jax.jit(_d_to_outputs_impl)
+_d_val_grad_to_outputs = jax.jit(jax.value_and_grad(_d_to_outputs_impl))
 
 
 # construct a copy of the network
@@ -96,7 +106,8 @@ def _zero_weight(layer, i, j):
 def adjust(net, cmp_net, omega, max_iters=500, tol=1e-9):
     net = clone_network(net)
     alfa = 1e-11
-    curr_val, gradiente = _d_val_grad(net, cmp_net, omega)
+    cmp_out = batched_predict(cmp_net, omega)  # fixed target — forward it once
+    curr_val, gradiente = _d_val_grad_to_outputs(net, cmp_out, omega)
     for _ in range(max_iters):
         if alfa <= 1e-14:
             break
@@ -104,7 +115,7 @@ def adjust(net, cmp_net, omega, max_iters=500, tol=1e-9):
             Layer(W=l.W - alfa * g.W, b=l.b - alfa * g.b, mask=l.mask)
             for l, g in zip(net, gradiente)
         ]
-        new_val, new_grad = _d_val_grad(new_net, cmp_net, omega)
+        new_val, new_grad = _d_val_grad_to_outputs(new_net, cmp_out, omega)
         if new_val < curr_val:
             if curr_val - new_val < tol * curr_val:
                 net = new_net
@@ -158,6 +169,7 @@ def prune(net, og_net, omega, activations=None, doAdjust=True):
         )
         min_dist = float(min_dist)
     else:
+        og_out = batched_predict(og_net, omega)  # fixed reference — forward it once
         search_done = False
         for idx, layer in enumerate(net):
             for i in range(layer.W.shape[0]):
@@ -169,7 +181,7 @@ def prune(net, og_net, omega, activations=None, doAdjust=True):
                     saved_mask = probe_net[idx].mask[i, j]
                     probe_net[idx].W[i, j] = 0.0
                     probe_net[idx].mask[i, j] = 0.0
-                    distance = d(og_net, probe_net, omega)
+                    distance = _d_to_outputs(probe_net, og_out, omega)
                     probe_net[idx].W[i, j] = saved_W
                     probe_net[idx].mask[i, j] = saved_mask
 
@@ -232,8 +244,9 @@ def main():
     import mlp.mlp as _mlp
     _mlp.hidden_activation = _mlp._ACTS[cfg.get('hidden_activation', 'relu')]
     # Activation list for the C++ extension (one entry per layer).
+    # A topology of T sizes has T-1 weight layers: T-2 hidden + 1 output.
     act_name   = cfg.get('hidden_activation', 'relu')
-    activations = [act_name] * (len(cfg['topology']) - 1) + ['linear']
+    activations = [act_name] * (len(cfg['topology']) - 2) + ['linear']
 
     print("Load the parameters from the folder")
     og_net = load_network_params(input_folder)

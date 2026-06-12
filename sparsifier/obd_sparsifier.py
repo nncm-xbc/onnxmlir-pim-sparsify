@@ -13,9 +13,9 @@ Note (ReLU identity): for ReLU networks, relu''=0 by JAX convention, so
   H_ii = 2·(∂d_W/∂w_i)²  and  score_OBD = score_Kwon.
 They diverge for tanh/sigmoid architectures (cross-term is non-zero).
 
-Complexity per step: O(N²) — jax.hessian materialises an N×N matrix.
-Feasibility: N=2160 (baseline) → ~18 MB; N≈12500 (width_50) → ~625 MB.
-Width_200 will OOM — document as limitation.
+Complexity per step: N Hessian-vector products, evaluated in fixed-size
+chunks — peak memory O(chunk · |omega|) regardless of N, so no full N×N
+matrix is ever materialised.
 
 Public API: :func:`prune_obd`, :class:`OBDPruneMeta`.
 """
@@ -70,16 +70,21 @@ def _diag_hessian(net, og_net, omega):
         pred = batched_predict(new_net, omega)
         return jnp.sum((pred - og_out) ** 2)
 
-    grad_f  = jax.grad(d_of_W_flat)
-    hvp_jit = jax.jit(lambda v: jax.jvp(grad_f, (W_flat,), (v,))[1])
+    grad_f    = jax.grad(d_of_W_flat)
+    hvp_batch = jax.jit(jax.vmap(lambda v: jax.jvp(grad_f, (W_flat,), (v,))[1]))
 
+    # Batch the N Hessian-vector products in chunks: same math as one HVP per
+    # parameter, but ~chunk-size fewer dispatches. Chunk bounds peak memory
+    # (each tangent carries its own forward/backward activations over omega).
+    chunk   = 64
     W_dtype = np.array(W_flat).dtype
     H_diag  = np.zeros(N, dtype=W_dtype)
-    for i in range(N):
-        e_i       = np.zeros(N, dtype=W_dtype)
-        e_i[i]    = 1.0
-        hvp_i     = hvp_jit(jnp.array(e_i))
-        H_diag[i] = float(hvp_i[i])
+    for start in range(0, N, chunk):
+        idxs = np.arange(start, min(start + chunk, N))
+        E    = np.zeros((len(idxs), N), dtype=W_dtype)
+        E[np.arange(len(idxs)), idxs] = 1.0
+        hvp_rows = hvp_batch(jnp.array(E))          # row k = H @ e_{idxs[k]}
+        H_diag[idxs] = np.asarray(hvp_rows)[np.arange(len(idxs)), idxs]
 
     idx    = 0
     result = []
@@ -110,17 +115,17 @@ def prune_obd(net, og_net, omega, doAdjust=True):
     min_i     = 0
     min_j     = 0
 
+    # Vectorised argmin; ties resolve to the first index in row-major scan
+    # order (np.argmin), matching an explicit per-entry scan.
     for l, (layer, h_layer) in enumerate(zip(net, H_diag_layers)):
-        for i in range(layer.W.shape[0]):
-            for j in range(layer.W.shape[1]):
-                if layer.mask[i, j] == 0.0:
-                    continue
-                score = 0.5 * float(h_layer[i, j]) * float(layer.W[i, j]) ** 2
-                if score < min_score:
-                    min_score = score
-                    min_layer = l
-                    min_i     = i
-                    min_j     = j
+        scores = 0.5 * np.asarray(h_layer) * np.asarray(layer.W) ** 2
+        scores[np.asarray(layer.mask) == 0.0] = np.inf
+        flat  = int(np.argmin(scores))
+        score = float(scores.flat[flat])
+        if score < min_score:
+            min_score = score
+            min_layer = l
+            min_i, min_j = (int(v) for v in np.unravel_index(flat, scores.shape))
 
     prune_time_s = time.perf_counter() - prune_t0
 

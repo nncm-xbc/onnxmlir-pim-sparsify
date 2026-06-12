@@ -70,8 +70,20 @@ def _hessian_and_inv(net, og_net, omega):
         pred = batched_predict(new_net, omega)
         return jnp.sum((pred - og_out) ** 2)
 
-    H_jax  = jax.hessian(d_of_W_flat)(W_flat)
-    H      = np.array(H_jax)
+    # Chunked Hessian: jax.hessian vmaps all N basis vectors at once, which
+    # OOMs the GPU (N x B x out intermediate). Compute H column-blocks via
+    # vmapped Hessian-vector products in chunks instead (H is symmetric, so
+    # the HVP results can be stacked as rows). Minimal fix, 2026-06-12.
+    grad_f = jax.grad(d_of_W_flat)
+    _hvp_chunk = jax.jit(jax.vmap(lambda v: jax.jvp(grad_f, (W_flat,), (v,))[1]))
+    _CHUNK = 240  # divides 2160; bounded memory per chunk
+    rows = []
+    for s in range(0, N, _CHUNK):
+        basis = np.zeros((min(_CHUNK, N - s), N), dtype=np.array(W_flat).dtype)
+        for k in range(basis.shape[0]):
+            basis[k, s + k] = 1.0
+        rows.append(np.array(_hvp_chunk(jnp.array(basis))))
+    H = np.concatenate(rows, axis=0)
     H_reg  = H + _LAMBDA_REG * np.eye(N)
     H_inv  = np.linalg.inv(H_reg)
 
@@ -95,54 +107,33 @@ def prune_obs(net, og_net, omega):
 
     H, H_inv, W_shapes, W_flat = _hessian_and_inv(net, og_net, omega)
 
-    # Build flat index → (layer, i, j) map for active weights
-    idx      = 0
-    flat_idx_to_loc = {}  # flat_index → (layer, i, j)
-    for l, shape in enumerate(W_shapes):
-        for i in range(shape[0]):
-            for j in range(shape[1]):
-                flat_idx_to_loc[idx] = (l, i, j)
-                idx += 1
+    N           = len(W_flat)
+    active_flat = np.concatenate([np.asarray(l.mask).ravel() != 0.0 for l in net])
+    if not active_flat.any():
+        raise ValueError("No non-zero weights left — network is fully pruned.")
 
-    N = len(W_flat)
-
-    # Build flat active-weight mask
-    active_flat = np.zeros(N, dtype=bool)
-    idx = 0
-    for layer in net:
-        for i in range(layer.W.shape[0]):
-            for j in range(layer.W.shape[1]):
-                if layer.mask[i, j] != 0.0:
-                    active_flat[idx] = True
-                idx += 1
-
-    # Score each active weight; only consider entries with positive H_inv diagonal
+    # Score active weights with positive H_inv diagonal (negative diagonal:
+    # saddle-point artefact). Ties resolve to the first flat index
+    # (np.argmin), matching an explicit scan.
+    diag      = np.diag(H_inv)
+    scores    = np.asarray(W_flat) ** 2 / (2.0 * diag)
+    valid     = active_flat & (diag > 0)
     min_score = float('inf')
-    best_q    = -1   # -1 = no valid OBS candidate found yet
-    for q in range(N):
-        if not active_flat[q]:
-            continue
-        h_inv_qq = float(H_inv[q, q])
-        if h_inv_qq <= 0:
-            continue  # negative diagonal: saddle-point artefact, skip
-        score = float(W_flat[q]) ** 2 / (2.0 * h_inv_qq)
-        if score < min_score:
-            min_score = score
-            best_q    = q
-
-    if best_q == -1:
+    if valid.any():
+        best_q    = int(np.argmin(np.where(valid, scores, np.inf)))
+        min_score = float(scores[best_q])
+    else:
         # Degenerate fallback: no valid OBS candidate (H ill-conditioned).
         # Fall back to magnitude selection — zero-only, no weight update.
-        min_mag = float('inf')
-        for q in range(N):
-            if not active_flat[q]:
-                continue
-            mag = abs(float(W_flat[q]))
-            if mag < min_mag:
-                min_mag = mag
-                best_q  = q
+        mags   = np.where(active_flat, np.abs(np.asarray(W_flat)), np.inf)
+        best_q = int(np.argmin(mags))
 
-    min_layer, min_i, min_j = flat_idx_to_loc[best_q]
+    # Map flat index back to (layer, i, j)
+    layer_sizes = [s[0] * s[1] for s in W_shapes]
+    offsets     = np.cumsum([0] + layer_sizes)
+    min_layer   = int(np.searchsorted(offsets, best_q, side='right') - 1)
+    min_i, min_j = (int(v) for v in
+                    np.unravel_index(best_q - offsets[min_layer], W_shapes[min_layer]))
     prune_time_s = time.perf_counter() - prune_t0
 
     h_inv_qq = float(H_inv[best_q, best_q])
@@ -157,15 +148,13 @@ def prune_obs(net, og_net, omega):
     else:
         delta_w = np.zeros(N)
 
-    # Apply update, zero the pruned weight, re-enforce masks
+    # Apply update (active weights only), zero the pruned weight, re-enforce masks
     result_net = clone_network(net)
     idx = 0
-    for l, layer in enumerate(result_net):
-        for i in range(layer.W.shape[0]):
-            for j in range(layer.W.shape[1]):
-                if layer.mask[i, j] != 0.0:
-                    layer.W[i, j] += float(delta_w[idx])
-                idx += 1
+    for layer in result_net:
+        dw = delta_w[idx:idx + layer.W.size].reshape(layer.W.shape)
+        layer.W[...] += np.where(np.asarray(layer.mask) != 0.0, dw, 0.0)
+        idx += layer.W.size
 
     # Zero the pruned weight and its mask
     result_net[min_layer].W[min_i, min_j] = 0.0
