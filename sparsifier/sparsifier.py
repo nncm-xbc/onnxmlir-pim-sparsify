@@ -169,7 +169,10 @@ def prune(net, og_net, omega, activations=None, doAdjust=True):
         )
         min_dist = float(min_dist)
     else:
-        og_out = batched_predict(og_net, omega)  # fixed reference — forward it once
+        # NOTE: keep the two-network d() here (not _d_to_outputs with a
+        # precomputed og forward): evaluating both networks in one JIT
+        # program makes a zero-effect candidate compare *exactly* equal to
+        # the original, which the min_dist == 0 early exit depends on.
         search_done = False
         for idx, layer in enumerate(net):
             for i in range(layer.W.shape[0]):
@@ -181,7 +184,7 @@ def prune(net, og_net, omega, activations=None, doAdjust=True):
                     saved_mask = probe_net[idx].mask[i, j]
                     probe_net[idx].W[i, j] = 0.0
                     probe_net[idx].mask[i, j] = 0.0
-                    distance = _d_to_outputs(probe_net, og_out, omega)
+                    distance = d(og_net, probe_net, omega)
                     probe_net[idx].W[i, j] = saved_W
                     probe_net[idx].mask[i, j] = saved_mask
 
