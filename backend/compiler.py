@@ -25,7 +25,6 @@ import struct
 import sys
 
 import jax.numpy as jnp
-import matplotlib.pyplot as plt
 import networkx as nx
 import numpy as np
 import torch
@@ -79,29 +78,6 @@ class Program:
         self.activation_functions = {}
         self.activation_functions['RELU']   = lambda x : jnp.maximum(0.,x)
         self.activation_functions['LINEAR'] = lambda x : x
-        
-    def random_init_weights(self):
-        for layer in range(len(self.topology[:-1])):
-            self.W[layer] = np.random.normal( size = (self.topology[layer + 1] , self.topology[layer] ) )**2
-            size = self.W[layer].shape[0] * self.W[layer].shape[1] 
-            for i in range(size - int(np.sqrt(size))):
-                r = np.random.choice(len(self.W[layer]))
-                c = np.random.choice(len(self.W[layer].T))
-                self.W[layer][r,c] = 0.   # adding some sparsity
-                
-            self.b[layer] = np.random.normal( size = self.topology[layer + 1] )
-
-    def print(self):
-        for i,layer in enumerate(self.topology[:-1]):
-            print("layer %d->%d "%(i,i+1))
-            print("W.shape = %s \t b.shape = %s" % (str(self.W[i].shape),str(self.b[i].shape)))
-            print("Activation functions = %s" % str(self.activation_functions_list[i]))
-
-    def visualize_weights(self):
-        for w in self.W:
-            print(w.shape)
-            plt.figure(figsize=(10,10))
-            plt.imshow(w > 0.)        
 
     def run(self, data):
         layer = data
@@ -111,11 +87,6 @@ class Program:
             f     = self.activation_functions[f_name]
             layer = f(weight @ layer  + bias)
         return layer
-
-
-    def random_test(self):
-        return self.run(np.random.randn(self.topology[0]))
-        
 
 ################################################################################################################################
 #                                                   INTERMEDIATE REPRESENTATION                                                #
@@ -134,11 +105,6 @@ class TreeNode:
     def __init__(self, ID, *args):
         self.id   = ID
         self.sons = list(args)
-
-    def print(self, level=0):
-        print(("\t" * level) + str(self.id))
-        for s in self.sons:
-            s.print(level + 1)
 
     def __str__(self):
         ret = str(self.id)
@@ -162,7 +128,7 @@ class TreeNode:
 #                                    * Program produces a Tree based intermediate representation
 #                                    * which is used by the compiler to generate assembly code.
 
-def IR(program, compile_time_data=True):
+def IR(program):
     """Lower a :class:`Program` to a flat list of :class:`TreeNode` IR statements.
 
     For each layer the IR contains:
@@ -177,7 +143,6 @@ def IR(program, compile_time_data=True):
 
     Args:
         program: source :class:`Program`.
-        compile_time_data: kept for API compatibility; currently unused.
 
     Returns:
         list of :class:`TreeNode` instructions in execution order.
@@ -286,10 +251,6 @@ class TemporaryVariablesStatistics:
         arr = np.array(arr)                                                              # builds a tempstable [ temp | usage ]
         arr = arr[ arr[:,1].argsort()[-1::-1] ]                                          # sort the tempstable by usage  (decreasing)
         return arr
-    
-    def print(self):
-        for t in self.temp_usage_map:
-            print("%d --> %d" % (t , self.temp_usage_map[t]) )
 
 
 class RegisterAllocationData:
@@ -316,39 +277,8 @@ class RegisterAllocationData:
     def get_data(self):
         return self.temp_reg_map
 
-    def rename(self, old_reg_name, new_reg_name):
-        for t in self.temp_reg_map:
-            if self.temp_reg_map[t] == old_reg_name:
-                self.temp_reg_map[t] = new_reg_name
-
-    def get_unitialized_temps(self):
-        return [s for s in self.temp_reg_map if self.temp_reg_map[s].startswith("register_")]
-
-    def get_initialized_registers(self):
-        return [
-            self.temp_reg_map[s]
-            for s in self.temp_reg_map
-            if not self.temp_reg_map[s].startswith("register_")
-        ]
-
     def get_variables_list(self):
         return list(self.temp_reg_map)
-
-    def get_input_temps(self, prev_layer_size):
-        all_vars = np.array(self.get_variables_list())
-        return np.array([
-            [var, self.temp_reg_map[var]] for var in all_vars if var < prev_layer_size
-        ])
-
-    def get_output_temps(self, prev_layer_size):
-        all_vars = np.array(self.get_variables_list())
-        return np.array([
-            [var, self.temp_reg_map[var]] for var in all_vars if var >= prev_layer_size
-        ])
-
-    def print(self):
-        for t in self.temp_reg_map:
-            print(t, "\t", self.temp_reg_map[t])
 
     def contains(self, tmp_name):
         return tmp_name in self.temp_reg_map
@@ -367,10 +297,6 @@ class MemoryAllocationData:
     def insert(self, temp_variable, address):
         self.temp_mem_map[temp_variable] = address
 
-    def batch_set(self, list_of_temps, list_of_addresses):
-        for tmp_id, mem_addr in zip(list_of_temps, list_of_addresses):
-            self.temp_mem_map[tmp_id] = mem_addr
-
     def get_data(self):
         return self.temp_mem_map
 
@@ -379,18 +305,6 @@ class MemoryAllocationData:
 
     def get_variables_list(self):
         return list(self.temp_mem_map)
-
-    def get_input_temps(self, prev_layer_size):
-        all_vars = np.array(self.get_variables_list())
-        return all_vars[all_vars < prev_layer_size]
-
-    def get_output_temps(self, prev_layer_size):
-        all_vars = np.array(self.get_variables_list())
-        return all_vars[all_vars >= prev_layer_size]
-
-    def print(self):
-        for t in self.temp_mem_map:
-            print(t, "\t", self.temp_mem_map[t])
 
 
 ################################################################################################################################
@@ -436,69 +350,37 @@ class MemoryToRegisterFlow:
     def __init__(self, mem_address, register):
         self.mem_address = mem_address
         self.register    = register
-    def print(self):
-        print("M2R flow\t%s\t->\t%s" % (self.mem_address,self.register))
-        
-        
+
+
 class RegisterToMemoryFlow:
     """Move from a VFP register into a memory slot at a layer boundary."""
 
     def __init__(self, register, mem_address):
         self.mem_address = mem_address
         self.register    = register
-    def print(self):
-        print("R2M flow\t%s\t->\t%s" % (self.register,self.mem_address))
-
-class RegisterRenameFlow:
-    """Resolve a placeholder register name to a concrete VFP register."""
-
-    def __init__(self, register_placeholder, register_name):
-        self.register_placeholder = register_placeholder
-        self.register_name        = register_name
-    def print(self):
-        print("R2R flow\t%s\t->\t%s" % (self.register_placeholder,self.register_name))
 
 
 class InterfaceCommunication:
     """Set of data flows between two consecutive matrix-multiplication blocks.
 
-    Holds three lists, one per flow kind: register-to-memory,
-    memory-to-register, and register-rename. Consumed by
-    :func:`interfaces_manager` to emit the assembly that materialises the
-    layer boundary.
+    Holds two lists, one per flow kind: register-to-memory and
+    memory-to-register. Consumed by :func:`interfaces_manager` to emit the
+    assembly that materialises the layer boundary.
     """
 
     def __init__(self):
         self.reg2mem_flows = list()
         self.mem2reg_flows = list()
-        self.reg2reg_flows = list()
     def insert(self,flow):
-        if type(flow).__name__ == "RegisterToMemoryFlow":
+        if isinstance(flow, RegisterToMemoryFlow):
             self.reg2mem_flows.append(flow)
-        else:
-            if type(flow).__name__ == "MemoryToRegisterFlow":
-                self.mem2reg_flows.append(flow)
-            else:
-                if type(flow).__name__ == "RegisterRenameFlow":
-                    self.reg2reg_flows.append(flow)
-                    
+        elif isinstance(flow, MemoryToRegisterFlow):
+            self.mem2reg_flows.append(flow)
+
     def get_reg2mem_flows(self):
         return self.reg2mem_flows
     def get_mem2reg_flows(self):
         return self.mem2reg_flows
-    def get_reg2reg_flows(self):
-        return self.reg2reg_flows
-    
-    def print(self):
-        reg2mem = self.get_mem2reg_flows()
-        mem2reg = self.get_reg2mem_flows()
-        reg2reg = self.get_reg2reg_flows()
-        for rm in reg2mem:
-            rm.print()
-        for mr in mem2reg:
-            mr.print()
-        for rr in reg2reg:
-            rr.print()
 
 ################################################################################################################################
 #                                                        ALLOCATOR CLASS                                                       #
@@ -1114,7 +996,7 @@ def interfaces_manager(interface, buffer_register_1):
 ################################################################################################################################
 
 
-def compiler(network, registers, sparsify=False, r7offset=0):
+def compiler(network, registers, r7offset=0):
     """Emit ARMv7-A VFP assembly for a :class:`Program` network.
 
     Lowers ``network`` to IR, allocates registers and memory, then walks
@@ -1126,8 +1008,6 @@ def compiler(network, registers, sparsify=False, r7offset=0):
         registers: VFP register names. ``registers[0]`` is reserved as the
             zero register, ``registers[1..2]`` as scratch buffers, and the
             rest are available for allocation.
-        sparsify: kept for API compatibility; sparsity is already exploited
-            during IR generation.
         r7offset: byte offset loaded into ``r7`` at function entry. Memory
             slots are addressed as ``[r7, #<addr>]``.
 
@@ -1335,7 +1215,7 @@ def compiler(network, registers, sparsify=False, r7offset=0):
 
 
 
-def executable(network, registers, sparsify=False, r7offset=0x1000000):
+def executable(network, registers, r7offset=0x1000000):
     """Wrap :func:`compiler`'s output in a self-contained ARMv7 function.
 
     Adds a ``network_inference`` symbol with the C ABI ``(float* input,
@@ -1346,7 +1226,7 @@ def executable(network, registers, sparsify=False, r7offset=0x1000000):
     Returns:
         Tuple ``(asm_code, executable_code, input_mask, output_mask)``.
     """
-    asm_code, input_mask, output_mask = compiler(network, registers, sparsify, r7offset)
+    asm_code, input_mask, output_mask = compiler(network, registers, r7offset)
 
     formatted_asm = asm_code
     formatted_asm = formatted_asm.replace("VMUL.F32 s", "vmul.f32 s")

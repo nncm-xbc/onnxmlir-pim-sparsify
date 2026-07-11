@@ -26,7 +26,6 @@ class Network(nn.Module):
             with torch.no_grad():
                 layer.weight.copy_(torch.tensor(network.W[i], dtype=torch.float32))
                 layer.bias.copy_(torch.tensor(network.b[i], dtype=torch.float32))
-            setattr(self, f'fc{i+1}', layer)
             self.layers.append(layer)
 
     def forward(self, x):

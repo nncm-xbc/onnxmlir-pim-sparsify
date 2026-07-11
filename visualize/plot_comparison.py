@@ -6,11 +6,9 @@ Usage:
     python visualize/plot_comparison.py artifacts/comparison/
     python visualize/plot_comparison.py artifacts/comparison/ --out artifacts/comparison/
 """
-import sys, os
-import pandas as pd
-import matplotlib
-matplotlib.use('Agg')
-import matplotlib.pyplot as plt
+import sys
+
+from visualize.viz_common import plt, save_fig, load_method_csvs
 
 # Consistent colours per strategy name
 _COLORS = {
@@ -32,16 +30,12 @@ def plot_strategy_comparison(csv_dir: str, out_dir: str = None,
     Note: with the Agg backend (set at module level), show=True is a silent no-op.
     The returned Figure is closed (deregistered from pyplot); use fig.savefig() directly.
     """
-    csv_files = sorted(f for f in os.listdir(csv_dir) if f.endswith('.csv'))
-    if not csv_files:
-        raise ValueError(f'No CSV files found in: {csv_dir}')
+    loaded = load_method_csvs(csv_dir)
 
     fig, axes = plt.subplots(1, 3, figsize=(14, 5))
     fig.suptitle('Strategy Comparison', fontsize=13)
 
-    for fname in csv_files:
-        name = fname[:-4]   # strip .csv
-        df   = pd.read_csv(os.path.join(csv_dir, fname))
+    for name, df in loaded:
         c    = _COLORS.get(name, None)
         kw   = dict(label=name, color=c, linewidth=1.5)
 
@@ -66,15 +60,7 @@ def plot_strategy_comparison(csv_dir: str, out_dir: str = None,
         ax.legend(fontsize=8)
 
     plt.tight_layout()
-    if out_dir:
-        os.makedirs(out_dir, exist_ok=True)
-        out_path = os.path.join(out_dir, 'strategy_comparison.png')
-        fig.savefig(out_path, dpi=150)
-        print(f'Saved: {out_path}')
-    if show:
-        plt.show()
-    plt.close(fig)
-    return fig
+    return save_fig(fig, out_dir, 'strategy_comparison.png', show=show)
 
 
 if __name__ == '__main__':

@@ -13,27 +13,10 @@ Usage:
 """
 import sys, os
 import numpy as np
-import matplotlib
-matplotlib.use('Agg')
-import matplotlib.pyplot as plt
+from visualize.viz_common import plt, save_fig, load_checkpoint_W
+# Backwards-compatible alias (identical signature/behavior) for external importers.
+from visualize.viz_common import load_checkpoint_W as load_checkpoint
 import matplotlib.colors as mcolors
-
-
-def load_checkpoint(ckpt_dir: str) -> list:
-    """
-    Load all W_i.npy arrays from a checkpoint directory.
-
-    Returns list of np.ndarray ordered by layer index.
-    Raises FileNotFoundError if ckpt_dir does not exist.
-    Raises ValueError if no W_*.npy files are found.
-    """
-    if not os.path.isdir(ckpt_dir):
-        raise FileNotFoundError(f"Checkpoint directory not found: {ckpt_dir}")
-    count = sum(1 for f in os.listdir(ckpt_dir)
-                if f.startswith('W_') and f.endswith('.npy'))
-    if count == 0:
-        raise ValueError(f"No W_*.npy files found in: {ckpt_dir}")
-    return [np.load(os.path.join(ckpt_dir, f'W_{i}.npy')) for i in range(count)]
 
 
 def plot_weight_heatmaps(ckpt_dirs: list, step_labels: list = None,
@@ -56,7 +39,7 @@ def plot_weight_heatmaps(ckpt_dirs: list, step_labels: list = None,
     if step_labels is None:
         step_labels = [os.path.basename(d.rstrip('/')) for d in ckpt_dirs]
 
-    checkpoints = [load_checkpoint(d) for d in ckpt_dirs]
+    checkpoints = [load_checkpoint_W(d) for d in ckpt_dirs]
     n_layers = len(checkpoints[0])
     n_ckpts  = len(checkpoints)
 
@@ -94,15 +77,8 @@ def plot_weight_heatmaps(ckpt_dirs: list, step_labels: list = None,
             ax_m.axis('off')
 
     plt.tight_layout()
-    if out_dir:
-        os.makedirs(out_dir, exist_ok=True)
-        out_path = os.path.join(out_dir, 'weight_heatmaps.png')
-        fig.savefig(out_path, dpi=150, bbox_inches='tight')
-        print(f"Saved: {out_path}")
-    if show:
-        plt.show()
-    plt.close(fig)
-    return fig
+    return save_fig(fig, out_dir, 'weight_heatmaps.png', show=show,
+                    bbox_inches='tight')
 
 
 if __name__ == '__main__':

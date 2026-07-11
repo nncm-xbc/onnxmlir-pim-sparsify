@@ -1,4 +1,4 @@
-# Master Thesis TODO List
+# Master Thesis Roadmap
 
 ## Foundational Proofs
 
@@ -277,7 +277,7 @@
 - What is the precise relationship between critical parameters and lottery tickets?
 
 ### Resources Created
-- [Sparsification Stability Approaches](Docs/Proofs/Sparsification_Stability_Approaches.md) - Four detailed proof approaches
+- [Sparsification Stability Approaches](proofs/Sparsification_Stability_Approaches.md) - Four detailed proof approaches
 
 ### Key Concepts to Master
 1. Riemannian metrics on parameter manifolds

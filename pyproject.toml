@@ -1,0 +1,15 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pim-sparsify"
+version = "0.1.0"
+description = "Post-training manifold-distance sparsification of MLPs, with an ARMv7 sparse-inference compiler."
+requires-python = ">=3.10"
+
+# Packages are imported in place (flat layout). Installing editable
+# (`pip install -e .`) puts the repo root on sys.path so first-party
+# imports resolve without per-file sys.path hacks.
+[tool.setuptools]
+packages = ["sparsifier", "mlp", "backend", "benchmark", "visualize"]

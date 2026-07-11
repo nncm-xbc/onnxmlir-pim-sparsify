@@ -1,0 +1,35 @@
+{
+  "name": "e15_magnitude_full",
+  "topology": [
+    196,
+    10,
+    10,
+    10
+  ],
+  "hidden_activation": "relu",
+  "data": {
+    "x_train": "data/X_train_small.csv",
+    "y_train": "data/Y_train_small.csv",
+    "x_test": "data/X_test_small.csv",
+    "y_test": "data/Y_test_small.csv"
+  },
+  "train": {
+    "epochs": 1000,
+    "batch_size": 128,
+    "seed": 0
+  },
+  "sparsify": {
+    "steps": 2160,
+    "do_adjust": true,
+    "omega_samples": 10000,
+    "checkpoint_every": 50
+  },
+  "_experiment": {
+    "id": "E15",
+    "description": "Full-budget (2160-step) version of e09_magnitude_search.json: drive the selector to complete exhaustion of the 2160 prunable weights to locate its empirical collapse (stupidity) point, mirroring e05_stupidity_point for the manifold selector. Same seed-0 dense baseline network (artifact-reuse), B=10000, do_adjust=true.",
+    "literature": [
+      "Han et al. 2015: magnitude pruning competitive when paired with retraining \u2014 this checks whether the same holds with manifold adjust instead",
+      "Molchanov et al. 2019: systematic comparison of magnitude, first-order Taylor, and second-order importance metrics"
+    ]
+  }
+}

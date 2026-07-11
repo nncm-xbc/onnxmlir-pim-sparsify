@@ -1,0 +1,4 @@
+# module                       config
+sparsifier.kwon_sparsifier     experiments/e16_kwon_full.json
+sparsifier.sparsifier          experiments/baseline.json
+sparsifier.neuron_sparsifier   experiments/e11_neuron_baseline.json

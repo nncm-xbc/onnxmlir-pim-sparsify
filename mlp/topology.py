@@ -51,27 +51,3 @@ def load_topology(csv_path: str) -> tuple:
         activations = ["relu"] * (n_layers - 1) + ["linear"]
 
     return sizes, activations
-
-
-def save_topology(csv_path: str, sizes: list, activations: list) -> None:
-    """Write a two-row topology CSV.
-
-    Validates that activations has the correct length (len(sizes) - 1) and
-    that all activation names are in _VALID_ACTIVATIONS.
-    """
-    n_layers = len(sizes) - 1
-    if len(activations) != n_layers:
-        raise ValueError(
-            f"Activations row length {len(activations)} does not match topology "
-            f"weight matrices {n_layers} (len(sizes)-1). They must match."
-        )
-    for act in activations:
-        if act not in _VALID_ACTIVATIONS:
-            raise ValueError(
-                f"Unknown activation '{act}'. "
-                f"Supported: {sorted(_VALID_ACTIVATIONS)}"
-            )
-
-    with open(csv_path, "w") as f:
-        f.write(",".join(str(s) for s in sizes) + "\n")
-        f.write(",".join(activations) + "\n")

@@ -20,7 +20,6 @@ import sys
 import time
 import tracemalloc
 
-sys.path.insert(0, os.path.realpath(os.path.join(os.path.dirname(__file__), '..')))
 
 import numpy as np
 

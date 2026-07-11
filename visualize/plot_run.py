@@ -8,9 +8,8 @@ Usage:
 import sys, os
 import numpy as np
 import pandas as pd
-import matplotlib
-matplotlib.use('Agg')   # non-interactive backend — safe for headless/test environments
-import matplotlib.pyplot as plt
+
+from visualize.viz_common import plt, save_fig
 
 
 def parse_log(log_path: str) -> pd.DataFrame:
@@ -96,15 +95,7 @@ def plot_run(log_path: str, out_dir: str = None, show: bool = True) -> plt.Figur
         ax.set_title('Time per Step')
 
     plt.tight_layout()
-    if out_dir:
-        os.makedirs(out_dir, exist_ok=True)
-        out_path = os.path.join(out_dir, 'run_summary.png')
-        fig.savefig(out_path, dpi=150)
-        print(f"Saved: {out_path}")
-    if show:
-        plt.show()
-    plt.close(fig)
-    return fig
+    return save_fig(fig, out_dir, 'run_summary.png', show=show)
 
 
 if __name__ == '__main__':

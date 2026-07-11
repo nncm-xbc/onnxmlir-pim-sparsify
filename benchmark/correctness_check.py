@@ -6,7 +6,6 @@ Usage:
     python benchmark/correctness_check.py <net_folder> <x_test.csv> <y_test.csv> [n_steps]
 """
 import sys, os, time
-sys.path.insert(0, os.path.realpath(os.path.join(os.path.dirname(__file__), '..')))
 
 import numpy as np
 from mlp.mlp import accuracy, load_network_params

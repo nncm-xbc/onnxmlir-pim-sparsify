@@ -7,6 +7,7 @@ Usage (run while sparsifier is running in another terminal):
     python visualize/live_view.py path/to/sparsification_log.csv path/to/checkpoints/
     python visualize/live_view.py path/to/sparsification_log.csv --target-sparsity 0.9
 """
+import datetime
 import sys
 import os
 
@@ -16,16 +17,10 @@ _PACE_WINDOW = 20
 
 
 def _format_seconds(s: float) -> str:
-    """Pretty-print a duration in seconds as e.g. '1h 12m 03s'."""
+    """Pretty-print a duration in seconds as e.g. '1:12:03'."""
     if s != s or s < 0:                          # NaN guard
         return '—'
-    h = int(s // 3600); s -= h * 3600
-    m = int(s // 60);   s -= m * 60
-    if h > 0:
-        return f'{h}h {m:02d}m {int(s):02d}s'
-    if m > 0:
-        return f'{m}m {int(s):02d}s'
-    return f'{s:.1f}s'
+    return str(datetime.timedelta(seconds=int(s)))
 
 
 def live_view(log_path: str, ckpt_base: str = None, interval_ms: int = 2000,

@@ -15,7 +15,6 @@ Usage:
         --strategies exhaustive gradient_top_10
 """
 import sys, os, csv, argparse
-sys.path.insert(0, os.path.realpath(os.path.join(os.path.dirname(__file__), '..')))
 
 import numpy as np
 from mlp.mlp import accuracy, load_network_params

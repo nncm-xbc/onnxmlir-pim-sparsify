@@ -1,126 +1,87 @@
-# Manifold-Based Neural Network Sparsification with an Optimizing ARM Compiler
+# Manifold-Based Neural Network Sparsification with an ARM Compiler
 
-The project develops a **post-training sparsification algorithm** grounded in manifold geometry, together with an **optimizing compiler** that translates the resulting sparse networks into ARM assembly code. The target application is inference on resource-constrained architectures where memory bandwidth is the primary bottleneck, including Processing-In-Memory (PIM) devices.
+Post-training **sparsification** of MLPs grounded in manifold geometry, plus an
+**optimizing compiler** that lowers the resulting sparse networks to ARMv7 assembly.
+The target is inference on memory-bandwidth-bound hardware — in particular
+Processing-In-Memory (PIM) devices. MSc thesis, Politecnico di Milano (HPC Engineering).
 
----
+## Idea in one paragraph
 
-## Overview
+An already-trained network can be made sparser **without retraining** if you measure how
+much a weight matters by its effect on the network's *function*, not its magnitude. Parameter
+space is isomorphic to ℝ^N, and the map from parameters to functions induces a semantic distance
 
-Modern neural network pruning methods are largely training-time: they guide the training procedure toward sparse solutions. This work takes a different approach and asks how an already-trained network can be made sparser **without retraining**, while preserving its function as closely as possible.
+$$d_{\mathscr W}(w, w') = \mathbb{E}_{x \sim \mathcal U(\Omega)}\big[\lVert \mathcal F(w)(x) - \mathcal F(w')(x)\rVert^2\big]$$
 
-The answer is grounded in a geometric observation. The space of network parameters $\mathscr{W}$ is isomorphic to $\mathbb{R}^N$, and the map $\mathcal{F}: \mathscr{W} \to \mathscr{F}$ that converts parameters into functions induces a natural **semantic distance** between nearby networks:
+which is differentiable (ReLU nets are piecewise linear). The core algorithm greedily removes the
+weight whose zeroing least increases $d_{\mathscr W}$, then runs a gradient **adjust** step on the
+surviving weights (mask fixed) to compensate. Full derivation: [`docs/algorithm.md`](docs/algorithm.md).
 
-$$
-d_{\mathscr{W}}(w, w') = \mathbb{E}_{x \sim \mathcal{U}(\Omega)}\left[\|\mathcal{F}(w)(x) - \mathcal{F}(w')(x)\|^2\right]
-$$
+## What's here
 
-Because $\mathcal{F}$ is differentiable almost everywhere (ReLU networks are piecewise linear), this distance is differentiable with respect to the parameters. The sparsification algorithm exploits this: at each step it removes the weight whose zeroing minimally perturbs the function, then uses gradient descent on $d_{\mathscr{W}}$ to adjust the remaining weights to compensate. The full mathematical development is in [`Docs/Sparsifying algorithm, mathematics and explanation.md`](Docs/Sparsifying%20algorithm%2C%20mathematics%20and%20explanation.md).
+- **`sparsifier/`** — the sparsification framework. A shared driver (`runner.py`) runs the
+  prune→adjust→log loop; each method supplies only its candidate-scoring rule:
+  | module | method |
+  |---|---|
+  | `sparsifier.py` | manifold-distance greedy prune (the core method) + `prune`/`adjust`/`d` primitives |
+  | `magnitude_sparsifier.py` | magnitude pruning baseline |
+  | `kwon_sparsifier.py` | Kwon 2022 Fisher-importance |
+  | `obd_sparsifier.py` / `obs_sparsifier.py` | Optimal Brain Damage / Surgeon |
+  | `lazarevich_sparsifier.py` | manifold prune with Ω drawn from data |
+  | `neuron_sparsifier.py` | structured (whole-neuron) pruning |
+- **`backend/`** — IR generation, register/memory allocation (memory placement via simulated
+  annealing), and ARMv7-A VFP assembly emission. Only non-zero weights emit instructions.
+- **`prune_ext/`** — C++/pybind extension that accelerates candidate evaluation in the hot loop.
+- **`mlp/`** — JAX MLP primitives (forward, training, parameter I/O, topology).
+- **`scripts/`** — entry points: `dataeng.py` (build dataset), `train.py`, `test.py`; `scripts/run/` holds batch experiment shell drivers.
+- **`experiments/`** — one JSON config per experiment (topology, data, train + sparsify params). Configs drive train and sparsify.
+- **`benchmark/`** — correctness checks, strategy comparison, and the sparsifier profiler.
+- **`visualize/`** — plotting scripts (shared helpers in `viz_common.py`) + a live training view.
+- **`tests/`** — pytest suite. **`docs/`** — all documentation (start at [`docs/index.md`](docs/index.md)).
 
----
-
-## What has been implemented
-
-### Sparsification algorithm (`sparsifier/`)
-
-A greedy prune-and-adjust loop operating on a trained dense MLP:
-
-- **Prune step** — evaluates $d_{\mathscr{W}}$ for every candidate single-weight removal and selects the one with minimal impact. Cost is $O(N^{(k)} \cdot B \cdot C)$ per iteration where $N^{(k)}$ is the current non-zero count, $B$ the Monte Carlo batch size, and $C$ the cost of one forward pass.
-- **Adjust step** — runs gradient descent on $d_{\mathscr{W}}$ with the updated sparsity mask fixed, using an adaptive step size. The mask enforces the sparsity constraint automatically: masked parameters receive zero gradient and are never updated.
-- Implemented in JAX for vectorised inference and automatic differentiation.
-- Validated on MNIST: a three-layer MLP retains **~95% test accuracy** after sparsification on a 14×14 input.
-
-### Compiler (`backend/`)
-
-An optimising compiler that takes a sparse MLP (as weight matrices) and produces ARM assembly code. The compilation pipeline has two main phases:
-
-1. **IR generation** — the network is lowered to a lightweight tree-based intermediate representation. Only non-zero weights generate instructions, directly exploiting the sparsity.
-
-2. **Register and memory allocation** — a two-stage optimisation targeting minimal data movement:
-    - _Register allocation_ tracks the lifetime of every intermediate value and assigns ARM registers to minimise spills.
-    - _Memory allocation_ places values that must cross layer boundaries using a moving-window density metric, optimised by a **simulated annealing** procedure. The goal is to keep the number of memory transfers $\mathcal{O}(R)$ where $R$ is the register count — independent of the network width.
-
-The compiler outputs an ARM assembly file and two interface descriptors (input and output masks) specifying how a peripheral driver should handle memory and registers to feed data into and read results from the network. The output has been validated with the **Unicorn ARM emulator**.
-
-### Formal proofs (`Docs/Proofs/`)
-
-A Lean 4 formalisation is in progress, targeting three theoretical results:
-
-- **Sparsification stability** — bounding $d_{\mathscr{F}}$ between the sparsified outputs of two close initialisations after $K$ iterations.
-- **Stupidity point** — the existence of a critical sparsity level $s^*$ beyond which the network cannot maintain its function regardless of adjustment.
-- **Weight pruning vs. neuron pruning** — a formal comparison of the two strategies within the manifold framework.
-
-Proof strategy and background are documented in [`Docs/Proofs/Sparsification_Stability_Approaches.md`](Docs/Proofs/Sparsification_Stability_Approaches.md).
-
----
-
-## Repository structure
-
-```
-mlp/            Pure JAX MLP primitives (forward pass, training, parameter I/O)
-sparsifier/     Manifold-based sparsification algorithm
-backend/        IR, register/memory allocation, ARM code generation
-scripts/        Entry-point scripts: dataeng.py, train.py, test.py
-data/           MNIST source CSVs and processed dataset splits
-artifacts/      Trained parameters, sparsified parameters, compiled outputs
-Docs/
-  Sparsifying algorithm, mathematics and explanation.md   Mathematical foundations
-  Interfaces Explanation.pdf                              Memory allocation spec
-  Proofs/                                                 Lean 4 formalisation
-  Notebooks/                                              Development notebooks
-```
-
----
-
-## Running the pipeline
-
-All commands are run from the repository root. Pre-trained parameters and a processed dataset are already present in `artifacts/` and `data/` respectively, so steps 1 and 2 are optional.
-
-**1. Prepare the dataset** _(optional — only needed to change the network topology)_
-
-```bash
-python3 scripts/dataeng.py network_topology.csv
-```
-
-Reads `data/mnist_train.csv` and `data/mnist_test.csv`, resizes images to the resolution specified in `data/network_topology.csv`, and writes the processed splits back to `data/`. The topology file stores the first-layer size as its square root (e.g. `14` for a 196-input layer) to enforce a square input shape.
-
-**2. Train a dense network** _(optional)_
-
-```bash
-python3 scripts/train.py <output_folder> data/network_topology.csv
-```
-
-Trains a dense MLP and saves weights and biases (`W_i.npy`, `b_i.npy`) to `<output_folder>`.
-
-**3. Sparsify**
-
-```bash
-python3 -m sparsifier.sparsifier <params_folder> data/X_test_small.csv data/Y_test_small.csv
-```
-
-Runs the prune-and-adjust loop for 500 iterations. The validation set is printed at each step for monitoring only — it does not influence the pruning. Sparsified parameters are saved to `<params_folder>/sparsified/`.
-
-**4. Compile**
-
-```bash
-python3 -m backend.compiler <params_folder>/sparsified <output_name>
-```
-
-Produces `<output_name>` (ARM assembly), `<output_name>_exe` (executable form), and `<output_name>.onnx` / `<output_name>.pt` (for cross-validation).
-
-**5. Evaluate**
-
-```bash
-python3 scripts/test.py <model_file> data/X_test_small.csv data/Y_test_small.csv
-```
-
-Accepts `.pt`, `.onnx`, or a compiled parameter folder.
-
----
-
-## Dependencies
+## Setup
 
 ```bash
 pip install -r requirements.txt
+pip install -e .        # puts the packages on the path; no PYTHONPATH juggling
 ```
 
-See `requirements.txt` for the full list. JAX defaults to CPU; for GPU replace `jaxlib` with `jax[cuda12]`.
+JAX defaults to CPU; for GPU swap `jaxlib` → `jax[cuda12]` in `requirements.txt`.
+The `prune_ext` extension is optional (pure-Python fallback exists); build it with `prune_ext/build.sh`.
+
+## Pipeline
+
+All commands run from the repo root. Trained params live in `artifacts/<name>/`; processed data in `data/`.
+
+```bash
+# 1. (optional) build a downsized MNIST split for a topology
+python scripts/dataeng.py network_topology.csv
+
+# 2. (optional) train a dense MLP from an experiment config
+python scripts/train.py experiments/baseline.json
+
+# 3. sparsify — pick any method module; config sets steps, Ω samples, adjust, etc.
+python -m sparsifier.sparsifier experiments/baseline.json      # core manifold method
+python -m sparsifier.magnitude_sparsifier experiments/e15_magnitude_full.json
+#   → writes sparsified params + a per-step CSV log under artifacts/<name>/<method>_sparsified/
+
+# 4. compile a sparse network to ARMv7 assembly (+ .onnx/.pt for cross-check)
+python -m backend.compiler artifacts/<name>/sparsified out/model
+
+# 5. evaluate a .pt / .onnx / params folder
+python scripts/test.py <model> data/X_test_small.csv data/Y_test_small.csv
+```
+
+Batch drivers for the full experiment matrix are in `scripts/run/`. Plots:
+`python visualize/plot_run.py artifacts/<name>/<method>_sparsified/<log>.csv`.
+
+## Tests
+
+```bash
+python -m pytest -q
+```
+
+## Documentation
+
+See [`docs/index.md`](docs/index.md) — algorithm & math, thesis roadmap, the open-work/experiment
+backlog ([`docs/todo.md`](docs/todo.md)), design specs, notebooks, and the Lean stability proofs.

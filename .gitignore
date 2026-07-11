@@ -15,3 +15,6 @@ artifacts/*
 images/
 prune_ext/build
 prune_ext/build/*
+
+*.egg-info/
+build/

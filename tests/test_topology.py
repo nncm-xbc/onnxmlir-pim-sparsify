@@ -3,7 +3,7 @@ import os, pytest
 import sys
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 
-from mlp.topology import load_topology, save_topology
+from mlp.topology import load_topology
 
 def write_csv(tmp_path, content):
     p = tmp_path / "topology.csv"
@@ -36,30 +36,12 @@ def test_load_unknown_activation_raises(tmp_path):
     with pytest.raises(ValueError, match="swish"):
         load_topology(path)
 
-def test_save_load_roundtrip(tmp_path):
-    """save_topology → load_topology is a round-trip."""
-    path = str(tmp_path / "topo.csv")
-    save_topology(path, [196, 64, 10], ["tanh", "linear"])
-    sizes, acts = load_topology(path)
-    assert sizes == [196, 64, 10]
-    assert acts == ["tanh", "linear"]
-
 def test_load_four_layer(tmp_path):
     """Four-layer topology with three activations."""
     path = write_csv(tmp_path, "196,10,10,10\nrelu,relu,linear\n")
     sizes, acts = load_topology(path)
     assert sizes == [196, 10, 10, 10]
     assert acts == ["relu", "relu", "linear"]
-
-def test_save_topology_validates_length(tmp_path):
-    """save_topology rejects activations list with wrong length."""
-    with pytest.raises(ValueError, match="length"):
-        save_topology(str(tmp_path / "t.csv"), [196, 64, 10], ["relu"])
-
-def test_save_topology_validates_unknown_activation(tmp_path):
-    """save_topology rejects unknown activation names."""
-    with pytest.raises(ValueError, match="swish"):
-        save_topology(str(tmp_path / "t.csv"), [196, 64, 10], ["relu", "swish"])
 
 def test_load_empty_file_raises(tmp_path):
     """Empty CSV raises a clear ValueError."""

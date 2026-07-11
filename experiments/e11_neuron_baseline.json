@@ -1,6 +1,11 @@
 {
-  "name": "e11_euron_baseline",
-  "topology": [196, 10, 10, 10],
+  "name": "e11_neuron_baseline",
+  "topology": [
+    196,
+    10,
+    10,
+    10
+  ],
   "hidden_activation": "relu",
   "data": {
     "x_test": "data/X_test_small.csv",

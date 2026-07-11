@@ -15,8 +15,6 @@ import sys
 import time
 from typing import NamedTuple
 
-sys.path.insert(0, os.path.realpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..')))
-
 import numpy as np
 
 from mlp.mlp import Layer, accuracy, load_network_params
@@ -157,8 +155,7 @@ def main():
     print("\t 2. Adjusted — compensate via remaining parameters")
     net = clone_network(og_net)
 
-    if not os.path.exists(output_folder):
-        os.makedirs(output_folder)
+    os.makedirs(output_folder, exist_ok=True)
 
     log_path = os.path.join(output_folder, 'neuron_sparsification_log.csv')
     with open(log_path, 'w', newline='') as log_file:
