@@ -1,3 +1,53 @@
+# Handover: current state (2026-07-11)
+
+Experiment-running was made robust and the experiment backlog was pushed forward.
+The 2026-06 section below is retained for the perf/correctness technical record
+(fp-contract, two-network `d()`, verification methodology) — still valid.
+
+## Runner robustness (why e16 hung, and the fix)
+`e16_kwon_full` "ran for days" in June because a single JAX/CUDA call **wedged on
+the 8 GB GPU** (froze ~step 1900/2160, no crash, blocked the whole driver chain).
+It was **not** a code loop — `adjust()` is bounded. Fix = external watchdog +
+resumable checkpoints, now in the tree:
+- **`scripts/run/supervise.py`** — runs a queue (full command lines; derives the
+  monitored dir from the `.json` arg) serially, SIGKILLs the process group after
+  `STALL_TIMEOUT` (default 600 s; campaign uses 900) of no artifact progress,
+  relaunches (runner auto-resumes), gives up after `MAX_RESTARTS`. **Use
+  `JAX_PLATFORMS=cuda`, not `gpu`** (this build errors on `gpu`).
+- **`sparsifier/runner.py`** — checkpoints now save **W and b** (adjust mutates
+  b; mask = W!=0 on load); auto-resumes from the latest checkpoint carrying
+  `b_*.npy` and truncates the CSV to match; Ω is **seeded** (`omega_seed` /
+  `train.seed`). `RESUME=0` forces fresh. Old W-only checkpoints are ignored →
+  re-runs of old-code experiments start fresh (safe).
+Verified: kill-mid-run resumes to a contiguous log; watchdog stall→kill→give-up
+tested. CSV output verified byte-compatible with the old per-file `main()`s.
+
+## Experiments — done since June
+- Re-ran the three incomplete/corrupted ones clean under the watchdog:
+  **e16_kwon_full** 2160/2160, **baseline** 500/500 (23.1% sparsity, acc 0.917;
+  old log was NUL-corrupted), **e11_neuron** 15/15.
+- All 25 pre-existing logs health-checked: no corruption, contiguous, sane.
+- **Headline method-comparison figure** rendered (`images/comparison/method_comparison.png`
+  via `visualize/plot_methods.py`; assemble `artifacts/comparison/<method>.csv`
+  from the 500-step logs). Manifold is competitive with the best baseline (OBD) on
+  accuracy-vs-sparsity while much cheaper on the compute-vs-sparsity Pareto.
+
+## Experiments — RUNNING (batch launched 2026-07-11, serial GPU under the watchdog)
+Queue: `scripts/run/queue_batch.txt`, log in the session scratch `campaign.log`.
+Authored by parallel agents, all committed (`8becc03`):
+1. **Neuron-level variants** magnitude/OBD/OBS — `sparsifier/neuron_{magnitude,obd,obs}_sparsifier.py`, configs e20/e21/e22 (15 steps each).
+2. **E6 tanh/sigmoid retrain** with the fixed Xavier init (`mlp/mlp.py`; ReLU untouched) → re-sparsify. Acceptance: dense val_acc ≥ 0.85.
+3. **Full-budget 2160-step** OBD/OBS/Lazarevich stupidity runs — e17/e18/e19.
+4. **Multi-seed sweep** of e03/e04 ablations, seeds 0–4 (20 configs, train+sparsify each).
+5. **MC-variance** characterisation — `scripts/mc_variance.py` → `artifacts/mc_variance/results.csv`.
+Longest tail: OBD-full (~4 h) is queued last. Expect ~half a day total.
+
+## Still pending (explicitly deferred by the user, run later)
+- **Open investigation**: width-200 collapse (0.916→0.662).
+- **New datasets**: e07 full-res 784 MNIST, Fashion-MNIST, synthetic Gaussian, CIFAR-10 (need loaders / dataeng changes first).
+
+---
+
 # Handover: `fable-profiling` branch (2026-06-12/13)
 
 Performance + correctness overhaul of the sparsification stack. All work is
