@@ -1,0 +1,36 @@
+{
+  "name": "e19_lazarevich_full",
+  "topology": [
+    196,
+    10,
+    10,
+    10
+  ],
+  "hidden_activation": "relu",
+  "data": {
+    "x_train": "data/X_train_small.csv",
+    "y_train": "data/Y_train_small.csv",
+    "x_test": "data/X_test_small.csv",
+    "y_test": "data/Y_test_small.csv"
+  },
+  "train": {
+    "epochs": 1000,
+    "batch_size": 128,
+    "seed": 0
+  },
+  "sparsify": {
+    "steps": 2160,
+    "do_adjust": true,
+    "omega_samples": 10000,
+    "omega_source": "data",
+    "checkpoint_every": 50
+  },
+  "_experiment": {
+    "id": "E19_LAZAREVICH_FULL",
+    "description": "Full-budget (2160-step) Lazarevich (data-Omega) stupidity-point run.",
+    "literature": [
+      "Lazarevich et al. 2021 (layer-wise calibration): uses a small unlabelled calibration set to reconstruct each layer \u2014 the direct data-using baseline this experiment compares against",
+      "Thesis sec:discussion: explicitly claims data-free operation as a strength \u2014 this experiment is the empirical test of that claim"
+    ]
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "name": "e21_neuron_obd",
+  "topology": [
+    196,
+    10,
+    10,
+    10
+  ],
+  "hidden_activation": "relu",
+  "data": {
+    "x_test": "data/X_test_small.csv",
+    "y_test": "data/Y_test_small.csv"
+  },
+  "sparsify": {
+    "steps": 15,
+    "do_adjust": true,
+    "omega_samples": 10000,
+    "checkpoint_every": 5
+  },
+  "_experiment": {
+    "id": "e21_neuron_obd",
+    "description": "Neuron-level OBD pruning on the reference [196,10,10,10] network. Each step removes the hidden neuron (row of W[l] + column of W[l+1] + bias b[l][i]) with the smallest summed OBD saliency (sum of 0.5*H_ii*w^2 over the neuron's active weights, H = diagonal Hessian of d_W), then adjusts. Shares neuron_sparsification_log.csv schema with e11 (manifold) / e20 (magnitude) / e22 (obs).",
+    "literature": []
+  }
+}

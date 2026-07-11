@@ -87,7 +87,7 @@ def fig_seed_variance(out_dir):
     _seed_band(ax2, dfs, 'd_W', 'C3', 'rolling median, 4 seeds', logy=True, smooth=25)
     ax2.set_yscale('log')
     ax2.set_xlabel('pruning step')
-    ax2.set_ylabel(r'$d_{\mathscr{W}}$ (per-step weight change)')
+    ax2.set_ylabel(r'$\|\Delta w\|_2$ per step')
     ax2.set_title('(b) parameter-space step size', loc='left')
     ax2.legend(frameon=False, loc='lower left')
 
@@ -212,7 +212,7 @@ def fig_stupidity(out_dir):
     ax1.legend(frameon=False, fontsize=7, loc='lower left')
 
     ax2.set_yscale('log')
-    ax2.set_ylabel(r'$d_{\mathscr{W}}$ per step (rolling median)')
+    ax2.set_ylabel(r'$\|\Delta w\|_2$ per step (rolling median)')
     ax2.set_xlabel('pruning step')
     ax2.set_title('(b) parameter-space step size', loc='left')
 

@@ -16,8 +16,15 @@ class Layer(NamedTuple):
     mask: np.ndarray  # sparsity mask, shape (n_out, n_in), 1=active 0=pruned
 
 # Randomly initialize weights and biases for a single dense layer.
+# Activation-aware: relu keeps the legacy fixed tiny scale + random bias
+# (byte-identical to prior runs). Saturating activations (tanh/sigmoid) use
+# Xavier/Glorot-normal W (std = sqrt(2/(fan_in+fan_out))) and ZERO bias, or
+# they never escape the flat saturated region and the dense baseline collapses.
 def random_layer_params(m, n, key, scale=1e-2):
   w_key, b_key = random.split(key)
+  if hidden_activation in (jnp.tanh, jax.nn.sigmoid):
+    xavier = jnp.sqrt(2.0 / (m + n))
+    return xavier * random.normal(w_key, (n, m)), jnp.zeros((n,))
   return scale * random.normal(w_key, (n, m)), scale * random.normal(b_key, (n,))
 
 # Initialize all layers for a fully-connected network with the given layer sizes.

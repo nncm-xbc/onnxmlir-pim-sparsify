@@ -1,0 +1,25 @@
+{
+  "name": "e22_neuron_obs",
+  "topology": [
+    196,
+    10,
+    10,
+    10
+  ],
+  "hidden_activation": "relu",
+  "data": {
+    "x_test": "data/X_test_small.csv",
+    "y_test": "data/Y_test_small.csv"
+  },
+  "sparsify": {
+    "steps": 15,
+    "do_adjust": true,
+    "omega_samples": 10000,
+    "checkpoint_every": 5
+  },
+  "_experiment": {
+    "id": "e22_neuron_obs",
+    "description": "Neuron-level OBS pruning on the reference [196,10,10,10] network. Each step removes the hidden neuron (row of W[l] + column of W[l+1] + bias b[l][i]) with the smallest summed OBS saliency (sum of w_q^2/(2*[H^-1]_qq) over the neuron's active, positive-diagonal weights; diagonal group approximation), then adjusts via gradient descent on d_W (not the OBS closed-form group update). Shares neuron_sparsification_log.csv schema with e11 (manifold) / e20 (magnitude) / e21 (obd).",
+    "literature": []
+  }
+}

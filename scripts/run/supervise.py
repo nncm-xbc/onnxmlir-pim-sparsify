@@ -12,9 +12,12 @@ relaunch. runner.py then auto-resumes from its newest checkpoint, so at most
 
 Usage:
     python scripts/run/supervise.py QUEUE.txt
-where each non-comment line of QUEUE.txt is "MODULE CONFIG", e.g.
-    sparsifier.kwon_sparsifier experiments/e16_kwon_full.json
-    sparsifier.sparsifier      experiments/baseline.json
+where each non-comment line of QUEUE.txt is a FULL command to run; the
+experiment's artifact dir is derived from the `.json` config argument (the last
+token ending in .json). Runs strictly in order, so a train line can precede the
+sparsify line that consumes it. Examples:
+    python -m sparsifier.kwon_sparsifier experiments/e16_kwon_full.json
+    python scripts/train.py experiments/e03_width_50_seed_1.json
 
 Env knobs:
     STALL_TIMEOUT  seconds of no artifact progress before kill (default 600)
@@ -25,6 +28,7 @@ JAX_PLATFORMS and everything else in the environment pass through to the child.
 """
 import json
 import os
+import shlex
 import signal
 import subprocess
 import sys
@@ -53,17 +57,20 @@ def newest_mtime(path):
     return m
 
 
-def run_one(module, config):
+def run_one(cmd):
+    """cmd: list of argv tokens. The config is the last token ending in .json."""
+    config = next((t for t in reversed(cmd) if t.endswith('.json')), None)
+    if config is None:
+        log("SKIP (no .json config in command): %s" % ' '.join(cmd))
+        return False
     name = json.load(open(os.path.join(REPO, config)))['name']
     exp_dir = os.path.join(REPO, 'artifacts', name)
     os.makedirs(exp_dir, exist_ok=True)
+    label = ' '.join(cmd)
 
     for attempt in range(MAX_RESTARTS + 1):
-        log("launch %s %s (attempt %d/%d)" % (module, config, attempt, MAX_RESTARTS))
-        p = subprocess.Popen(
-            [sys.executable, '-u', '-m', module, config],
-            cwd=REPO, preexec_fn=os.setsid,
-        )
+        log("launch [%s] (attempt %d/%d)" % (label, attempt, MAX_RESTARTS))
+        p = subprocess.Popen(cmd, cwd=REPO, preexec_fn=os.setsid)
         last_seen = newest_mtime(exp_dir)
         last_progress = time.time()
         killed = False
@@ -105,14 +112,18 @@ def main():
     if len(sys.argv) != 2:
         sys.exit(__doc__)
     with open(sys.argv[1]) as f:
-        queue = [ln.split() for ln in f
+        queue = [shlex.split(ln) for ln in f
                  if ln.strip() and not ln.lstrip().startswith('#')]
-    results = {}
-    for module, config in queue:
-        results[config] = run_one(module, config)
+    # normalize a leading 'python'/'python3' to this interpreter
+    for cmd in queue:
+        if cmd and cmd[0] in ('python', 'python3'):
+            cmd[0] = sys.executable
+    results = []
+    for cmd in queue:
+        results.append((' '.join(cmd), run_one(cmd)))
     log("QUEUE COMPLETE: " + ", ".join(
-        "%s=%s" % (c, 'ok' if ok else 'FAILED') for c, ok in results.items()))
-    sys.exit(0 if all(results.values()) else 1)
+        "%s=%s" % (lbl, 'ok' if ok else 'FAILED') for lbl, ok in results))
+    sys.exit(0 if all(ok for _, ok in results) else 1)
 
 
 if __name__ == '__main__':

@@ -1,0 +1,34 @@
+{
+  "name": "e17_obd_full",
+  "topology": [
+    196,
+    10,
+    10,
+    10
+  ],
+  "hidden_activation": "relu",
+  "data": {
+    "x_train": "data/X_train_small.csv",
+    "y_train": "data/Y_train_small.csv",
+    "x_test": "data/X_test_small.csv",
+    "y_test": "data/Y_test_small.csv"
+  },
+  "train": {
+    "epochs": 1000,
+    "batch_size": 128,
+    "seed": 0
+  },
+  "sparsify": {
+    "steps": 2160,
+    "do_adjust": true,
+    "omega_samples": 10000,
+    "checkpoint_every": 50
+  },
+  "_experiment": {
+    "id": "E17_OBD_FULL",
+    "description": "Full-budget (2160-step) OBD stupidity-point run, mirroring e05/e15/e16.",
+    "literature": [
+      "LeCun, Denker & Solla 1989 (lecun1989optimal): Optimal Brain Damage \u2014 second-order saliency for structured pruning"
+    ]
+  }
+}

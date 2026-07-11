@@ -1,0 +1,56 @@
+# Master batch queue — run serially under the watchdog. Order: fast/high-value first, longest (OBD-full) last.
+# --- neuron-level variants (15 steps, fast) ---
+python -m sparsifier.neuron_magnitude_sparsifier experiments/e20_neuron_magnitude.json
+python -m sparsifier.neuron_obd_sparsifier experiments/e21_neuron_obd.json
+python -m sparsifier.neuron_obs_sparsifier experiments/e22_neuron_obs.json
+# --- E6 tanh/sigmoid retrain (Xavier init) + re-sparsify ---
+python scripts/train.py experiments/e06_act_tanh.json
+python -m sparsifier.sparsifier experiments/e06_act_tanh.json
+python scripts/train.py experiments/e06_act_sigmoid.json
+python -m sparsifier.sparsifier experiments/e06_act_sigmoid.json
+# --- full-budget Lazarevich (fast, data-Omega) ---
+python -m sparsifier.lazarevich_sparsifier experiments/e19_lazarevich_full.json
+# --- multi-seed sweep (train + sparsify per config) ---
+python scripts/train.py experiments/e03_width_50_seed_0.json
+python -m sparsifier.sparsifier experiments/e03_width_50_seed_0.json
+python scripts/train.py experiments/e03_width_50_seed_1.json
+python -m sparsifier.sparsifier experiments/e03_width_50_seed_1.json
+python scripts/train.py experiments/e03_width_50_seed_2.json
+python -m sparsifier.sparsifier experiments/e03_width_50_seed_2.json
+python scripts/train.py experiments/e03_width_50_seed_3.json
+python -m sparsifier.sparsifier experiments/e03_width_50_seed_3.json
+python scripts/train.py experiments/e03_width_50_seed_4.json
+python -m sparsifier.sparsifier experiments/e03_width_50_seed_4.json
+python scripts/train.py experiments/e03_width_200_seed_0.json
+python -m sparsifier.sparsifier experiments/e03_width_200_seed_0.json
+python scripts/train.py experiments/e03_width_200_seed_1.json
+python -m sparsifier.sparsifier experiments/e03_width_200_seed_1.json
+python scripts/train.py experiments/e03_width_200_seed_2.json
+python -m sparsifier.sparsifier experiments/e03_width_200_seed_2.json
+python scripts/train.py experiments/e03_width_200_seed_3.json
+python -m sparsifier.sparsifier experiments/e03_width_200_seed_3.json
+python scripts/train.py experiments/e03_width_200_seed_4.json
+python -m sparsifier.sparsifier experiments/e03_width_200_seed_4.json
+python scripts/train.py experiments/e04_depth_2layer_seed_0.json
+python -m sparsifier.sparsifier experiments/e04_depth_2layer_seed_0.json
+python scripts/train.py experiments/e04_depth_2layer_seed_1.json
+python -m sparsifier.sparsifier experiments/e04_depth_2layer_seed_1.json
+python scripts/train.py experiments/e04_depth_2layer_seed_2.json
+python -m sparsifier.sparsifier experiments/e04_depth_2layer_seed_2.json
+python scripts/train.py experiments/e04_depth_2layer_seed_3.json
+python -m sparsifier.sparsifier experiments/e04_depth_2layer_seed_3.json
+python scripts/train.py experiments/e04_depth_2layer_seed_4.json
+python -m sparsifier.sparsifier experiments/e04_depth_2layer_seed_4.json
+python scripts/train.py experiments/e04_depth_4layer_seed_0.json
+python -m sparsifier.sparsifier experiments/e04_depth_4layer_seed_0.json
+python scripts/train.py experiments/e04_depth_4layer_seed_1.json
+python -m sparsifier.sparsifier experiments/e04_depth_4layer_seed_1.json
+python scripts/train.py experiments/e04_depth_4layer_seed_2.json
+python -m sparsifier.sparsifier experiments/e04_depth_4layer_seed_2.json
+python scripts/train.py experiments/e04_depth_4layer_seed_3.json
+python -m sparsifier.sparsifier experiments/e04_depth_4layer_seed_3.json
+python scripts/train.py experiments/e04_depth_4layer_seed_4.json
+python -m sparsifier.sparsifier experiments/e04_depth_4layer_seed_4.json
+# --- full-budget OBS then OBD (longest, last) ---
+python -m sparsifier.obs_sparsifier experiments/e18_obs_full.json
+python -m sparsifier.obd_sparsifier experiments/e17_obd_full.json

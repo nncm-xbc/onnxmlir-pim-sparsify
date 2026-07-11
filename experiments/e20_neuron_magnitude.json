@@ -1,0 +1,25 @@
+{
+  "name": "e20_neuron_magnitude",
+  "topology": [
+    196,
+    10,
+    10,
+    10
+  ],
+  "hidden_activation": "relu",
+  "data": {
+    "x_test": "data/X_test_small.csv",
+    "y_test": "data/Y_test_small.csv"
+  },
+  "sparsify": {
+    "steps": 15,
+    "do_adjust": true,
+    "omega_samples": 10000,
+    "checkpoint_every": 5
+  },
+  "_experiment": {
+    "id": "e20_neuron_magnitude",
+    "description": "Neuron-level MAGNITUDE pruning on the reference [196,10,10,10] network. Structured counterpart to the weight-level magnitude ablation: each step removes the hidden neuron (row of W[l] + column of W[l+1] + bias b[l][i]) with the smallest mean(|w|) over its active weights, then adjusts via gradient descent on d_W. Shares neuron_sparsification_log.csv schema with e11 (manifold) / e21 (obd) / e22 (obs) for direct comparison of the selection criterion.",
+    "literature": []
+  }
+}
