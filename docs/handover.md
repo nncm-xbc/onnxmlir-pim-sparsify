@@ -32,19 +32,40 @@ tested. CSV output verified byte-compatible with the old per-file `main()`s.
   from the 500-step logs). Manifold is competitive with the best baseline (OBD) on
   accuracy-vs-sparsity while much cheaper on the compute-vs-sparsity Pareto.
 
-## Experiments — RUNNING (batch launched 2026-07-11, serial GPU under the watchdog)
-Queue: `scripts/run/queue_batch.txt`, log in the session scratch `campaign.log`.
-Authored by parallel agents, all committed (`8becc03`):
-1. **Neuron-level variants** magnitude/OBD/OBS — `sparsifier/neuron_{magnitude,obd,obs}_sparsifier.py`, configs e20/e21/e22 (15 steps each).
-2. **E6 tanh/sigmoid retrain** with the fixed Xavier init (`mlp/mlp.py`; ReLU untouched) → re-sparsify. Acceptance: dense val_acc ≥ 0.85.
-3. **Full-budget 2160-step** OBD/OBS/Lazarevich stupidity runs — e17/e18/e19.
-4. **Multi-seed sweep** of e03/e04 ablations, seeds 0–4 (20 configs, train+sparsify each).
-5. **MC-variance** characterisation — `scripts/mc_variance.py` → `artifacts/mc_variance/results.csv`.
-Longest tail: OBD-full (~4 h) is queued last. Expect ~half a day total.
+## Experiments — batch DONE (2026-07-13, all 50 jobs rc=0, 0 stalls/retries/failures)
+Queue `scripts/run/queue_batch.txt`; code committed `8becc03`. All 28 new logs
+health-checked (0 NUL, contiguous, sane). Results:
+- **Full-budget stupidity runs** (2160 steps) e17_obd_full / e18_obs_full /
+  e19_lazarevich_full — all collapse to acc ≈ 0.087–0.089 at 99.95% sparsity,
+  matching e05/e15/e16. The stupidity-point set now covers all 6 selectors.
+- **Neuron-level variants** (15 steps, vs e11 manifold-neuron acc 0.256@70%):
+  OBD-neuron **0.257@70%** (≈ manifold, best), OBS-neuron 0.091@70% (collapses),
+  magnitude-neuron 0.087@100% (collapses). → neuron-level pruning needs a
+  second-order/manifold criterion; magnitude is not enough structurally.
+- **Multi-seed sweep** (final val_acc, mean±std over seeds 0–4):
+  width_50 0.926±0.020 (3.9% sp); width_200 0.962±0.004 (0.6% sp, ~undent);
+  **depth_2layer 0.800±0.132** (24% sp — very high cross-seed variance, range
+  0.555–0.922, a real fragility finding); depth_4layer 0.129±0.006 (collapsed
+  every seed). Bands ready for the seed-variance figure (`plot_seeds.py`).
+- **MC-variance**: `artifacts/mc_variance/results.csv` (21000 rows = 7 B ×
+  100 samples × 30 candidates) for `plot_mc_variance.py`.
+- **E6 Xavier retrain — PARTIAL, acceptance NOT met.** Activation-aware Xavier
+  init lifted tanh dense 0.30→**0.62** and sigmoid 0.13→**0.30**, but both are
+  still < 0.85. Root cause is deeper than init: **inputs are unnormalised**
+  (range ≈ [-30, 281], mean 33) so tanh/sigmoid first-layer pre-activations
+  saturate (ReLU is scale-tolerant, they are not). tanh's curve is still slowly
+  climbing at epoch 999 (plateau ~0.62). Real fix = normalise inputs (e.g. /255
+  or standardise) for the non-ReLU configs, then retrain; likely also needs the
+  Ω sampler range adjusted to match. NOT yet done.
 
-## Still pending (explicitly deferred by the user, run later)
-- **Open investigation**: width-200 collapse (0.916→0.662).
-- **New datasets**: e07 full-res 784 MNIST, Fashion-MNIST, synthetic Gaussian, CIFAR-10 (need loaders / dataeng changes first).
+## Still pending
+- **E6 follow-up (new)**: input normalisation for tanh/sigmoid, then retrain +
+  re-sparsify (see above). Init fix is in; scaling fix is not.
+- **Open investigation** (user-deferred): width-200 collapse (0.916→0.662); the
+  multi-seed width_200 band above is at ~0.6% sparsity (500 steps), so it does
+  not yet probe the collapse — needs a higher step budget.
+- **New datasets** (user-deferred): e07 full-res 784 MNIST, Fashion-MNIST,
+  synthetic Gaussian, CIFAR-10 (need loaders / dataeng changes first).
 
 ---
 
