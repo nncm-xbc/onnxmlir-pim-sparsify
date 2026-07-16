@@ -49,18 +49,34 @@ health-checked (0 NUL, contiguous, sane). Results:
   every seed). Bands ready for the seed-variance figure (`plot_seeds.py`).
 - **MC-variance**: `artifacts/mc_variance/results.csv` (21000 rows = 7 B ×
   100 samples × 30 candidates) for `plot_mc_variance.py`.
-- **E6 Xavier retrain — PARTIAL, acceptance NOT met.** Activation-aware Xavier
-  init lifted tanh dense 0.30→**0.62** and sigmoid 0.13→**0.30**, but both are
-  still < 0.85. Root cause is deeper than init: **inputs are unnormalised**
-  (range ≈ [-30, 281], mean 33) so tanh/sigmoid first-layer pre-activations
-  saturate (ReLU is scale-tolerant, they are not). tanh's curve is still slowly
-  climbing at epoch 999 (plateau ~0.62). Real fix = normalise inputs (e.g. /255
-  or standardise) for the non-ReLU configs, then retrain; likely also needs the
-  Ω sampler range adjusted to match. NOT yet done.
+- **E6 tanh/sigmoid — FIXED (2026-07-16, commit `7d75397`).** Two coupled root
+  causes, both now addressed: (1) **input saturation** — inputs unnormalised
+  (range ≈ [-30, 281]); fixed by per-config `input_scale=255` threaded through
+  train.py, runner.py `x_test`, and `make_omega` (Ω now in the same normalized
+  domain). Default 1.0 keeps ReLU byte-identical. (2) **learning rate** — the
+  `@jit update` baked `step_size=0.01` (tuned for raw [0,255] ReLU gradients),
+  far too small once inputs are normalised; fixed by a per-config
+  `train.learning_rate` (default 0.01) set before the first `update()` trace.
+  Results: **tanh dense 0.912 → sparsified 0.86 @ 23.1%**; **sigmoid dense 0.905
+  → sparsified 0.788 @ 23.1%** (both dense ≥ 0.85 acceptance). Conclusion for the
+  thesis: tanh/sigmoid dense failure was a **training artifact** (init + input
+  scale + LR), not the activations being fundamentally worse. e06 configs use
+  tanh lr=0.5, sigmoid lr=2.0.
+
+## Figures (built 2026-07-16, in gitignored images/)
+- `images/comparison/method_comparison.png` (headline, refreshed)
+- `images/neuron_comparison/neuron_method_comparison.png` (OBD ties manifold)
+- `images/seeds/seed_variance_e0{3,4}_*.png` (4 ablation bands)
+- `images/mc_variance/mc_variance.png` (top-1 stability needs B≥10000)
+- New scripts: `visualize/plot_neuron_methods.py`; `plot_mc_variance.py` top-1 bug fixed.
+
+## Untracked / unresolved
+- `backend/compact.py` — appeared in the tree 2026-07-16, provenance unknown
+  (no agent was scoped to backend/); coherent orphan module (physically removes
+  dead neurons from neuron-pruned nets so the PIM crossbar compiler benefits).
+  Left untracked pending a decision to wire-in+test or delete.
 
 ## Still pending
-- **E6 follow-up (new)**: input normalisation for tanh/sigmoid, then retrain +
-  re-sparsify (see above). Init fix is in; scaling fix is not.
 - **Open investigation** (user-deferred): width-200 collapse (0.916→0.662); the
   multi-seed width_200 band above is at ~0.6% sparsity (500 steps), so it does
   not yet probe the collapse — needs a higher step budget.
