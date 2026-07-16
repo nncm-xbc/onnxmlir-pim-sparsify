@@ -43,9 +43,12 @@ __location__ = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file
 
 # Build a random sample from the input domain Ω (uniform pixel noise).
 # input_dim is inferred from the first layer weight matrix shape (out, in).
-def make_omega(network, n_samples=10000):
+def make_omega(network, n_samples=10000, scale=1.0):
     input_dim = network[0].W.shape[1]
-    return np.random.randint(0, 256, size=(n_samples, input_dim)).astype(np.float64)
+    # scale=1.0 (default) keeps the raw [0,255] domain byte-identical; non-ReLU
+    # configs pass scale=255 so Omega lives in the same normalized input domain
+    # the net was trained/evaluated on.
+    return (np.random.randint(0, 256, size=(n_samples, input_dim)) / scale).astype(np.float64)
 
 
 # Estimate the manifold distance between two networks by comparing

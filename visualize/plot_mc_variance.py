@@ -65,12 +65,12 @@ def plot_mc_variance(csv_path: str, out_dir: str = None,
     stabilities = []
     for B in Bs:
         sub = df[df['B'] == B]
-        # For each sample, find the candidate at rank 0 (or 1 if 1-indexed).
-        rank_min = sub['rank'].min()
+        # Top-1 = each sample's own min-rank candidate (grouped per sample_idx,
+        # not a global rank.min() across the whole B-group which biases the
+        # stability fraction when samples don't share the same min rank).
         top1_per_sample = (
-            sub[sub['rank'] == rank_min]
-            .groupby('sample_idx')['candidate_idx']
-            .first()
+            sub.loc[sub.groupby('sample_idx')['rank'].idxmin()]
+            .set_index('sample_idx')['candidate_idx']
         )
         if len(top1_per_sample) == 0:
             stabilities.append(float('nan'))

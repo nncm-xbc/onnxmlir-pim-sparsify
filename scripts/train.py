@@ -34,12 +34,25 @@ def main():
     x_test  = np.genfromtxt(resolve(cfg['data']['x_test']),  delimiter=',', max_rows=1000)
     y_test  = np.genfromtxt(resolve(cfg['data']['y_test']),  delimiter=',', max_rows=1000)
 
-    print("Data loaded.")
+    # Input normalization: default 1.0 keeps ReLU experiments byte-identical;
+    # non-ReLU configs (e06 tanh/sigmoid) set input_scale=255 to avoid saturating
+    # the first-layer activations. Must match runner.py / make_omega at sparsify time.
+    input_scale = float(cfg.get('input_scale', 1.0))
+    x_train = x_train / input_scale
+    x_test  = x_test / input_scale
+
+    print("Data loaded. (input_scale=%.1f)" % input_scale)
     print("\tX_train.shape = %s" % str(x_train.shape))
     print("\tX_test.shape  = %s" % str(x_test.shape))
 
     import mlp.mlp as _mlp
     _mlp.hidden_activation = _mlp._ACTS[cfg.get('hidden_activation', 'relu')]
+    # Learning rate override: default 0.01 keeps ReLU experiments unchanged.
+    # Must be set before the first update() call, which JIT-traces step_size in.
+    # Normalized-input (tanh/sigmoid) configs need a larger lr (0.01 is tuned for
+    # the raw [0,255] ReLU gradient scale).
+    _mlp.step_size = float(cfg['train'].get('learning_rate', 0.01))
+    print("Learning rate: %.4f" % _mlp.step_size)
 
     layer_sizes = cfg['topology']
     epochs      = cfg['train']['epochs']

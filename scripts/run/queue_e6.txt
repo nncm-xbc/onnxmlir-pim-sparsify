@@ -1,0 +1,5 @@
+# E6 retrain with input normalization (input_scale=255) then re-sparsify
+python scripts/train.py experiments/e06_act_tanh.json
+python -m sparsifier.sparsifier experiments/e06_act_tanh.json
+python scripts/train.py experiments/e06_act_sigmoid.json
+python -m sparsifier.sparsifier experiments/e06_act_sigmoid.json

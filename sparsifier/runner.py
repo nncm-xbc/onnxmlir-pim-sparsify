@@ -60,16 +60,17 @@ def _truncate_log(log_path, keep_through_step):
         f.writelines(kept)
 
 
-def _build_omega(og_net, x_test, sp, omega_source):
+def _build_omega(og_net, x_test, sp, omega_source, scale=1.0):
     if omega_source == "data":
         # Lazarevich: real calibration images as Omega instead of noise.
+        # x_test is already scaled by the caller, so data-Omega stays consistent.
         n_omega = min(sp['omega_samples'], len(x_test))
         if n_omega < sp['omega_samples']:
             print("WARNING: omega_samples=%d requested but only %d calibration images available; using all %d." % (sp['omega_samples'], len(x_test), n_omega))
         omega = x_test[:n_omega].astype(np.float64)
         print("Omega: %d real calibration images (data-driven)" % n_omega)
         return omega
-    return make_omega(og_net, n_samples=sp['omega_samples'])
+    return make_omega(og_net, n_samples=sp['omega_samples'], scale=scale)
 
 
 def run_sparsifier(cfg_path, prune_fn, *, output_subdir, log_name,
@@ -90,6 +91,12 @@ def run_sparsifier(cfg_path, prune_fn, *, output_subdir, log_name,
     x_test = np.genfromtxt(resolve(cfg['data']['x_test']), delimiter=',', max_rows=1000)
     y_test = np.genfromtxt(resolve(cfg['data']['y_test']), delimiter=',', max_rows=1000)
 
+    # Input normalization: default 1.0 keeps ReLU experiments byte-identical;
+    # non-ReLU configs (e06 tanh/sigmoid) set input_scale=255 so the net sees the
+    # same normalized inputs at train, accuracy-eval, and Omega-sampling time.
+    input_scale = float(cfg.get('input_scale', 1.0))
+    x_test = x_test / input_scale
+
     sp = cfg['sparsify']
 
     # Set hidden activation before the first JAX trace.
@@ -109,7 +116,7 @@ def run_sparsifier(cfg_path, prune_fn, *, output_subdir, log_name,
     # Deterministic Omega so a resumed run reproduces the same sample as the
     # interrupted one (and for reproducibility generally). Was previously unseeded.
     np.random.seed(int(sp.get('omega_seed', cfg.get('train', {}).get('seed', 0))))
-    omega = _build_omega(og_net, x_test, sp, omega_source)
+    omega = _build_omega(og_net, x_test, sp, omega_source, scale=input_scale)
     print(
         "Perturbation distance (sanity check): %.4e"
         % float(d(og_net, [
