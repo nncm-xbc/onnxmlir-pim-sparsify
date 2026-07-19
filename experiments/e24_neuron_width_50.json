@@ -1,0 +1,25 @@
+{
+  "name": "e24_neuron_width_50",
+  "topology": [
+    196,
+    50,
+    50,
+    10
+  ],
+  "hidden_activation": "relu",
+  "data": {
+    "x_test": "data/X_test_small.csv",
+    "y_test": "data/Y_test_small.csv"
+  },
+  "sparsify": {
+    "steps": 95,
+    "do_adjust": true,
+    "omega_samples": 10000,
+    "checkpoint_every": 10
+  },
+  "_experiment": {
+    "id": "E24_NEURON_WIDTH_50",
+    "description": "Neuron-level (structured) pruning of the CORRECT [196, 50, 50, 10] net to probe a structured stupidity point at width. Reuses the seed-0 dense net from e03_width_50_seed_0. Compare vs e11_neuron_baseline (20 neurons) for a width sweep.",
+    "literature": []
+  }
+}

@@ -1,0 +1,3 @@
+# Neuron-pruning the CORRECT wide nets to probe a structured stupidity point at width
+python -m sparsifier.neuron_sparsifier experiments/e23_neuron_width_200.json
+python -m sparsifier.neuron_sparsifier experiments/e24_neuron_width_50.json

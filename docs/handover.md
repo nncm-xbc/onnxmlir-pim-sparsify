@@ -76,10 +76,26 @@ health-checked (0 NUL, contiguous, sane). Results:
   dead neurons from neuron-pruned nets so the PIM crossbar compiler benefits).
   Left untracked pending a decision to wire-in+test or delete.
 
+## Width-200 collapse — DEBUNKED (2026-07-19)
+The thesis "open question" *"why does width-200 collapse to 0.662 at 23.1%
+while width-50 survives?"* rests on a **stale-data artifact**, not a real
+phenomenon. Evidence: the old `artifacts/e03_width_200/` dense net is
+**byte-identical to the baseline `[196,10,10,10]` net** (2160 params, shapes
+`[(10,196),(10,10),(10,10)]`) — the config-topology bug (memory, verified
+2026-05-25). So "width-200" sparsified a mislabeled baseline with old
+(pre-determinism-fix) code and read 0.662 at 23.1%. The *correct*
+`[196,200,200,10]` net (81,200 params, freshly trained ×5 seeds) holds 0.969 and
+at 500 steps only reaches 0.6% sparsity — it was never driven near collapse.
+Weight-pruning it to 23.1% is infeasible (~50 s/step × 18,757 steps ≈ 263 h).
+**Action: remove the width-200-collapse claim from the thesis; replace with the
+correct behaviour + this artifact explanation.**
+
+RUNNING (2026-07-19): to probe collapse feasibly, neuron-level pruning of the
+correct wide nets — `e23_neuron_width_200` (400 hidden neurons, 390 steps) and
+`e24_neuron_width_50` (100, 95 steps), vs `e11_neuron_baseline` (20). ~7.9 s/step,
+~1 h total. Gives a structured stupidity-point-vs-width curve.
+
 ## Still pending
-- **Open investigation** (user-deferred): width-200 collapse (0.916→0.662); the
-  multi-seed width_200 band above is at ~0.6% sparsity (500 steps), so it does
-  not yet probe the collapse — needs a higher step budget.
 - **New datasets** (user-deferred): e07 full-res 784 MNIST, Fashion-MNIST,
   synthetic Gaussian, CIFAR-10 (need loaders / dataeng changes first).
 
