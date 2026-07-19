@@ -90,10 +90,26 @@ Weight-pruning it to 23.1% is infeasible (~50 s/step × 18,757 steps ≈ 263 h).
 **Action: remove the width-200-collapse claim from the thesis; replace with the
 correct behaviour + this artifact explanation.**
 
-RUNNING (2026-07-19): to probe collapse feasibly, neuron-level pruning of the
-correct wide nets — `e23_neuron_width_200` (400 hidden neurons, 390 steps) and
-`e24_neuron_width_50` (100, 95 steps), vs `e11_neuron_baseline` (20). ~7.9 s/step,
-~1 h total. Gives a structured stupidity-point-vs-width curve.
+RESULT (2026-07-20, all healthy): structured (neuron) pruning of the correct
+wide nets — `e23_neuron_width_200` (400 neurons, 390 steps), `e24_neuron_width_50`
+(100, 95), vs `e11_neuron_baseline` (20). Figure: `images/width_neuron/`.
+val_acc at matched neuron-sparsity:
+
+| sparsity | baseline(20) | width_50(100) | width_200(400) |
+|---|---|---|---|
+| dense | 0.916 | 0.945 | 0.969 |
+| 50%   | 0.683 | 0.569 | 0.519 |
+| 70%   | **0.256** (cliff) | 0.396 | 0.459 |
+| 90%   | — | 0.163 | 0.327 |
+| final | 0.256 @70% | 0.145 @94% | 0.279 @97% |
+
+**Corrected conclusion: there is NO width-200 collapse pathology — the opposite.**
+The narrow baseline shows the sharpest stupidity-cliff (~65-70%); wider nets
+degrade more gradually with a longer graceful tail (width_200 still 0.28 at 97%
+neuron-sparsity). Consistent with over-parameterisation/redundancy, opposite of
+the debunked "width-200 collapses" claim. Mid-range (25-50%) the narrow net is
+marginally more accurate, so there is a mild crossover. This is the correct
+width story for the experiments chapter.
 
 ## Still pending
 - **New datasets** (user-deferred): e07 full-res 784 MNIST, Fashion-MNIST,
