@@ -334,13 +334,38 @@ def fig_neuron_vs_weight(out_dir):
     _save(fig, out_dir, 'fig_neuron_vs_weight')
 
 
+def fig_neuron_width(out_dir):
+    """Structured (neuron) pruning across widths: accuracy vs neuron-sparsity for
+    the CORRECT [196,W,W,10] nets, W in {10,50,200} (e11/e24/e23). Supersedes the
+    debunked weight-level 'width-200 collapse' (that run was a mislabeled baseline;
+    see docs/handover.md). Shows wider nets degrade more gracefully."""
+    runs = [
+        ('e11_neuron_baseline', 'width 10 (20 neurons)',  'C0'),
+        ('e24_neuron_width_50', 'width 50 (100 neurons)', 'C1'),
+        ('e23_neuron_width_200', 'width 200 (400 neurons)', 'C3'),
+    ]
+    fig, ax = plt.subplots(figsize=(5.5, 3.2))
+    for run, label, color in runs:
+        d = _load(run, 'neuron_sparsified', 'neuron_sparsification_log.csv')
+        if d is not None:
+            ax.plot(d['neuron_sparsity'], d['val_acc'], color=color, lw=1.2, label=label)
+    ax.axhline(0.1, color='gray', lw=0.6, ls=':')
+    ax.text(0.02, 0.115, 'chance level', fontsize=6.5, color='gray')
+    ax.set_xlabel('neuron sparsity (fraction of hidden neurons removed)')
+    ax.set_ylabel('validation accuracy')
+    ax.set_xlim(0, 1)
+    ax.set_ylim(0, 1)
+    ax.legend(frameon=False, fontsize=7, loc='upper right')
+    _save(fig, out_dir, 'fig_neuron_width')
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--out', default=OUT_DEFAULT)
     ap.add_argument('--only', default=None,
-                    help='comma list: seed,methods,stupidity,arch,neuron')
+                    help='comma list: seed,methods,stupidity,arch,neuron,nwidth')
     args = ap.parse_args()
-    todo = set(args.only.split(',')) if args.only else {'seed', 'methods', 'stupidity', 'arch', 'neuron'}
+    todo = set(args.only.split(',')) if args.only else {'seed', 'methods', 'stupidity', 'arch', 'neuron', 'nwidth'}
     if 'seed' in todo:
         fig_seed_variance(args.out)
     if 'methods' in todo:
@@ -351,6 +376,8 @@ def main():
         fig_architecture(args.out)
     if 'neuron' in todo:
         fig_neuron_vs_weight(args.out)
+    if 'nwidth' in todo:
+        fig_neuron_width(args.out)
 
 
 if __name__ == '__main__':
