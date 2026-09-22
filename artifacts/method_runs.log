@@ -1,0 +1,28 @@
+[12:52:02] START magnitude_sparsifier e09_magnitude_search
+[13:27:24] END magnitude_sparsifier rc=0 elapsed=2122s
+[13:27:24] START kwon_sparsifier e12_kwon
+[17:24:06] START kwon_sparsifier e12_kwon
+[17:24:06] START e05 full rerun (2160 steps)
+[17:24:08] END kwon_sparsifier rc=1 elapsed=2s
+[17:24:08] START obs_sparsifier e14_obs
+[17:24:09] END obs_sparsifier rc=1 elapsed=1s
+[17:24:09] START lazarevich_sparsifier e08_omega_data
+[17:24:10] END lazarevich_sparsifier rc=1 elapsed=1s
+[17:24:10] START obd_sparsifier e13_obd
+[17:24:11] END obd_sparsifier rc=1 elapsed=1s
+[17:24:11] ALL REMAINING METHOD RUNS DONE
+[17:28:07] START kwon_sparsifier e12_kwon (driver2)
+[17:55:58] END kwon_sparsifier rc=0 elapsed=1671s
+[17:55:58] START obs_sparsifier e14_obs (driver2)
+[18:18:03] END obs_sparsifier rc=0 elapsed=1325s
+[18:18:03] START lazarevich_sparsifier e08_omega_data (driver2)
+[18:21:15] END lazarevich_sparsifier rc=0 elapsed=192s
+[18:21:15] START obd_sparsifier e13_obd (driver2)
+[19:17:04] END obd_sparsifier rc=0 elapsed=3349s
+[19:17:04] ALL METHOD RUNS DONE (driver2)
+[19:17:04] START sparsifier e05_stupidity_point (driver2)
+[21:13:31] END sparsifier rc=0 elapsed=6987s
+[21:13:31] DRIVER2 COMPLETE
+[21:13:39] START magnitude_sparsifier e15_magnitude_full (driver3)
+[23:13:44] END magnitude_sparsifier rc=0 elapsed=7205s
+[23:13:44] START kwon_sparsifier e16_kwon_full (driver3)

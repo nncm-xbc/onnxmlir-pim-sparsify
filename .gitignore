@@ -10,9 +10,6 @@
 TODO.md
 THESIS_ROADMAP.md
 
-artifacts/
-artifacts/*
-images/
 prune_ext/build
 prune_ext/build/*
 
