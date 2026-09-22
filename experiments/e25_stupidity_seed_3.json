@@ -1,0 +1,36 @@
+{
+  "name": "e25_stupidity_seed_3",
+  "topology": [
+    196,
+    10,
+    10,
+    10
+  ],
+  "hidden_activation": "relu",
+  "data": {
+    "x_train": "data/X_train_small.csv",
+    "y_train": "data/Y_train_small.csv",
+    "x_test": "data/X_test_small.csv",
+    "y_test": "data/Y_test_small.csv"
+  },
+  "train": {
+    "epochs": 1000,
+    "batch_size": 128,
+    "seed": 3
+  },
+  "sparsify": {
+    "steps": 2160,
+    "do_adjust": true,
+    "omega_samples": 10000,
+    "checkpoint_every": 50,
+    "omega_seed": 3
+  },
+  "_experiment": {
+    "id": "E25_seed3",
+    "description": "[seed 3] Seed replicate of E5 (manifold, full 2160-step budget). With e05 (seed 0) gives a 5-seed band on the stupidity point: step/sparsity of collapse, d_manifold shape before it. Training seed and Omega seed both = 3.",
+    "literature": [
+      "Thesis sec_proof_stupidity: formal definition and proof of the stupidity point \u2014 this experiment is the empirical counterpart",
+      "LeCun et al. 1989 (OBD): notes that pruning beyond a certain saliency threshold degrades accuracy catastrophically \u2014 the stupidity point is the manifold-metric analogue of that threshold"
+    ]
+  }
+}

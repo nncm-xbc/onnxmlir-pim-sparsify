@@ -1,0 +1,25 @@
+{
+  "crossbar_size": 128,
+  "topology_before": [
+    196,
+    10,
+    10,
+    10
+  ],
+  "topology_after": [
+    196,
+    3,
+    2,
+    10
+  ],
+  "cost_before": {
+    "crossbars": 4,
+    "cores": 3,
+    "mvmuls": 4
+  },
+  "cost_after": {
+    "crossbars": 4,
+    "cores": 3,
+    "mvmuls": 4
+  }
+}

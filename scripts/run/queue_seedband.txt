@@ -1,0 +1,10 @@
+# D2: seed band for the manifold stupidity point (e05 @ seed 0 is the existing run).
+# ~2 s train + ~1.9 h sparsify each on the RTX 2070S -> ~8 h total. Run: python scripts/run/supervise.py scripts/run/queue_seedband.txt
+python scripts/train.py experiments/e25_stupidity_seed_1.json
+python -m sparsifier.sparsifier experiments/e25_stupidity_seed_1.json
+python scripts/train.py experiments/e25_stupidity_seed_2.json
+python -m sparsifier.sparsifier experiments/e25_stupidity_seed_2.json
+python scripts/train.py experiments/e25_stupidity_seed_3.json
+python -m sparsifier.sparsifier experiments/e25_stupidity_seed_3.json
+python scripts/train.py experiments/e25_stupidity_seed_4.json
+python -m sparsifier.sparsifier experiments/e25_stupidity_seed_4.json
