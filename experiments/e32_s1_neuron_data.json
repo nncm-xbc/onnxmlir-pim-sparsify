@@ -1,0 +1,35 @@
+{
+  "name": "e32_s1_neuron_data",
+  "topology": [
+    196,
+    10,
+    10,
+    10
+  ],
+  "hidden_activation": "relu",
+  "data": {
+    "x_train": "data/s1_teacher/X_train_small.csv",
+    "y_train": "data/s1_teacher/Y_train_small.csv",
+    "x_test": "data/s1_teacher/X_test_small.csv",
+    "y_test": "data/s1_teacher/Y_test_small.csv"
+  },
+  "train": {
+    "epochs": 5000,
+    "batch_size": 128,
+    "seed": 0
+  },
+  "sparsify": {
+    "steps": 15,
+    "do_adjust": true,
+    "omega_samples": 1000,
+    "checkpoint_every": 5,
+    "omega_source": "data"
+  },
+  "_experiment": {
+    "id": "E32",
+    "description": "S1 neuron pruning, data-Omega (x_test). Pair with e31. Same train section as e29 (seeded) so e29/e31/e32 share one dense net. omega_samples=1000 in both e31/e32 (data-Omega is capped at the 1000 loaded x_test rows), so only the Omega distribution differs.",
+    "literature": [
+      "Dataset research: docs/dataset-research.md; data built by scripts/prep_dataset.py"
+    ]
+  }
+}

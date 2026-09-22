@@ -1,0 +1,28 @@
+{
+  "name": "e33_neuron_data",
+  "topology": [
+    196,
+    10,
+    10,
+    10
+  ],
+  "hidden_activation": "relu",
+  "data": {
+    "x_test": "data/X_test_small.csv",
+    "y_test": "data/Y_test_small.csv"
+  },
+  "sparsify": {
+    "steps": 15,
+    "do_adjust": true,
+    "omega_samples": 10000,
+    "checkpoint_every": 5,
+    "omega_source": "data"
+  },
+  "_experiment": {
+    "id": "E33",
+    "description": "MNIST neuron pruning with data-Omega; counterpart of e11 (noise-Omega) at [196,10,10,10] for the Omega-gap comparison. Caveat: data-Omega uses 1000 samples vs e11's 10000 noise samples.",
+    "literature": [
+      "Dataset research: docs/dataset-research.md; data built by scripts/prep_dataset.py"
+    ]
+  }
+}

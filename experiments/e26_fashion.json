@@ -1,0 +1,34 @@
+{
+  "name": "e26_fashion",
+  "topology": [
+    196,
+    10,
+    10,
+    10
+  ],
+  "hidden_activation": "relu",
+  "data": {
+    "x_train": "data/fashion/X_train_small.csv",
+    "y_train": "data/fashion/Y_train_small.csv",
+    "x_test": "data/fashion/X_test_small.csv",
+    "y_test": "data/fashion/Y_test_small.csv"
+  },
+  "train": {
+    "epochs": 1000,
+    "batch_size": 128,
+    "seed": 0
+  },
+  "sparsify": {
+    "steps": 500,
+    "do_adjust": true,
+    "omega_samples": 10000,
+    "checkpoint_every": 50
+  },
+  "_experiment": {
+    "id": "E26",
+    "description": "Fashion-MNIST at 14x14 (same bicubic pipeline as MNIST). Cheapest real generalisation check: does the sparsity/accuracy curve and the border-first input pruning pattern carry over from MNIST?",
+    "literature": [
+      "Dataset research: docs/dataset-research.md; data built by scripts/prep_dataset.py"
+    ]
+  }
+}

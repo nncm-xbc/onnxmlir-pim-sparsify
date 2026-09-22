@@ -1,0 +1,21 @@
+# New datasets + Omega-gap tests (see docs/dataset-research.md). Est. ~3-4 h GPU total.
+# Prereq: python scripts/prep_dataset.py {fashion,kmnist,usps,s1_teacher,s2_planted} (regenerates data/<name>/, ~1 min, deterministic)
+# Run: python scripts/run/supervise.py scripts/run/queue_datasets.txt
+python scripts/train.py experiments/e26_fashion.json
+python -m sparsifier.sparsifier experiments/e26_fashion.json
+python scripts/train.py experiments/e27_kmnist.json
+python -m sparsifier.sparsifier experiments/e27_kmnist.json
+python scripts/train.py experiments/e28_usps.json
+python -m sparsifier.sparsifier experiments/e28_usps.json
+python scripts/train.py experiments/e29_s1_teacher.json
+python -m sparsifier.sparsifier experiments/e29_s1_teacher.json
+python scripts/train.py experiments/e30_s2_planted.json
+python -m sparsifier.sparsifier experiments/e30_s2_planted.json
+python scripts/train.py experiments/e31_s1_neuron_noise.json
+python -m sparsifier.neuron_sparsifier experiments/e31_s1_neuron_noise.json
+python scripts/train.py experiments/e32_s1_neuron_data.json
+python -m sparsifier.neuron_sparsifier experiments/e32_s1_neuron_data.json
+# e33 reuses e11's dense net (copied into artifacts/e33_neuron_data) so the Omega comparison is paired
+python -m sparsifier.neuron_sparsifier experiments/e33_neuron_data.json
+# After the run, confirm e29/e31/e32 trained the identical net (paired Omega test):
+#   cmp artifacts/e29_s1_teacher/W_0.npy artifacts/e31_s1_neuron_noise/W_0.npy && cmp artifacts/e29_s1_teacher/W_0.npy artifacts/e32_s1_neuron_data/W_0.npy

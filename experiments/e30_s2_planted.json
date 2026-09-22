@@ -1,0 +1,34 @@
+{
+  "name": "e30_s2_planted",
+  "topology": [
+    196,
+    10,
+    10,
+    10
+  ],
+  "hidden_activation": "relu",
+  "data": {
+    "x_train": "data/s2_planted/X_train_small.csv",
+    "y_train": "data/s2_planted/Y_train_small.csv",
+    "x_test": "data/s2_planted/X_test_small.csv",
+    "y_test": "data/s2_planted/Y_test_small.csv"
+  },
+  "train": {
+    "epochs": 5000,
+    "batch_size": 128,
+    "seed": 0
+  },
+  "sparsify": {
+    "steps": 500,
+    "do_adjust": true,
+    "omega_samples": 10000,
+    "checkpoint_every": 50
+  },
+  "_experiment": {
+    "id": "E30",
+    "description": "S2 planted structure: make_classification, 20 informative of 196 features at random pixels (data/s2_planted/informative_pixels.npy). Prediction: weights on the 176 useless inputs pruned first; precision@k of surviving inputs vs planted set.",
+    "literature": [
+      "Dataset research: docs/dataset-research.md; data built by scripts/prep_dataset.py"
+    ]
+  }
+}

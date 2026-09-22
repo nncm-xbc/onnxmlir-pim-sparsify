@@ -1,0 +1,34 @@
+{
+  "name": "e29_s1_teacher",
+  "topology": [
+    196,
+    10,
+    10,
+    10
+  ],
+  "hidden_activation": "relu",
+  "data": {
+    "x_train": "data/s1_teacher/X_train_small.csv",
+    "y_train": "data/s1_teacher/Y_train_small.csv",
+    "x_test": "data/s1_teacher/X_test_small.csv",
+    "y_test": "data/s1_teacher/Y_test_small.csv"
+  },
+  "train": {
+    "epochs": 5000,
+    "batch_size": 128,
+    "seed": 0
+  },
+  "sparsify": {
+    "steps": 500,
+    "do_adjust": true,
+    "omega_samples": 10000,
+    "checkpoint_every": 50
+  },
+  "_experiment": {
+    "id": "E29",
+    "description": "S1 structureless null: iid Gaussian inputs, labels from a random [196,10,10,10] ReLU teacher (data/s1_teacher/teacher.npz). Prediction: input-layer survival pattern ~ spatially uniform (Moran's I ~ 0), unlike MNIST.",
+    "literature": [
+      "Dataset research: docs/dataset-research.md; data built by scripts/prep_dataset.py"
+    ]
+  }
+}

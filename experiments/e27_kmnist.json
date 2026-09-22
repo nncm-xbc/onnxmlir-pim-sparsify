@@ -1,0 +1,34 @@
+{
+  "name": "e27_kmnist",
+  "topology": [
+    196,
+    10,
+    10,
+    10
+  ],
+  "hidden_activation": "relu",
+  "data": {
+    "x_train": "data/kmnist/X_train_small.csv",
+    "y_train": "data/kmnist/Y_train_small.csv",
+    "x_test": "data/kmnist/X_test_small.csv",
+    "y_test": "data/kmnist/Y_test_small.csv"
+  },
+  "train": {
+    "epochs": 1000,
+    "batch_size": 128,
+    "seed": 0
+  },
+  "sparsify": {
+    "steps": 500,
+    "do_adjust": true,
+    "omega_samples": 10000,
+    "checkpoint_every": 50
+  },
+  "_experiment": {
+    "id": "E27",
+    "description": "KMNIST (Kuzushiji) at 14x14: harder handwritten 10-class set, same pipeline. Second real generalisation point.",
+    "literature": [
+      "Dataset research: docs/dataset-research.md; data built by scripts/prep_dataset.py"
+    ]
+  }
+}

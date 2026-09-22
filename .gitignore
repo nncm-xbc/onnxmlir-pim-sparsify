@@ -15,3 +15,9 @@ prune_ext/build/*
 
 *.egg-info/
 build/
+data/_downloads/
+data/fashion/
+data/kmnist/
+data/usps/
+data/s1_teacher/
+data/s2_planted/
