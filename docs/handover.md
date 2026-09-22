@@ -70,11 +70,14 @@ health-checked (0 NUL, contiguous, sane). Results:
 - `images/mc_variance/mc_variance.png` (top-1 stability needs B≥10000)
 - New scripts: `visualize/plot_neuron_methods.py`; `plot_mc_variance.py` top-1 bug fixed.
 
-## Untracked / unresolved
-- `backend/compact.py` — appeared in the tree 2026-07-16, provenance unknown
-  (no agent was scoped to backend/); coherent orphan module (physically removes
-  dead neurons from neuron-pruned nets so the PIM crossbar compiler benefits).
-  Left untracked pending a decision to wire-in+test or delete.
+## `backend/compact.py` — wired in (2026-09-22)
+- Physically removes dead neurons from neuron-pruned nets so the PIM crossbar
+  compiler benefits. Now called by every neuron sparsifier after its final save:
+  writes `<run>/compact/{W_i,b_i}.npy` + `crossbar_cost.json` (S=128).
+  Tested in `tests/test_compact.py`. Equivalence is to ~1 ulp, not bit-exact
+  (XLA reduces differently shaped matmuls in a different order).
+- Existing neuron runs (e11, e20–e24) predate this; compact them with
+  `python -m backend.compact <params_in> <params_out>`.
 
 ## Width-200 collapse — DEBUNKED (2026-07-19)
 The thesis "open question" *"why does width-200 collapse to 0.662 at 23.1%

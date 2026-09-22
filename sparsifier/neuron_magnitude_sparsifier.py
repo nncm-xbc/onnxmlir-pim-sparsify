@@ -224,6 +224,9 @@ def run_neuron_sparsifier(cfg_path, prune_fn, output_subdir, log_name, loop_labe
     for i, layer in enumerate(net):
         np.save(os.path.join(output_folder, 'W_%i.npy' % i), layer.W)
         np.save(os.path.join(output_folder, 'b_%i.npy' % i), layer.b)
+    # Shape-shrunk copy for crossbar backends (pruned neurons physically removed).
+    from backend.compact import save_compacted
+    save_compacted(net, output_folder)
 
 
 def _selfcheck():
