@@ -1,0 +1,35 @@
+{
+  "name": "e34_obd_full_seed_1",
+  "topology": [
+    196,
+    10,
+    10,
+    10
+  ],
+  "hidden_activation": "relu",
+  "data": {
+    "x_train": "data/X_train_small.csv",
+    "y_train": "data/Y_train_small.csv",
+    "x_test": "data/X_test_small.csv",
+    "y_test": "data/Y_test_small.csv"
+  },
+  "train": {
+    "epochs": 1000,
+    "batch_size": 128,
+    "seed": 1
+  },
+  "sparsify": {
+    "steps": 2160,
+    "do_adjust": true,
+    "omega_samples": 10000,
+    "checkpoint_every": 50,
+    "omega_seed": 1
+  },
+  "_experiment": {
+    "id": "E34_seed1",
+    "description": "[seed 1] Seed replicate of E17 (OBD with d_W as loss, full 2160-step budget, identical adjustment). Same train seed and Omega seed as e25_stupidity_seed_1, so it starts from the identical dense net and Omega sample: a paired OBD-vs-exhaustive comparison per seed.",
+    "literature": [
+      "LeCun, Denker & Solla 1989 (lecun1989optimal): Optimal Brain Damage \u2014 second-order saliency for structured pruning"
+    ]
+  }
+}

@@ -8,3 +8,8 @@ python scripts/train.py experiments/e25_stupidity_seed_3.json
 python -m sparsifier.sparsifier experiments/e25_stupidity_seed_3.json
 python scripts/train.py experiments/e25_stupidity_seed_4.json
 python -m sparsifier.sparsifier experiments/e25_stupidity_seed_4.json
+# OBD full budget on seeds 1-2 (paired with e25 seeds 1-2; ~4 h each)
+python scripts/train.py experiments/e34_obd_full_seed_1.json
+python -m sparsifier.obd_sparsifier experiments/e34_obd_full_seed_1.json
+python scripts/train.py experiments/e34_obd_full_seed_2.json
+python -m sparsifier.obd_sparsifier experiments/e34_obd_full_seed_2.json
