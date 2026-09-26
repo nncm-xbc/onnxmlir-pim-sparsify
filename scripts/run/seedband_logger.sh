@@ -9,7 +9,7 @@ line() {  # run csv
   tail -1 "$2" | awk -F, -v r="$1" '$1 ~ /^[0-9]+$/ {printf "| %s | %s | %.1f %% | %.3f | %s |\n", r, $1, $4*100, $5, $6}'
 }
 while :; do
-  alive=$(pgrep -f 'supervise.py scripts/run/queue_seedband.txt' >/dev/null && echo 1 || echo 0)
+  alive=$(pgrep -f 'supervise.py artifacts/seedband/queue_resume.txt' >/dev/null && echo 1 || echo 0)
   {
     echo ""
     echo "**$(date '+%Y-%m-%d %H:%M')** — supervisor $([ $alive = 1 ] && echo running || echo exited)"

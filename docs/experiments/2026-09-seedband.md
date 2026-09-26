@@ -100,3 +100,71 @@ unless the seed-band update replaces them.
 
 ## 6. Progress checkpoints (auto-appended)
 
+
+**2026-09-24 23:22** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+
+```
+[supervise 23:22:44] launch [/home/simon/venv/general/bin/python3 scripts/train.py experiments/e25_stupidity_seed_1.json] (attempt 0/5)
+```
+
+**2026-09-24 23:52** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e25_seed_1 | 511 | 23.7 % | 0.786 | 2.979668e+02 |
+
+```
+[supervise 23:22:44] launch [/home/simon/venv/general/bin/python3 scripts/train.py experiments/e25_stupidity_seed_1.json] (attempt 0/5)
+[supervise 23:23:21] DONE experiments/e25_stupidity_seed_1.json rc=0
+[supervise 23:23:21] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e25_stupidity_seed_1.json] (attempt 0/5)
+```
+
+**2026-09-25 00:22** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e25_seed_1 | 1008 | 46.7 % | 0.765 | 5.894597e+03 |
+
+```
+[supervise 23:22:44] launch [/home/simon/venv/general/bin/python3 scripts/train.py experiments/e25_stupidity_seed_1.json] (attempt 0/5)
+[supervise 23:23:21] DONE experiments/e25_stupidity_seed_1.json rc=0
+[supervise 23:23:21] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e25_stupidity_seed_1.json] (attempt 0/5)
+```
+
+**2026-09-25 00:52** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e25_seed_1 | 1519 | 70.3 % | 0.722 | 7.141308e+04 |
+
+```
+[supervise 23:22:44] launch [/home/simon/venv/general/bin/python3 scripts/train.py experiments/e25_stupidity_seed_1.json] (attempt 0/5)
+[supervise 23:23:21] DONE experiments/e25_stupidity_seed_1.json rc=0
+[supervise 23:23:21] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e25_stupidity_seed_1.json] (attempt 0/5)
+```
+
+**2026-09-26 — interruption.** The workstation went down at ~00:52 on 2026-09-25 (last log
+write; host up again 07:56) with e25 seed 1 at step 1 521 / 2 160 (latest checkpoint
+`step_1500`). Supervisor and logger did not survive the reboot. Relaunched with
+`scripts/run/seedband_launch.sh`, which skips training for nets that already exist (retraining
+would replace the reference network mid-run) and resumes from the checkpoint: the runner
+truncates the CSV to step 1 500 and continues from 1 501 with the dense seed-1 net and the same
+seeded Ω. A `@reboot` crontab entry now calls the launcher so a further outage self-heals.
+
+**2026-09-26 18:52** — (re)launch: 11 commands queued
+
+**2026-09-26 18:52** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e25_seed_1 | 1500 | 69.4 % | 0.722 | 6.411619e+04 |
+
+```
+[supervise 23:22:44] launch [/home/simon/venv/general/bin/python3 scripts/train.py experiments/e25_stupidity_seed_1.json] (attempt 0/5)
+[supervise 23:23:21] DONE experiments/e25_stupidity_seed_1.json rc=0
+[supervise 23:23:21] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e25_stupidity_seed_1.json] (attempt 0/5)
+step 1411 | acc=0.7410 | NZ=   749 | sparsity=0.6532 | d_m=4.5264e+04[supervise 18:52:01] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e25_stupidity_seed_1.json] (attempt 0/5)
+```
