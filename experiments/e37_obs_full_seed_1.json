@@ -1,0 +1,35 @@
+{
+  "name": "e37_obs_full_seed_1",
+  "topology": [
+    196,
+    10,
+    10,
+    10
+  ],
+  "hidden_activation": "relu",
+  "data": {
+    "x_train": "data/X_train_small.csv",
+    "y_train": "data/Y_train_small.csv",
+    "x_test": "data/X_test_small.csv",
+    "y_test": "data/Y_test_small.csv"
+  },
+  "train": {
+    "epochs": 1000,
+    "batch_size": 128,
+    "seed": 1
+  },
+  "sparsify": {
+    "steps": 2160,
+    "do_adjust": false,
+    "omega_samples": 10000,
+    "checkpoint_every": 50,
+    "omega_seed": 1
+  },
+  "_experiment": {
+    "id": "e37_obs_full_seed_1",
+    "description": "[seed 1] Seed replicate of e18_obs_full (full 2160-step budget). Dense net and Omega seed identical to e25_stupidity_seed_1 (weights copied), so it is paired with the exhaustive run of that seed.",
+    "literature": [
+      "Hassibi & Stork 1993 (hassibi1993second): Optimal Brain Surgeon \u2014 full-Hessian-inverse saliency with closed-form weight correction"
+    ]
+  }
+}

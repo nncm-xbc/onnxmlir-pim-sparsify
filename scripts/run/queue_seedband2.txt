@@ -1,0 +1,16 @@
+# D2 extension: baseline selectors over seeds, each paired with e25 seed k (dense net copied, not retrained).
+# Order: magnitude, Kwon (open manuscript claims), then OBD 3-4, then OBS. ~30 h. Launch: scripts/run/seedband_launch.sh scripts/run/queue_seedband2.txt
+python -m sparsifier.magnitude_sparsifier experiments/e35_magnitude_full_seed_1.json
+python -m sparsifier.magnitude_sparsifier experiments/e35_magnitude_full_seed_2.json
+python -m sparsifier.magnitude_sparsifier experiments/e35_magnitude_full_seed_3.json
+python -m sparsifier.magnitude_sparsifier experiments/e35_magnitude_full_seed_4.json
+python -m sparsifier.kwon_sparsifier experiments/e36_kwon_full_seed_1.json
+python -m sparsifier.kwon_sparsifier experiments/e36_kwon_full_seed_2.json
+python -m sparsifier.kwon_sparsifier experiments/e36_kwon_full_seed_3.json
+python -m sparsifier.kwon_sparsifier experiments/e36_kwon_full_seed_4.json
+python -m sparsifier.obd_sparsifier experiments/e34_obd_full_seed_3.json
+python -m sparsifier.obd_sparsifier experiments/e34_obd_full_seed_4.json
+python -m sparsifier.obs_sparsifier experiments/e37_obs_full_seed_1.json
+python -m sparsifier.obs_sparsifier experiments/e37_obs_full_seed_2.json
+python -m sparsifier.obs_sparsifier experiments/e37_obs_full_seed_3.json
+python -m sparsifier.obs_sparsifier experiments/e37_obs_full_seed_4.json

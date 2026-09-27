@@ -983,3 +983,47 @@ step 1411 | acc=0.7410 | NZ=   749 | sparsity=0.6532 | d_m=4.5264e+04[supervise 
 **2026-09-27 17:10** — queue complete (09:43). The completion watcher and the logger failed to
 exit because their own command lines matched the supervisor `pgrep` pattern (bug in the
 watcher, not in the runs); both were stopped manually and the `@reboot` crontab entry removed.
+
+---
+
+# Extension (queued 2026-09-27): baseline selectors over seeds
+
+## E.1 Motivation
+
+§5.4 left two manuscript claims resting on single seed-0 runs: the position of **magnitude**
+(collapse 88.9 %, inside the exhaustive seed range) and of the **first-order Kwon score**
+(77.6 %). OBD covers only seeds 0–2, and **OBS** (layer-wise, no adjustment; 71.5 %) is a
+single run. This extension gives every selector five seeds on the same five dense networks.
+
+## E.2 Hypotheses (pre-registered)
+
+- **H5 (magnitude).** Paired over seeds 0–4, collapse(exhaustive) − collapse(magnitude) has
+  mean within ±1 point of zero (tie), i.e. the seed-0 gap of 1.7 points does not persist.
+  *Refuted if* the exhaustive search collapses later on ≥ 4 of 5 seeds with mean gap > 1 point
+  (→ the manuscript may restore an advantage over magnitude).
+- **H6 (first-order).** Kwon collapses ≥ 5 points earlier than the exhaustive search on every
+  seed. *Refuted if* any seed shows a gap < 5 points.
+- **H7 (OBD).** With five paired seeds, mean collapse(OBD) − collapse(exhaustive) stays within
+  one exhaustive std (1.4 points). *Refuted if* it exceeds it (→ "OBD better").
+- **H8 (OBS).** Layer-wise OBS without adjustment collapses before every adjusted selector except
+  Kwon on every seed. *Refuted if* any seed has OBS collapsing after the exhaustive search.
+
+## E.3 Conditions
+
+Identical to §3, except: no training — each run's dense `W_*/b_*` are byte-identical copies of
+`e25_stupidity_seed_k` (checked with `cmp` before launch, 14/14 ✓), and `omega_seed` = k. Seed 0
+of every selector is the existing run (e05, e15, e16, e17, e18).
+
+| Runs | Module | Seeds | Est. per run (from seed 0) |
+|---|---|---|---|
+| e35_magnitude_full_seed_k | magnitude_sparsifier | 1–4 | ~2.0 h |
+| e36_kwon_full_seed_k | kwon_sparsifier | 1–4 | ~2.0 h |
+| e34_obd_full_seed_k | obd_sparsifier | 3–4 | ~3.9 h |
+| e37_obs_full_seed_k | obs_sparsifier (no adjustment) | 1–4 | ~1.6 h |
+
+Total ≈ 30 h, queue `scripts/run/queue_seedband2.txt`, launched with
+`scripts/run/seedband_launch.sh` (now pidfile-based, skips finished runs; `@reboot` hook
+re-installed). Metrics: `scripts/analyze_seedband.py` (extended to five selectors; seed-0
+magnitude/Kwon/OBS rows reproduce the manuscript table exactly).
+
+## E.4 Progress checkpoints (auto-appended)

@@ -1,0 +1,36 @@
+{
+  "name": "e35_magnitude_full_seed_1",
+  "topology": [
+    196,
+    10,
+    10,
+    10
+  ],
+  "hidden_activation": "relu",
+  "data": {
+    "x_train": "data/X_train_small.csv",
+    "y_train": "data/Y_train_small.csv",
+    "x_test": "data/X_test_small.csv",
+    "y_test": "data/Y_test_small.csv"
+  },
+  "train": {
+    "epochs": 1000,
+    "batch_size": 128,
+    "seed": 1
+  },
+  "sparsify": {
+    "steps": 2160,
+    "do_adjust": true,
+    "omega_samples": 10000,
+    "checkpoint_every": 50,
+    "omega_seed": 1
+  },
+  "_experiment": {
+    "id": "e35_magnitude_full_seed_1",
+    "description": "[seed 1] Seed replicate of e15_magnitude_full (full 2160-step budget). Dense net and Omega seed identical to e25_stupidity_seed_1 (weights copied), so it is paired with the exhaustive run of that seed.",
+    "literature": [
+      "Han et al. 2015: magnitude pruning competitive when paired with retraining \u2014 this checks whether the same holds with manifold adjust instead",
+      "Molchanov et al. 2019: systematic comparison of magnitude, first-order Taylor, and second-order importance metrics"
+    ]
+  }
+}

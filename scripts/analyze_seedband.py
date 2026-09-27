@@ -14,10 +14,15 @@ import numpy as np
 import pandas as pd
 
 REPO = os.path.realpath(os.path.join(os.path.dirname(__file__), '..'))
-RUNS = [('exhaustive', s, f'e05_stupidity_point' if s == 0 else f'e25_stupidity_seed_{s}',
-         'sparsified/sparsification_log.csv') for s in range(5)] + \
-       [('obd', s, 'e17_obd_full' if s == 0 else f'e34_obd_full_seed_{s}',
-         'obd_sparsified/obd_sparsification_log.csv') for s in range(3)]
+SEL = {  # selector: (seed-0 run, seed-k run prefix, subdir/log)
+    'exhaustive': ('e05_stupidity_point', 'e25_stupidity_seed_', 'sparsified/sparsification_log.csv'),
+    'obd': ('e17_obd_full', 'e34_obd_full_seed_', 'obd_sparsified/obd_sparsification_log.csv'),
+    'magnitude': ('e15_magnitude_full', 'e35_magnitude_full_seed_', 'magnitude_sparsified/magnitude_sparsification_log.csv'),
+    'kwon': ('e16_kwon_full', 'e36_kwon_full_seed_', 'kwon_sparsified/kwon_sparsification_log.csv'),
+    'obs': ('e18_obs_full', 'e37_obs_full_seed_', 'obs_sparsified/obs_sparsification_log.csv'),
+}
+RUNS = [(sel, s, run0 if s == 0 else f'{pre}{s}', log)
+        for sel, (run0, pre, log) in SEL.items() for s in range(5)]
 
 
 def stats(df):
