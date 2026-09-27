@@ -178,18 +178,21 @@ def _collapse_step(df):
 
 def fig_stupidity(out_dir):
     """Selector collapse overlay: manifold (e05) vs magnitude (e15) vs Kwon
-    (e16), all driven to the full 2160-step budget on the same dense net."""
+    (e16) vs OBD (e17), all driven to the full 2160-step budget on the same
+    dense net. OBD is listed after manifold so its curve is drawn on top."""
     runs = [
         ('Manifold search (e05)', _load('e05_stupidity_point'), 'C0'),
         ('Magnitude (e15)', _load('e15_magnitude_full', 'magnitude_sparsified',
                                   'magnitude_sparsification_log.csv'), 'C1'),
         ('Kwon / 1st-order Taylor (e16)', _load('e16_kwon_full', 'kwon_sparsified',
                                                 'kwon_sparsification_log.csv'), 'C2'),
+        ('OBD (e17)', _load('e17_obd_full', 'obd_sparsified',
+                            'obd_sparsification_log.csv'), 'C4'),
     ]
     runs = [(lab, df, c) for lab, df, c in runs if df is not None]
     fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(5.5, 4.0), sharex=True)
 
-    ymark = {0: 0.60, 1: 0.45, 2: 0.30}
+    ymark = {0: 0.60, 1: 0.45, 2: 0.30, 3: 0.18}  # OBD (1979) staggered below manifold (1956)
     for k, (lab, df, c) in enumerate(runs):
         ax1.plot(df['step'], df['val_acc'], color=c, lw=0.9, label=lab)
         ax2.plot(df['step'],
@@ -209,7 +212,7 @@ def fig_stupidity(out_dir):
     ax1.text(30, 0.115, 'chance level', fontsize=6.5, color='gray')
     ax1.set_ylabel('validation accuracy')
     ax1.set_title('(a) accuracy collapse per selector (dashed: stupidity point)', loc='left')
-    ax1.legend(frameon=False, fontsize=7, loc='lower left')
+    ax1.legend(frameon=False, fontsize=7, loc='center left')  # 4 entries: lower-left hides 'chance level'
 
     ax2.set_yscale('log')
     ax2.set_ylabel(r'$\|\Delta w\|_2$ per step (rolling median)')
