@@ -96,7 +96,75 @@ unless the seed-band update replaces them.
 
 ## 5. Results
 
-*(filled in after the queue completes)*
+Queue completed 2026-09-27 09:43 (all 11 commands rc=0; one host outage, see §6). Pairing check:
+`W_0.npy` of e25 seed k and e34 seed k are byte-identical for k = 1, 2 ✓. Seed 0 = existing
+e05 / e17. Numbers from `python scripts/analyze_seedband.py`.
+
+### 5.1 Per run
+
+| Selector | Seed | Dense | Acc @ step 500 (23.1 %) | Last sp. acc ≥ 0.85 | Last sp. acc ≥ 0.5 | Collapse (step) | Stop rule fires (acc then) | Lead [steps] |
+|---|---|---|---|---|---|---|---|---|
+| exhaustive | 0 | 0.916 | 0.915 | 78.3 % | 90.5 % | 90.6 % (1 956) | 1 769 (0.772) | 187 |
+| exhaustive | 1 | 0.909 | 0.785 | 18.0 % | 88.2 % | 88.2 % (1 906) | 415 (0.809) | 1 491 |
+| exhaustive | 2 | 0.911 | 0.909 | 55.8 % | 87.5 % | 87.6 % (1 892) | 1 996 (0.175) | −104 |
+| exhaustive | 3 | 0.916 | 0.893 | 32.4 % | 86.9 % | 86.8 % (1 875) | 361 (0.897) | 1 514 |
+| exhaustive | 4 | 0.920 | 0.920 | 79.4 % | 88.5 % | 88.6 % (1 913) | 1 629 (0.849) | 284 |
+| OBD | 0 | 0.916 | 0.917 | 79.9 % | 91.8 % | 91.6 % (1 979) | 1 636 (0.859) | 343 |
+| OBD | 1 | 0.909 | 0.861 | 23.8 % | 88.4 % | 88.5 % (1 911) | 1 877 (0.541) | 34 |
+| OBD | 2 | 0.911 | 0.911 | 56.9 % | 88.2 % | 88.3 % (1 907) | 2 006 (0.183) | −99 |
+
+### 5.2 Aggregates (mean ± std [min, max])
+
+| Metric | Exhaustive (5 seeds) | OBD (3 seeds) |
+|---|---|---|
+| Dense accuracy | 0.914 ± 0.004 | 0.912 ± 0.004 |
+| Acc @ 23.1 % | 0.884 ± 0.057 [0.785, 0.920] | 0.896 ± 0.031 [0.861, 0.917] |
+| Last sparsity acc ≥ 0.85 | 52.8 ± 27.4 % [18.0, 79.4] | 53.5 ± 28.2 % [23.8, 79.9] |
+| Last sparsity acc ≥ 0.5 | 88.3 ± 1.4 % [86.9, 90.5] | 89.5 ± 2.0 % [88.2, 91.8] |
+| **Collapse sparsity** | **88.4 ± 1.4 %** [86.8, 90.6] | **89.5 ± 1.9 %** [88.3, 91.6] |
+| Acc @ 80 % (rolling median) | 0.713 ± 0.112 | 0.721 ± 0.105 |
+| Acc @ 90 % (rolling median) | 0.400 ± 0.103 | 0.453 ± 0.109 |
+
+Paired OBD − exhaustive collapse sparsity: seed 0 **+1.06**, seed 1 **+0.23**, seed 2 **+0.69**
+points (mean +0.66).
+
+### 5.3 Hypothesis verdicts
+
+- **H1 — partially refuted.** The collapse point is tight (std 1.4 ≤ 2 points ✓), but seed 0 is
+  the **maximum** of the five seeds (90.6 % vs 86.8–88.6 % for seeds 1–4), which the
+  pre-registered criterion counts as a refutation. The published single-run number overstates
+  the typical collapse by ~2 points: the band is **88.4 ± 1.4 %**. The "acc ≥ 0.85 held to
+  78.3 %" figure is far from typical: across seeds it ranges 18–79 % (mean 53 %). Seeds 1 and 3
+  lose several points already in the plateau (0.785 and 0.893 at 23.1 %), so the *knee* is
+  highly seed-dependent while the *collapse* is not.
+- **H2 — supported in magnitude, with a consistent sign.** OBD collapses later on all three
+  paired seeds, by 0.2–1.1 points — every difference below the exhaustive seed std (1.4), so the
+  refutation threshold is not met and "tied within noise" stands. But the direction is
+  consistent (3/3; probability 1/4 under a symmetric null, so not significant at n = 3). Honest
+  reading: *OBD matches the exhaustive search at collapse and is, if anything, marginally ahead.*
+- **H3 — refuted.** The displacement blow-up rule is not a reliable stopping signal. It fired
+  after collapse on 2 of 8 runs (exhaustive seed 2, OBD seed 2), with a lead of only 34 steps
+  on a third (OBD seed 1), and spuriously early on 2 runs (exhaustive seeds 1 and 3, at 16–19 %
+  sparsity, while accuracy was 0.81–0.90). Only 3 of 8 runs show the seed-0 behaviour (fires
+  shortly before collapse with accuracy still ≥ 0.77). The manuscript's "usable stopping signal,
+  not a sharp one" must be withdrawn or restricted to seed 0.
+- **H4 — supported.** Accuracy at 23.1 % sparsity is 0.884 ± 0.057 (range 0.785–0.920),
+  matching the spread previously reported on the e10 nets (0.865 ± 0.061).
+
+### 5.4 Consequences for the manuscript
+
+1. Table "collapse statistics": replace the single-run exhaustive and OBD rows by seed means ± std
+   (5 and 3 seeds); keep magnitude and Kwon as single seed-0 runs, marked as such.
+2. The comparison with **magnitude** (single run, collapse 88.9 %) is no longer supported: it lies
+   inside the exhaustive seed range [86.8, 90.6]. The "four points over magnitude" claim must go
+   until magnitude is replicated over seeds. The gap to the **Kwon** first-order score (77.6 %,
+   single run) is ~9 points below the lowest exhaustive seed and survives.
+3. OBD vs exhaustive: "tied within noise, OBD marginally later on every paired seed".
+4. Stopping rule: withdraw as a general signal; report it as seed-0 only and refuted across seeds.
+5. The "knee" (acc ≥ 0.85) is strongly seed-dependent and should be reported as a range.
+
+Suggested follow-up (not run): magnitude and Kwon full-budget runs on seeds 1–4 (~35 + 28 min
+each, ~4 h total) to restore the selector ordering claim on equal footing.
 
 ## 6. Progress checkpoints (auto-appended)
 
@@ -168,3 +236,750 @@ seeded Ω. A `@reboot` crontab entry now calls the launcher so a further outage 
 [supervise 23:23:21] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e25_stupidity_seed_1.json] (attempt 0/5)
 step 1411 | acc=0.7410 | NZ=   749 | sparsity=0.6532 | d_m=4.5264e+04[supervise 18:52:01] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e25_stupidity_seed_1.json] (attempt 0/5)
 ```
+
+**2026-09-26 19:22** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e25_seed_1 | 2028 | 93.9 % | 0.242 | 1.178659e+06 |
+
+```
+[supervise 23:22:44] launch [/home/simon/venv/general/bin/python3 scripts/train.py experiments/e25_stupidity_seed_1.json] (attempt 0/5)
+[supervise 23:23:21] DONE experiments/e25_stupidity_seed_1.json rc=0
+[supervise 23:23:21] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e25_stupidity_seed_1.json] (attempt 0/5)
+step 1411 | acc=0.7410 | NZ=   749 | sparsity=0.6532 | d_m=4.5264e+04[supervise 18:52:01] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e25_stupidity_seed_1.json] (attempt 0/5)
+```
+
+**2026-09-26 19:52** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e25_seed_1 | 2159 | 100.0 % | 0.107 | 2.431626e+06 |
+| e25_seed_2 | 363 | 16.8 % | 0.911 | 7.721959e+00 |
+
+```
+[supervise 19:29:20] DONE experiments/e25_stupidity_seed_1.json rc=0
+[supervise 19:29:20] launch [/home/simon/venv/general/bin/python3 scripts/train.py experiments/e25_stupidity_seed_2.json] (attempt 0/5)
+[supervise 19:29:57] DONE experiments/e25_stupidity_seed_2.json rc=0
+[supervise 19:29:57] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e25_stupidity_seed_2.json] (attempt 0/5)
+```
+
+**2026-09-26 20:22** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e25_seed_1 | 2159 | 100.0 % | 0.107 | 2.431626e+06 |
+| e25_seed_2 | 864 | 40.0 % | 0.906 | 7.136466e+02 |
+
+```
+[supervise 19:29:20] DONE experiments/e25_stupidity_seed_1.json rc=0
+[supervise 19:29:20] launch [/home/simon/venv/general/bin/python3 scripts/train.py experiments/e25_stupidity_seed_2.json] (attempt 0/5)
+[supervise 19:29:57] DONE experiments/e25_stupidity_seed_2.json rc=0
+[supervise 19:29:57] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e25_stupidity_seed_2.json] (attempt 0/5)
+```
+
+**2026-09-26 20:52** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e25_seed_1 | 2159 | 100.0 % | 0.107 | 2.431626e+06 |
+| e25_seed_2 | 1373 | 63.6 % | 0.786 | 2.405757e+04 |
+
+```
+[supervise 19:29:20] DONE experiments/e25_stupidity_seed_1.json rc=0
+[supervise 19:29:20] launch [/home/simon/venv/general/bin/python3 scripts/train.py experiments/e25_stupidity_seed_2.json] (attempt 0/5)
+[supervise 19:29:57] DONE experiments/e25_stupidity_seed_2.json rc=0
+[supervise 19:29:57] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e25_stupidity_seed_2.json] (attempt 0/5)
+```
+
+**2026-09-26 21:22** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e25_seed_1 | 2159 | 100.0 % | 0.107 | 2.431626e+06 |
+| e25_seed_2 | 1895 | 87.7 % | 0.484 | 3.419168e+05 |
+
+```
+[supervise 19:29:20] DONE experiments/e25_stupidity_seed_1.json rc=0
+[supervise 19:29:20] launch [/home/simon/venv/general/bin/python3 scripts/train.py experiments/e25_stupidity_seed_2.json] (attempt 0/5)
+[supervise 19:29:57] DONE experiments/e25_stupidity_seed_2.json rc=0
+[supervise 19:29:57] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e25_stupidity_seed_2.json] (attempt 0/5)
+```
+
+**2026-09-26 21:52** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e25_seed_1 | 2159 | 100.0 % | 0.107 | 2.431626e+06 |
+| e25_seed_2 | 2159 | 100.0 % | 0.107 | 1.567784e+06 |
+| e25_seed_3 | 253 | 11.7 % | 0.919 | 9.195321e+01 |
+
+```
+[supervise 21:36:52] DONE experiments/e25_stupidity_seed_2.json rc=0
+[supervise 21:36:52] launch [/home/simon/venv/general/bin/python3 scripts/train.py experiments/e25_stupidity_seed_3.json] (attempt 0/5)
+[supervise 21:37:29] DONE experiments/e25_stupidity_seed_3.json rc=0
+[supervise 21:37:29] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e25_stupidity_seed_3.json] (attempt 0/5)
+```
+
+**2026-09-26 22:22** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e25_seed_1 | 2159 | 100.0 % | 0.107 | 2.431626e+06 |
+| e25_seed_2 | 2159 | 100.0 % | 0.107 | 1.567784e+06 |
+| e25_seed_3 | 747 | 34.6 % | 0.840 | 2.356692e+03 |
+
+```
+[supervise 21:36:52] DONE experiments/e25_stupidity_seed_2.json rc=0
+[supervise 21:36:52] launch [/home/simon/venv/general/bin/python3 scripts/train.py experiments/e25_stupidity_seed_3.json] (attempt 0/5)
+[supervise 21:37:29] DONE experiments/e25_stupidity_seed_3.json rc=0
+[supervise 21:37:29] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e25_stupidity_seed_3.json] (attempt 0/5)
+```
+
+**2026-09-26 22:52** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e25_seed_1 | 2159 | 100.0 % | 0.107 | 2.431626e+06 |
+| e25_seed_2 | 2159 | 100.0 % | 0.107 | 1.567784e+06 |
+| e25_seed_3 | 1251 | 57.9 % | 0.649 | 1.807190e+04 |
+
+```
+[supervise 21:36:52] DONE experiments/e25_stupidity_seed_2.json rc=0
+[supervise 21:36:52] launch [/home/simon/venv/general/bin/python3 scripts/train.py experiments/e25_stupidity_seed_3.json] (attempt 0/5)
+[supervise 21:37:29] DONE experiments/e25_stupidity_seed_3.json rc=0
+[supervise 21:37:29] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e25_stupidity_seed_3.json] (attempt 0/5)
+```
+
+**2026-09-26 23:22** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e25_seed_1 | 2159 | 100.0 % | 0.107 | 2.431626e+06 |
+| e25_seed_2 | 2159 | 100.0 % | 0.107 | 1.567784e+06 |
+| e25_seed_3 | 1767 | 81.8 % | 0.580 | 1.878833e+05 |
+
+```
+[supervise 21:36:52] DONE experiments/e25_stupidity_seed_2.json rc=0
+[supervise 21:36:52] launch [/home/simon/venv/general/bin/python3 scripts/train.py experiments/e25_stupidity_seed_3.json] (attempt 0/5)
+[supervise 21:37:29] DONE experiments/e25_stupidity_seed_3.json rc=0
+[supervise 21:37:29] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e25_stupidity_seed_3.json] (attempt 0/5)
+```
+
+**2026-09-26 23:52** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e25_seed_1 | 2159 | 100.0 % | 0.107 | 2.431626e+06 |
+| e25_seed_2 | 2159 | 100.0 % | 0.107 | 1.567784e+06 |
+| e25_seed_3 | 2159 | 100.0 % | 0.087 | 2.302118e+06 |
+| e25_seed_4 | 152 | 7.0 % | 0.920 | 1.088360e-02 |
+
+```
+[supervise 23:44:09] DONE experiments/e25_stupidity_seed_3.json rc=0
+[supervise 23:44:09] launch [/home/simon/venv/general/bin/python3 scripts/train.py experiments/e25_stupidity_seed_4.json] (attempt 0/5)
+[supervise 23:44:46] DONE experiments/e25_stupidity_seed_4.json rc=0
+[supervise 23:44:46] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e25_stupidity_seed_4.json] (attempt 0/5)
+```
+
+**2026-09-27 00:22** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e25_seed_1 | 2159 | 100.0 % | 0.107 | 2.431626e+06 |
+| e25_seed_2 | 2159 | 100.0 % | 0.107 | 1.567784e+06 |
+| e25_seed_3 | 2159 | 100.0 % | 0.087 | 2.302118e+06 |
+| e25_seed_4 | 644 | 29.8 % | 0.916 | 1.661336e+03 |
+
+```
+[supervise 23:44:09] DONE experiments/e25_stupidity_seed_3.json rc=0
+[supervise 23:44:09] launch [/home/simon/venv/general/bin/python3 scripts/train.py experiments/e25_stupidity_seed_4.json] (attempt 0/5)
+[supervise 23:44:46] DONE experiments/e25_stupidity_seed_4.json rc=0
+[supervise 23:44:46] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e25_stupidity_seed_4.json] (attempt 0/5)
+```
+
+**2026-09-27 00:52** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e25_seed_1 | 2159 | 100.0 % | 0.107 | 2.431626e+06 |
+| e25_seed_2 | 2159 | 100.0 % | 0.107 | 1.567784e+06 |
+| e25_seed_3 | 2159 | 100.0 % | 0.087 | 2.302118e+06 |
+| e25_seed_4 | 1148 | 53.1 % | 0.909 | 2.572736e+04 |
+
+```
+[supervise 23:44:09] DONE experiments/e25_stupidity_seed_3.json rc=0
+[supervise 23:44:09] launch [/home/simon/venv/general/bin/python3 scripts/train.py experiments/e25_stupidity_seed_4.json] (attempt 0/5)
+[supervise 23:44:46] DONE experiments/e25_stupidity_seed_4.json rc=0
+[supervise 23:44:46] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e25_stupidity_seed_4.json] (attempt 0/5)
+```
+
+**2026-09-27 01:22** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e25_seed_1 | 2159 | 100.0 % | 0.107 | 2.431626e+06 |
+| e25_seed_2 | 2159 | 100.0 % | 0.107 | 1.567784e+06 |
+| e25_seed_3 | 2159 | 100.0 % | 0.087 | 2.302118e+06 |
+| e25_seed_4 | 1662 | 76.9 % | 0.835 | 1.837600e+05 |
+
+```
+[supervise 23:44:09] DONE experiments/e25_stupidity_seed_3.json rc=0
+[supervise 23:44:09] launch [/home/simon/venv/general/bin/python3 scripts/train.py experiments/e25_stupidity_seed_4.json] (attempt 0/5)
+[supervise 23:44:46] DONE experiments/e25_stupidity_seed_4.json rc=0
+[supervise 23:44:46] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e25_stupidity_seed_4.json] (attempt 0/5)
+```
+
+**2026-09-27 01:52** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e25_seed_1 | 2159 | 100.0 % | 0.107 | 2.431626e+06 |
+| e25_seed_2 | 2159 | 100.0 % | 0.107 | 1.567784e+06 |
+| e25_seed_3 | 2159 | 100.0 % | 0.087 | 2.302118e+06 |
+| e25_seed_4 | 2159 | 100.0 % | 0.107 | 2.013833e+06 |
+| e34_seed_1 | 11 | 0.5 % | 0.909 | 7.248228e-05 |
+
+```
+[supervise 01:50:08] DONE experiments/e25_stupidity_seed_4.json rc=0
+[supervise 01:50:08] launch [/home/simon/venv/general/bin/python3 scripts/train.py experiments/e34_obd_full_seed_1.json] (attempt 0/5)
+[supervise 01:50:44] DONE experiments/e34_obd_full_seed_1.json rc=0
+[supervise 01:50:44] launch [/home/simon/venv/general/bin/python3 -m sparsifier.obd_sparsifier experiments/e34_obd_full_seed_1.json] (attempt 0/5)
+```
+
+**2026-09-27 02:22** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e25_seed_1 | 2159 | 100.0 % | 0.107 | 2.431626e+06 |
+| e25_seed_2 | 2159 | 100.0 % | 0.107 | 1.567784e+06 |
+| e25_seed_3 | 2159 | 100.0 % | 0.087 | 2.302118e+06 |
+| e25_seed_4 | 2159 | 100.0 % | 0.107 | 2.013833e+06 |
+| e34_seed_1 | 287 | 13.3 % | 0.905 | 5.268352e+01 |
+
+```
+[supervise 01:50:08] DONE experiments/e25_stupidity_seed_4.json rc=0
+[supervise 01:50:08] launch [/home/simon/venv/general/bin/python3 scripts/train.py experiments/e34_obd_full_seed_1.json] (attempt 0/5)
+[supervise 01:50:44] DONE experiments/e34_obd_full_seed_1.json rc=0
+[supervise 01:50:44] launch [/home/simon/venv/general/bin/python3 -m sparsifier.obd_sparsifier experiments/e34_obd_full_seed_1.json] (attempt 0/5)
+```
+
+**2026-09-27 02:52** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e25_seed_1 | 2159 | 100.0 % | 0.107 | 2.431626e+06 |
+| e25_seed_2 | 2159 | 100.0 % | 0.107 | 1.567784e+06 |
+| e25_seed_3 | 2159 | 100.0 % | 0.087 | 2.302118e+06 |
+| e25_seed_4 | 2159 | 100.0 % | 0.107 | 2.013833e+06 |
+| e34_seed_1 | 562 | 26.0 % | 0.820 | 5.762594e+02 |
+
+```
+[supervise 01:50:08] DONE experiments/e25_stupidity_seed_4.json rc=0
+[supervise 01:50:08] launch [/home/simon/venv/general/bin/python3 scripts/train.py experiments/e34_obd_full_seed_1.json] (attempt 0/5)
+[supervise 01:50:44] DONE experiments/e34_obd_full_seed_1.json rc=0
+[supervise 01:50:44] launch [/home/simon/venv/general/bin/python3 -m sparsifier.obd_sparsifier experiments/e34_obd_full_seed_1.json] (attempt 0/5)
+```
+
+**2026-09-27 03:22** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e25_seed_1 | 2159 | 100.0 % | 0.107 | 2.431626e+06 |
+| e25_seed_2 | 2159 | 100.0 % | 0.107 | 1.567784e+06 |
+| e25_seed_3 | 2159 | 100.0 % | 0.087 | 2.302118e+06 |
+| e25_seed_4 | 2159 | 100.0 % | 0.107 | 2.013833e+06 |
+| e34_seed_1 | 837 | 38.8 % | 0.774 | 2.381645e+03 |
+
+```
+[supervise 01:50:08] DONE experiments/e25_stupidity_seed_4.json rc=0
+[supervise 01:50:08] launch [/home/simon/venv/general/bin/python3 scripts/train.py experiments/e34_obd_full_seed_1.json] (attempt 0/5)
+[supervise 01:50:44] DONE experiments/e34_obd_full_seed_1.json rc=0
+[supervise 01:50:44] launch [/home/simon/venv/general/bin/python3 -m sparsifier.obd_sparsifier experiments/e34_obd_full_seed_1.json] (attempt 0/5)
+```
+
+**2026-09-27 03:52** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e25_seed_1 | 2159 | 100.0 % | 0.107 | 2.431626e+06 |
+| e25_seed_2 | 2159 | 100.0 % | 0.107 | 1.567784e+06 |
+| e25_seed_3 | 2159 | 100.0 % | 0.087 | 2.302118e+06 |
+| e25_seed_4 | 2159 | 100.0 % | 0.107 | 2.013833e+06 |
+| e34_seed_1 | 1112 | 51.5 % | 0.762 | 9.437218e+03 |
+
+```
+[supervise 01:50:08] DONE experiments/e25_stupidity_seed_4.json rc=0
+[supervise 01:50:08] launch [/home/simon/venv/general/bin/python3 scripts/train.py experiments/e34_obd_full_seed_1.json] (attempt 0/5)
+[supervise 01:50:44] DONE experiments/e34_obd_full_seed_1.json rc=0
+[supervise 01:50:44] launch [/home/simon/venv/general/bin/python3 -m sparsifier.obd_sparsifier experiments/e34_obd_full_seed_1.json] (attempt 0/5)
+```
+
+**2026-09-27 04:22** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e25_seed_1 | 2159 | 100.0 % | 0.107 | 2.431626e+06 |
+| e25_seed_2 | 2159 | 100.0 % | 0.107 | 1.567784e+06 |
+| e25_seed_3 | 2159 | 100.0 % | 0.087 | 2.302118e+06 |
+| e25_seed_4 | 2159 | 100.0 % | 0.107 | 2.013833e+06 |
+| e34_seed_1 | 1386 | 64.2 % | 0.740 | 4.009818e+04 |
+
+```
+[supervise 01:50:08] DONE experiments/e25_stupidity_seed_4.json rc=0
+[supervise 01:50:08] launch [/home/simon/venv/general/bin/python3 scripts/train.py experiments/e34_obd_full_seed_1.json] (attempt 0/5)
+[supervise 01:50:44] DONE experiments/e34_obd_full_seed_1.json rc=0
+[supervise 01:50:44] launch [/home/simon/venv/general/bin/python3 -m sparsifier.obd_sparsifier experiments/e34_obd_full_seed_1.json] (attempt 0/5)
+```
+
+**2026-09-27 04:52** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e25_seed_1 | 2159 | 100.0 % | 0.107 | 2.431626e+06 |
+| e25_seed_2 | 2159 | 100.0 % | 0.107 | 1.567784e+06 |
+| e25_seed_3 | 2159 | 100.0 % | 0.087 | 2.302118e+06 |
+| e25_seed_4 | 2159 | 100.0 % | 0.107 | 2.013833e+06 |
+| e34_seed_1 | 1660 | 76.9 % | 0.699 | 1.373448e+05 |
+
+```
+[supervise 01:50:08] DONE experiments/e25_stupidity_seed_4.json rc=0
+[supervise 01:50:08] launch [/home/simon/venv/general/bin/python3 scripts/train.py experiments/e34_obd_full_seed_1.json] (attempt 0/5)
+[supervise 01:50:44] DONE experiments/e34_obd_full_seed_1.json rc=0
+[supervise 01:50:44] launch [/home/simon/venv/general/bin/python3 -m sparsifier.obd_sparsifier experiments/e34_obd_full_seed_1.json] (attempt 0/5)
+```
+
+**2026-09-27 05:22** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e25_seed_1 | 2159 | 100.0 % | 0.107 | 2.431626e+06 |
+| e25_seed_2 | 2159 | 100.0 % | 0.107 | 1.567784e+06 |
+| e25_seed_3 | 2159 | 100.0 % | 0.087 | 2.302118e+06 |
+| e25_seed_4 | 2159 | 100.0 % | 0.107 | 2.013833e+06 |
+| e34_seed_1 | 1933 | 89.5 % | 0.417 | 5.577757e+05 |
+
+```
+[supervise 01:50:08] DONE experiments/e25_stupidity_seed_4.json rc=0
+[supervise 01:50:08] launch [/home/simon/venv/general/bin/python3 scripts/train.py experiments/e34_obd_full_seed_1.json] (attempt 0/5)
+[supervise 01:50:44] DONE experiments/e34_obd_full_seed_1.json rc=0
+[supervise 01:50:44] launch [/home/simon/venv/general/bin/python3 -m sparsifier.obd_sparsifier experiments/e34_obd_full_seed_1.json] (attempt 0/5)
+```
+
+**2026-09-27 05:52** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e25_seed_1 | 2159 | 100.0 % | 0.107 | 2.431626e+06 |
+| e25_seed_2 | 2159 | 100.0 % | 0.107 | 1.567784e+06 |
+| e25_seed_3 | 2159 | 100.0 % | 0.087 | 2.302118e+06 |
+| e25_seed_4 | 2159 | 100.0 % | 0.107 | 2.013833e+06 |
+| e34_seed_1 | 2159 | 100.0 % | 0.107 | 2.439091e+06 |
+| e34_seed_2 | 42 | 1.9 % | 0.911 | 7.960641e-02 |
+
+```
+[supervise 05:46:44] DONE experiments/e34_obd_full_seed_1.json rc=0
+[supervise 05:46:44] launch [/home/simon/venv/general/bin/python3 scripts/train.py experiments/e34_obd_full_seed_2.json] (attempt 0/5)
+[supervise 05:47:21] DONE experiments/e34_obd_full_seed_2.json rc=0
+[supervise 05:47:21] launch [/home/simon/venv/general/bin/python3 -m sparsifier.obd_sparsifier experiments/e34_obd_full_seed_2.json] (attempt 0/5)
+```
+
+**2026-09-27 06:22** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e25_seed_1 | 2159 | 100.0 % | 0.107 | 2.431626e+06 |
+| e25_seed_2 | 2159 | 100.0 % | 0.107 | 1.567784e+06 |
+| e25_seed_3 | 2159 | 100.0 % | 0.087 | 2.302118e+06 |
+| e25_seed_4 | 2159 | 100.0 % | 0.107 | 2.013833e+06 |
+| e34_seed_1 | 2159 | 100.0 % | 0.107 | 2.439091e+06 |
+| e34_seed_2 | 317 | 14.7 % | 0.911 | 8.766810e+00 |
+
+```
+[supervise 05:46:44] DONE experiments/e34_obd_full_seed_1.json rc=0
+[supervise 05:46:44] launch [/home/simon/venv/general/bin/python3 scripts/train.py experiments/e34_obd_full_seed_2.json] (attempt 0/5)
+[supervise 05:47:21] DONE experiments/e34_obd_full_seed_2.json rc=0
+[supervise 05:47:21] launch [/home/simon/venv/general/bin/python3 -m sparsifier.obd_sparsifier experiments/e34_obd_full_seed_2.json] (attempt 0/5)
+```
+
+**2026-09-27 06:52** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e25_seed_1 | 2159 | 100.0 % | 0.107 | 2.431626e+06 |
+| e25_seed_2 | 2159 | 100.0 % | 0.107 | 1.567784e+06 |
+| e25_seed_3 | 2159 | 100.0 % | 0.087 | 2.302118e+06 |
+| e25_seed_4 | 2159 | 100.0 % | 0.107 | 2.013833e+06 |
+| e34_seed_1 | 2159 | 100.0 % | 0.107 | 2.439091e+06 |
+| e34_seed_2 | 592 | 27.4 % | 0.911 | 7.491715e+01 |
+
+```
+[supervise 05:46:44] DONE experiments/e34_obd_full_seed_1.json rc=0
+[supervise 05:46:44] launch [/home/simon/venv/general/bin/python3 scripts/train.py experiments/e34_obd_full_seed_2.json] (attempt 0/5)
+[supervise 05:47:21] DONE experiments/e34_obd_full_seed_2.json rc=0
+[supervise 05:47:21] launch [/home/simon/venv/general/bin/python3 -m sparsifier.obd_sparsifier experiments/e34_obd_full_seed_2.json] (attempt 0/5)
+```
+
+**2026-09-27 07:22** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e25_seed_1 | 2159 | 100.0 % | 0.107 | 2.431626e+06 |
+| e25_seed_2 | 2159 | 100.0 % | 0.107 | 1.567784e+06 |
+| e25_seed_3 | 2159 | 100.0 % | 0.087 | 2.302118e+06 |
+| e25_seed_4 | 2159 | 100.0 % | 0.107 | 2.013833e+06 |
+| e34_seed_1 | 2159 | 100.0 % | 0.107 | 2.439091e+06 |
+| e34_seed_2 | 867 | 40.1 % | 0.906 | 7.757505e+02 |
+
+```
+[supervise 05:46:44] DONE experiments/e34_obd_full_seed_1.json rc=0
+[supervise 05:46:44] launch [/home/simon/venv/general/bin/python3 scripts/train.py experiments/e34_obd_full_seed_2.json] (attempt 0/5)
+[supervise 05:47:21] DONE experiments/e34_obd_full_seed_2.json rc=0
+[supervise 05:47:21] launch [/home/simon/venv/general/bin/python3 -m sparsifier.obd_sparsifier experiments/e34_obd_full_seed_2.json] (attempt 0/5)
+```
+
+**2026-09-27 07:52** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e25_seed_1 | 2159 | 100.0 % | 0.107 | 2.431626e+06 |
+| e25_seed_2 | 2159 | 100.0 % | 0.107 | 1.567784e+06 |
+| e25_seed_3 | 2159 | 100.0 % | 0.087 | 2.302118e+06 |
+| e25_seed_4 | 2159 | 100.0 % | 0.107 | 2.013833e+06 |
+| e34_seed_1 | 2159 | 100.0 % | 0.107 | 2.439091e+06 |
+| e34_seed_2 | 1141 | 52.8 % | 0.899 | 6.055070e+03 |
+
+```
+[supervise 05:46:44] DONE experiments/e34_obd_full_seed_1.json rc=0
+[supervise 05:46:44] launch [/home/simon/venv/general/bin/python3 scripts/train.py experiments/e34_obd_full_seed_2.json] (attempt 0/5)
+[supervise 05:47:21] DONE experiments/e34_obd_full_seed_2.json rc=0
+[supervise 05:47:21] launch [/home/simon/venv/general/bin/python3 -m sparsifier.obd_sparsifier experiments/e34_obd_full_seed_2.json] (attempt 0/5)
+```
+
+**2026-09-27 08:22** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e25_seed_1 | 2159 | 100.0 % | 0.107 | 2.431626e+06 |
+| e25_seed_2 | 2159 | 100.0 % | 0.107 | 1.567784e+06 |
+| e25_seed_3 | 2159 | 100.0 % | 0.087 | 2.302118e+06 |
+| e25_seed_4 | 2159 | 100.0 % | 0.107 | 2.013833e+06 |
+| e34_seed_1 | 2159 | 100.0 % | 0.107 | 2.439091e+06 |
+| e34_seed_2 | 1415 | 65.5 % | 0.792 | 2.884885e+04 |
+
+```
+[supervise 05:46:44] DONE experiments/e34_obd_full_seed_1.json rc=0
+[supervise 05:46:44] launch [/home/simon/venv/general/bin/python3 scripts/train.py experiments/e34_obd_full_seed_2.json] (attempt 0/5)
+[supervise 05:47:21] DONE experiments/e34_obd_full_seed_2.json rc=0
+[supervise 05:47:21] launch [/home/simon/venv/general/bin/python3 -m sparsifier.obd_sparsifier experiments/e34_obd_full_seed_2.json] (attempt 0/5)
+```
+
+**2026-09-27 08:52** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e25_seed_1 | 2159 | 100.0 % | 0.107 | 2.431626e+06 |
+| e25_seed_2 | 2159 | 100.0 % | 0.107 | 1.567784e+06 |
+| e25_seed_3 | 2159 | 100.0 % | 0.087 | 2.302118e+06 |
+| e25_seed_4 | 2159 | 100.0 % | 0.107 | 2.013833e+06 |
+| e34_seed_1 | 2159 | 100.0 % | 0.107 | 2.439091e+06 |
+| e34_seed_2 | 1689 | 78.2 % | 0.635 | 1.135762e+05 |
+
+```
+[supervise 05:46:44] DONE experiments/e34_obd_full_seed_1.json rc=0
+[supervise 05:46:44] launch [/home/simon/venv/general/bin/python3 scripts/train.py experiments/e34_obd_full_seed_2.json] (attempt 0/5)
+[supervise 05:47:21] DONE experiments/e34_obd_full_seed_2.json rc=0
+[supervise 05:47:21] launch [/home/simon/venv/general/bin/python3 -m sparsifier.obd_sparsifier experiments/e34_obd_full_seed_2.json] (attempt 0/5)
+```
+
+**2026-09-27 09:22** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e25_seed_1 | 2159 | 100.0 % | 0.107 | 2.431626e+06 |
+| e25_seed_2 | 2159 | 100.0 % | 0.107 | 1.567784e+06 |
+| e25_seed_3 | 2159 | 100.0 % | 0.087 | 2.302118e+06 |
+| e25_seed_4 | 2159 | 100.0 % | 0.107 | 2.013833e+06 |
+| e34_seed_1 | 2159 | 100.0 % | 0.107 | 2.439091e+06 |
+| e34_seed_2 | 1963 | 90.9 % | 0.295 | 5.472491e+05 |
+
+```
+[supervise 05:46:44] DONE experiments/e34_obd_full_seed_1.json rc=0
+[supervise 05:46:44] launch [/home/simon/venv/general/bin/python3 scripts/train.py experiments/e34_obd_full_seed_2.json] (attempt 0/5)
+[supervise 05:47:21] DONE experiments/e34_obd_full_seed_2.json rc=0
+[supervise 05:47:21] launch [/home/simon/venv/general/bin/python3 -m sparsifier.obd_sparsifier experiments/e34_obd_full_seed_2.json] (attempt 0/5)
+```
+
+**2026-09-27 09:52** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e25_seed_1 | 2159 | 100.0 % | 0.107 | 2.431626e+06 |
+| e25_seed_2 | 2159 | 100.0 % | 0.107 | 1.567784e+06 |
+| e25_seed_3 | 2159 | 100.0 % | 0.087 | 2.302118e+06 |
+| e25_seed_4 | 2159 | 100.0 % | 0.107 | 2.013833e+06 |
+| e34_seed_1 | 2159 | 100.0 % | 0.107 | 2.439091e+06 |
+| e34_seed_2 | 2159 | 100.0 % | 0.107 | 1.567781e+06 |
+
+```
+[supervise 05:47:21] DONE experiments/e34_obd_full_seed_2.json rc=0
+[supervise 05:47:21] launch [/home/simon/venv/general/bin/python3 -m sparsifier.obd_sparsifier experiments/e34_obd_full_seed_2.json] (attempt 0/5)
+[supervise 09:43:05] DONE experiments/e34_obd_full_seed_2.json rc=0
+[supervise 09:43:05] QUEUE COMPLETE: /home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e25_stupidity_seed_1.json=ok, /home/simon/venv/general/bin/python3 scripts/train.py experiments/e25_stupidity_seed_2.json=ok, /home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e25_stupidity_seed_2.json=ok, /home/simon/venv/general/bin/python3 scripts/train.py experiments/e25_stupidity_seed_3.json=ok, /home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e25_stupidity_seed_3.json=ok, /home/simon/venv/general/bin/python3 scripts/train.py experiments/e25_stupidity_seed_4.json=ok, /home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e25_stupidity_seed_4.json=ok, /home/simon/venv/general/bin/python3 scripts/train.py experiments/e34_obd_full_seed_1.json=ok, /home/simon/venv/general/bin/python3 -m sparsifier.obd_sparsifier experiments/e34_obd_full_seed_1.json=ok, /home/simon/venv/general/bin/python3 scripts/train.py experiments/e34_obd_full_seed_2.json=ok, /home/simon/venv/general/bin/python3 -m sparsifier.obd_sparsifier experiments/e34_obd_full_seed_2.json=ok
+```
+
+**2026-09-27 10:22** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e25_seed_1 | 2159 | 100.0 % | 0.107 | 2.431626e+06 |
+| e25_seed_2 | 2159 | 100.0 % | 0.107 | 1.567784e+06 |
+| e25_seed_3 | 2159 | 100.0 % | 0.087 | 2.302118e+06 |
+| e25_seed_4 | 2159 | 100.0 % | 0.107 | 2.013833e+06 |
+| e34_seed_1 | 2159 | 100.0 % | 0.107 | 2.439091e+06 |
+| e34_seed_2 | 2159 | 100.0 % | 0.107 | 1.567781e+06 |
+
+```
+[supervise 05:47:21] DONE experiments/e34_obd_full_seed_2.json rc=0
+[supervise 05:47:21] launch [/home/simon/venv/general/bin/python3 -m sparsifier.obd_sparsifier experiments/e34_obd_full_seed_2.json] (attempt 0/5)
+[supervise 09:43:05] DONE experiments/e34_obd_full_seed_2.json rc=0
+[supervise 09:43:05] QUEUE COMPLETE: /home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e25_stupidity_seed_1.json=ok, /home/simon/venv/general/bin/python3 scripts/train.py experiments/e25_stupidity_seed_2.json=ok, /home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e25_stupidity_seed_2.json=ok, /home/simon/venv/general/bin/python3 scripts/train.py experiments/e25_stupidity_seed_3.json=ok, /home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e25_stupidity_seed_3.json=ok, /home/simon/venv/general/bin/python3 scripts/train.py experiments/e25_stupidity_seed_4.json=ok, /home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e25_stupidity_seed_4.json=ok, /home/simon/venv/general/bin/python3 scripts/train.py experiments/e34_obd_full_seed_1.json=ok, /home/simon/venv/general/bin/python3 -m sparsifier.obd_sparsifier experiments/e34_obd_full_seed_1.json=ok, /home/simon/venv/general/bin/python3 scripts/train.py experiments/e34_obd_full_seed_2.json=ok, /home/simon/venv/general/bin/python3 -m sparsifier.obd_sparsifier experiments/e34_obd_full_seed_2.json=ok
+```
+
+**2026-09-27 10:52** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e25_seed_1 | 2159 | 100.0 % | 0.107 | 2.431626e+06 |
+| e25_seed_2 | 2159 | 100.0 % | 0.107 | 1.567784e+06 |
+| e25_seed_3 | 2159 | 100.0 % | 0.087 | 2.302118e+06 |
+| e25_seed_4 | 2159 | 100.0 % | 0.107 | 2.013833e+06 |
+| e34_seed_1 | 2159 | 100.0 % | 0.107 | 2.439091e+06 |
+| e34_seed_2 | 2159 | 100.0 % | 0.107 | 1.567781e+06 |
+
+```
+[supervise 05:47:21] DONE experiments/e34_obd_full_seed_2.json rc=0
+[supervise 05:47:21] launch [/home/simon/venv/general/bin/python3 -m sparsifier.obd_sparsifier experiments/e34_obd_full_seed_2.json] (attempt 0/5)
+[supervise 09:43:05] DONE experiments/e34_obd_full_seed_2.json rc=0
+[supervise 09:43:05] QUEUE COMPLETE: /home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e25_stupidity_seed_1.json=ok, /home/simon/venv/general/bin/python3 scripts/train.py experiments/e25_stupidity_seed_2.json=ok, /home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e25_stupidity_seed_2.json=ok, /home/simon/venv/general/bin/python3 scripts/train.py experiments/e25_stupidity_seed_3.json=ok, /home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e25_stupidity_seed_3.json=ok, /home/simon/venv/general/bin/python3 scripts/train.py experiments/e25_stupidity_seed_4.json=ok, /home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e25_stupidity_seed_4.json=ok, /home/simon/venv/general/bin/python3 scripts/train.py experiments/e34_obd_full_seed_1.json=ok, /home/simon/venv/general/bin/python3 -m sparsifier.obd_sparsifier experiments/e34_obd_full_seed_1.json=ok, /home/simon/venv/general/bin/python3 scripts/train.py experiments/e34_obd_full_seed_2.json=ok, /home/simon/venv/general/bin/python3 -m sparsifier.obd_sparsifier experiments/e34_obd_full_seed_2.json=ok
+```
+
+**2026-09-27 11:22** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e25_seed_1 | 2159 | 100.0 % | 0.107 | 2.431626e+06 |
+| e25_seed_2 | 2159 | 100.0 % | 0.107 | 1.567784e+06 |
+| e25_seed_3 | 2159 | 100.0 % | 0.087 | 2.302118e+06 |
+| e25_seed_4 | 2159 | 100.0 % | 0.107 | 2.013833e+06 |
+| e34_seed_1 | 2159 | 100.0 % | 0.107 | 2.439091e+06 |
+| e34_seed_2 | 2159 | 100.0 % | 0.107 | 1.567781e+06 |
+
+```
+[supervise 05:47:21] DONE experiments/e34_obd_full_seed_2.json rc=0
+[supervise 05:47:21] launch [/home/simon/venv/general/bin/python3 -m sparsifier.obd_sparsifier experiments/e34_obd_full_seed_2.json] (attempt 0/5)
+[supervise 09:43:05] DONE experiments/e34_obd_full_seed_2.json rc=0
+[supervise 09:43:05] QUEUE COMPLETE: /home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e25_stupidity_seed_1.json=ok, /home/simon/venv/general/bin/python3 scripts/train.py experiments/e25_stupidity_seed_2.json=ok, /home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e25_stupidity_seed_2.json=ok, /home/simon/venv/general/bin/python3 scripts/train.py experiments/e25_stupidity_seed_3.json=ok, /home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e25_stupidity_seed_3.json=ok, /home/simon/venv/general/bin/python3 scripts/train.py experiments/e25_stupidity_seed_4.json=ok, /home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e25_stupidity_seed_4.json=ok, /home/simon/venv/general/bin/python3 scripts/train.py experiments/e34_obd_full_seed_1.json=ok, /home/simon/venv/general/bin/python3 -m sparsifier.obd_sparsifier experiments/e34_obd_full_seed_1.json=ok, /home/simon/venv/general/bin/python3 scripts/train.py experiments/e34_obd_full_seed_2.json=ok, /home/simon/venv/general/bin/python3 -m sparsifier.obd_sparsifier experiments/e34_obd_full_seed_2.json=ok
+```
+
+**2026-09-27 11:52** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e25_seed_1 | 2159 | 100.0 % | 0.107 | 2.431626e+06 |
+| e25_seed_2 | 2159 | 100.0 % | 0.107 | 1.567784e+06 |
+| e25_seed_3 | 2159 | 100.0 % | 0.087 | 2.302118e+06 |
+| e25_seed_4 | 2159 | 100.0 % | 0.107 | 2.013833e+06 |
+| e34_seed_1 | 2159 | 100.0 % | 0.107 | 2.439091e+06 |
+| e34_seed_2 | 2159 | 100.0 % | 0.107 | 1.567781e+06 |
+
+```
+[supervise 05:47:21] DONE experiments/e34_obd_full_seed_2.json rc=0
+[supervise 05:47:21] launch [/home/simon/venv/general/bin/python3 -m sparsifier.obd_sparsifier experiments/e34_obd_full_seed_2.json] (attempt 0/5)
+[supervise 09:43:05] DONE experiments/e34_obd_full_seed_2.json rc=0
+[supervise 09:43:05] QUEUE COMPLETE: /home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e25_stupidity_seed_1.json=ok, /home/simon/venv/general/bin/python3 scripts/train.py experiments/e25_stupidity_seed_2.json=ok, /home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e25_stupidity_seed_2.json=ok, /home/simon/venv/general/bin/python3 scripts/train.py experiments/e25_stupidity_seed_3.json=ok, /home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e25_stupidity_seed_3.json=ok, /home/simon/venv/general/bin/python3 scripts/train.py experiments/e25_stupidity_seed_4.json=ok, /home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e25_stupidity_seed_4.json=ok, /home/simon/venv/general/bin/python3 scripts/train.py experiments/e34_obd_full_seed_1.json=ok, /home/simon/venv/general/bin/python3 -m sparsifier.obd_sparsifier experiments/e34_obd_full_seed_1.json=ok, /home/simon/venv/general/bin/python3 scripts/train.py experiments/e34_obd_full_seed_2.json=ok, /home/simon/venv/general/bin/python3 -m sparsifier.obd_sparsifier experiments/e34_obd_full_seed_2.json=ok
+```
+
+**2026-09-27 12:22** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e25_seed_1 | 2159 | 100.0 % | 0.107 | 2.431626e+06 |
+| e25_seed_2 | 2159 | 100.0 % | 0.107 | 1.567784e+06 |
+| e25_seed_3 | 2159 | 100.0 % | 0.087 | 2.302118e+06 |
+| e25_seed_4 | 2159 | 100.0 % | 0.107 | 2.013833e+06 |
+| e34_seed_1 | 2159 | 100.0 % | 0.107 | 2.439091e+06 |
+| e34_seed_2 | 2159 | 100.0 % | 0.107 | 1.567781e+06 |
+
+```
+[supervise 05:47:21] DONE experiments/e34_obd_full_seed_2.json rc=0
+[supervise 05:47:21] launch [/home/simon/venv/general/bin/python3 -m sparsifier.obd_sparsifier experiments/e34_obd_full_seed_2.json] (attempt 0/5)
+[supervise 09:43:05] DONE experiments/e34_obd_full_seed_2.json rc=0
+[supervise 09:43:05] QUEUE COMPLETE: /home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e25_stupidity_seed_1.json=ok, /home/simon/venv/general/bin/python3 scripts/train.py experiments/e25_stupidity_seed_2.json=ok, /home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e25_stupidity_seed_2.json=ok, /home/simon/venv/general/bin/python3 scripts/train.py experiments/e25_stupidity_seed_3.json=ok, /home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e25_stupidity_seed_3.json=ok, /home/simon/venv/general/bin/python3 scripts/train.py experiments/e25_stupidity_seed_4.json=ok, /home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e25_stupidity_seed_4.json=ok, /home/simon/venv/general/bin/python3 scripts/train.py experiments/e34_obd_full_seed_1.json=ok, /home/simon/venv/general/bin/python3 -m sparsifier.obd_sparsifier experiments/e34_obd_full_seed_1.json=ok, /home/simon/venv/general/bin/python3 scripts/train.py experiments/e34_obd_full_seed_2.json=ok, /home/simon/venv/general/bin/python3 -m sparsifier.obd_sparsifier experiments/e34_obd_full_seed_2.json=ok
+```
+
+**2026-09-27 12:52** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e25_seed_1 | 2159 | 100.0 % | 0.107 | 2.431626e+06 |
+| e25_seed_2 | 2159 | 100.0 % | 0.107 | 1.567784e+06 |
+| e25_seed_3 | 2159 | 100.0 % | 0.087 | 2.302118e+06 |
+| e25_seed_4 | 2159 | 100.0 % | 0.107 | 2.013833e+06 |
+| e34_seed_1 | 2159 | 100.0 % | 0.107 | 2.439091e+06 |
+| e34_seed_2 | 2159 | 100.0 % | 0.107 | 1.567781e+06 |
+
+```
+[supervise 05:47:21] DONE experiments/e34_obd_full_seed_2.json rc=0
+[supervise 05:47:21] launch [/home/simon/venv/general/bin/python3 -m sparsifier.obd_sparsifier experiments/e34_obd_full_seed_2.json] (attempt 0/5)
+[supervise 09:43:05] DONE experiments/e34_obd_full_seed_2.json rc=0
+[supervise 09:43:05] QUEUE COMPLETE: /home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e25_stupidity_seed_1.json=ok, /home/simon/venv/general/bin/python3 scripts/train.py experiments/e25_stupidity_seed_2.json=ok, /home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e25_stupidity_seed_2.json=ok, /home/simon/venv/general/bin/python3 scripts/train.py experiments/e25_stupidity_seed_3.json=ok, /home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e25_stupidity_seed_3.json=ok, /home/simon/venv/general/bin/python3 scripts/train.py experiments/e25_stupidity_seed_4.json=ok, /home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e25_stupidity_seed_4.json=ok, /home/simon/venv/general/bin/python3 scripts/train.py experiments/e34_obd_full_seed_1.json=ok, /home/simon/venv/general/bin/python3 -m sparsifier.obd_sparsifier experiments/e34_obd_full_seed_1.json=ok, /home/simon/venv/general/bin/python3 scripts/train.py experiments/e34_obd_full_seed_2.json=ok, /home/simon/venv/general/bin/python3 -m sparsifier.obd_sparsifier experiments/e34_obd_full_seed_2.json=ok
+```
+
+**2026-09-27 13:22** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e25_seed_1 | 2159 | 100.0 % | 0.107 | 2.431626e+06 |
+| e25_seed_2 | 2159 | 100.0 % | 0.107 | 1.567784e+06 |
+| e25_seed_3 | 2159 | 100.0 % | 0.087 | 2.302118e+06 |
+| e25_seed_4 | 2159 | 100.0 % | 0.107 | 2.013833e+06 |
+| e34_seed_1 | 2159 | 100.0 % | 0.107 | 2.439091e+06 |
+| e34_seed_2 | 2159 | 100.0 % | 0.107 | 1.567781e+06 |
+
+```
+[supervise 05:47:21] DONE experiments/e34_obd_full_seed_2.json rc=0
+[supervise 05:47:21] launch [/home/simon/venv/general/bin/python3 -m sparsifier.obd_sparsifier experiments/e34_obd_full_seed_2.json] (attempt 0/5)
+[supervise 09:43:05] DONE experiments/e34_obd_full_seed_2.json rc=0
+[supervise 09:43:05] QUEUE COMPLETE: /home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e25_stupidity_seed_1.json=ok, /home/simon/venv/general/bin/python3 scripts/train.py experiments/e25_stupidity_seed_2.json=ok, /home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e25_stupidity_seed_2.json=ok, /home/simon/venv/general/bin/python3 scripts/train.py experiments/e25_stupidity_seed_3.json=ok, /home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e25_stupidity_seed_3.json=ok, /home/simon/venv/general/bin/python3 scripts/train.py experiments/e25_stupidity_seed_4.json=ok, /home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e25_stupidity_seed_4.json=ok, /home/simon/venv/general/bin/python3 scripts/train.py experiments/e34_obd_full_seed_1.json=ok, /home/simon/venv/general/bin/python3 -m sparsifier.obd_sparsifier experiments/e34_obd_full_seed_1.json=ok, /home/simon/venv/general/bin/python3 scripts/train.py experiments/e34_obd_full_seed_2.json=ok, /home/simon/venv/general/bin/python3 -m sparsifier.obd_sparsifier experiments/e34_obd_full_seed_2.json=ok
+```
+
+**2026-09-27 13:52** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e25_seed_1 | 2159 | 100.0 % | 0.107 | 2.431626e+06 |
+| e25_seed_2 | 2159 | 100.0 % | 0.107 | 1.567784e+06 |
+| e25_seed_3 | 2159 | 100.0 % | 0.087 | 2.302118e+06 |
+| e25_seed_4 | 2159 | 100.0 % | 0.107 | 2.013833e+06 |
+| e34_seed_1 | 2159 | 100.0 % | 0.107 | 2.439091e+06 |
+| e34_seed_2 | 2159 | 100.0 % | 0.107 | 1.567781e+06 |
+
+```
+[supervise 05:47:21] DONE experiments/e34_obd_full_seed_2.json rc=0
+[supervise 05:47:21] launch [/home/simon/venv/general/bin/python3 -m sparsifier.obd_sparsifier experiments/e34_obd_full_seed_2.json] (attempt 0/5)
+[supervise 09:43:05] DONE experiments/e34_obd_full_seed_2.json rc=0
+[supervise 09:43:05] QUEUE COMPLETE: /home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e25_stupidity_seed_1.json=ok, /home/simon/venv/general/bin/python3 scripts/train.py experiments/e25_stupidity_seed_2.json=ok, /home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e25_stupidity_seed_2.json=ok, /home/simon/venv/general/bin/python3 scripts/train.py experiments/e25_stupidity_seed_3.json=ok, /home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e25_stupidity_seed_3.json=ok, /home/simon/venv/general/bin/python3 scripts/train.py experiments/e25_stupidity_seed_4.json=ok, /home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e25_stupidity_seed_4.json=ok, /home/simon/venv/general/bin/python3 scripts/train.py experiments/e34_obd_full_seed_1.json=ok, /home/simon/venv/general/bin/python3 -m sparsifier.obd_sparsifier experiments/e34_obd_full_seed_1.json=ok, /home/simon/venv/general/bin/python3 scripts/train.py experiments/e34_obd_full_seed_2.json=ok, /home/simon/venv/general/bin/python3 -m sparsifier.obd_sparsifier experiments/e34_obd_full_seed_2.json=ok
+```
+
+**2026-09-27 14:22** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e25_seed_1 | 2159 | 100.0 % | 0.107 | 2.431626e+06 |
+| e25_seed_2 | 2159 | 100.0 % | 0.107 | 1.567784e+06 |
+| e25_seed_3 | 2159 | 100.0 % | 0.087 | 2.302118e+06 |
+| e25_seed_4 | 2159 | 100.0 % | 0.107 | 2.013833e+06 |
+| e34_seed_1 | 2159 | 100.0 % | 0.107 | 2.439091e+06 |
+| e34_seed_2 | 2159 | 100.0 % | 0.107 | 1.567781e+06 |
+
+```
+[supervise 05:47:21] DONE experiments/e34_obd_full_seed_2.json rc=0
+[supervise 05:47:21] launch [/home/simon/venv/general/bin/python3 -m sparsifier.obd_sparsifier experiments/e34_obd_full_seed_2.json] (attempt 0/5)
+[supervise 09:43:05] DONE experiments/e34_obd_full_seed_2.json rc=0
+[supervise 09:43:05] QUEUE COMPLETE: /home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e25_stupidity_seed_1.json=ok, /home/simon/venv/general/bin/python3 scripts/train.py experiments/e25_stupidity_seed_2.json=ok, /home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e25_stupidity_seed_2.json=ok, /home/simon/venv/general/bin/python3 scripts/train.py experiments/e25_stupidity_seed_3.json=ok, /home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e25_stupidity_seed_3.json=ok, /home/simon/venv/general/bin/python3 scripts/train.py experiments/e25_stupidity_seed_4.json=ok, /home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e25_stupidity_seed_4.json=ok, /home/simon/venv/general/bin/python3 scripts/train.py experiments/e34_obd_full_seed_1.json=ok, /home/simon/venv/general/bin/python3 -m sparsifier.obd_sparsifier experiments/e34_obd_full_seed_1.json=ok, /home/simon/venv/general/bin/python3 scripts/train.py experiments/e34_obd_full_seed_2.json=ok, /home/simon/venv/general/bin/python3 -m sparsifier.obd_sparsifier experiments/e34_obd_full_seed_2.json=ok
+```
+
+**2026-09-27 14:52** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e25_seed_1 | 2159 | 100.0 % | 0.107 | 2.431626e+06 |
+| e25_seed_2 | 2159 | 100.0 % | 0.107 | 1.567784e+06 |
+| e25_seed_3 | 2159 | 100.0 % | 0.087 | 2.302118e+06 |
+| e25_seed_4 | 2159 | 100.0 % | 0.107 | 2.013833e+06 |
+| e34_seed_1 | 2159 | 100.0 % | 0.107 | 2.439091e+06 |
+| e34_seed_2 | 2159 | 100.0 % | 0.107 | 1.567781e+06 |
+
+```
+[supervise 05:47:21] DONE experiments/e34_obd_full_seed_2.json rc=0
+[supervise 05:47:21] launch [/home/simon/venv/general/bin/python3 -m sparsifier.obd_sparsifier experiments/e34_obd_full_seed_2.json] (attempt 0/5)
+[supervise 09:43:05] DONE experiments/e34_obd_full_seed_2.json rc=0
+[supervise 09:43:05] QUEUE COMPLETE: /home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e25_stupidity_seed_1.json=ok, /home/simon/venv/general/bin/python3 scripts/train.py experiments/e25_stupidity_seed_2.json=ok, /home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e25_stupidity_seed_2.json=ok, /home/simon/venv/general/bin/python3 scripts/train.py experiments/e25_stupidity_seed_3.json=ok, /home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e25_stupidity_seed_3.json=ok, /home/simon/venv/general/bin/python3 scripts/train.py experiments/e25_stupidity_seed_4.json=ok, /home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e25_stupidity_seed_4.json=ok, /home/simon/venv/general/bin/python3 scripts/train.py experiments/e34_obd_full_seed_1.json=ok, /home/simon/venv/general/bin/python3 -m sparsifier.obd_sparsifier experiments/e34_obd_full_seed_1.json=ok, /home/simon/venv/general/bin/python3 scripts/train.py experiments/e34_obd_full_seed_2.json=ok, /home/simon/venv/general/bin/python3 -m sparsifier.obd_sparsifier experiments/e34_obd_full_seed_2.json=ok
+```
+
+**2026-09-27 15:22** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e25_seed_1 | 2159 | 100.0 % | 0.107 | 2.431626e+06 |
+| e25_seed_2 | 2159 | 100.0 % | 0.107 | 1.567784e+06 |
+| e25_seed_3 | 2159 | 100.0 % | 0.087 | 2.302118e+06 |
+| e25_seed_4 | 2159 | 100.0 % | 0.107 | 2.013833e+06 |
+| e34_seed_1 | 2159 | 100.0 % | 0.107 | 2.439091e+06 |
+| e34_seed_2 | 2159 | 100.0 % | 0.107 | 1.567781e+06 |
+
+```
+[supervise 05:47:21] DONE experiments/e34_obd_full_seed_2.json rc=0
+[supervise 05:47:21] launch [/home/simon/venv/general/bin/python3 -m sparsifier.obd_sparsifier experiments/e34_obd_full_seed_2.json] (attempt 0/5)
+[supervise 09:43:05] DONE experiments/e34_obd_full_seed_2.json rc=0
+[supervise 09:43:05] QUEUE COMPLETE: /home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e25_stupidity_seed_1.json=ok, /home/simon/venv/general/bin/python3 scripts/train.py experiments/e25_stupidity_seed_2.json=ok, /home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e25_stupidity_seed_2.json=ok, /home/simon/venv/general/bin/python3 scripts/train.py experiments/e25_stupidity_seed_3.json=ok, /home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e25_stupidity_seed_3.json=ok, /home/simon/venv/general/bin/python3 scripts/train.py experiments/e25_stupidity_seed_4.json=ok, /home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e25_stupidity_seed_4.json=ok, /home/simon/venv/general/bin/python3 scripts/train.py experiments/e34_obd_full_seed_1.json=ok, /home/simon/venv/general/bin/python3 -m sparsifier.obd_sparsifier experiments/e34_obd_full_seed_1.json=ok, /home/simon/venv/general/bin/python3 scripts/train.py experiments/e34_obd_full_seed_2.json=ok, /home/simon/venv/general/bin/python3 -m sparsifier.obd_sparsifier experiments/e34_obd_full_seed_2.json=ok
+```
+
+**2026-09-27 15:52** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e25_seed_1 | 2159 | 100.0 % | 0.107 | 2.431626e+06 |
+| e25_seed_2 | 2159 | 100.0 % | 0.107 | 1.567784e+06 |
+| e25_seed_3 | 2159 | 100.0 % | 0.087 | 2.302118e+06 |
+| e25_seed_4 | 2159 | 100.0 % | 0.107 | 2.013833e+06 |
+| e34_seed_1 | 2159 | 100.0 % | 0.107 | 2.439091e+06 |
+| e34_seed_2 | 2159 | 100.0 % | 0.107 | 1.567781e+06 |
+
+```
+[supervise 05:47:21] DONE experiments/e34_obd_full_seed_2.json rc=0
+[supervise 05:47:21] launch [/home/simon/venv/general/bin/python3 -m sparsifier.obd_sparsifier experiments/e34_obd_full_seed_2.json] (attempt 0/5)
+[supervise 09:43:05] DONE experiments/e34_obd_full_seed_2.json rc=0
+[supervise 09:43:05] QUEUE COMPLETE: /home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e25_stupidity_seed_1.json=ok, /home/simon/venv/general/bin/python3 scripts/train.py experiments/e25_stupidity_seed_2.json=ok, /home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e25_stupidity_seed_2.json=ok, /home/simon/venv/general/bin/python3 scripts/train.py experiments/e25_stupidity_seed_3.json=ok, /home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e25_stupidity_seed_3.json=ok, /home/simon/venv/general/bin/python3 scripts/train.py experiments/e25_stupidity_seed_4.json=ok, /home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e25_stupidity_seed_4.json=ok, /home/simon/venv/general/bin/python3 scripts/train.py experiments/e34_obd_full_seed_1.json=ok, /home/simon/venv/general/bin/python3 -m sparsifier.obd_sparsifier experiments/e34_obd_full_seed_1.json=ok, /home/simon/venv/general/bin/python3 scripts/train.py experiments/e34_obd_full_seed_2.json=ok, /home/simon/venv/general/bin/python3 -m sparsifier.obd_sparsifier experiments/e34_obd_full_seed_2.json=ok
+```
+
+**2026-09-27 16:22** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e25_seed_1 | 2159 | 100.0 % | 0.107 | 2.431626e+06 |
+| e25_seed_2 | 2159 | 100.0 % | 0.107 | 1.567784e+06 |
+| e25_seed_3 | 2159 | 100.0 % | 0.087 | 2.302118e+06 |
+| e25_seed_4 | 2159 | 100.0 % | 0.107 | 2.013833e+06 |
+| e34_seed_1 | 2159 | 100.0 % | 0.107 | 2.439091e+06 |
+| e34_seed_2 | 2159 | 100.0 % | 0.107 | 1.567781e+06 |
+
+```
+[supervise 05:47:21] DONE experiments/e34_obd_full_seed_2.json rc=0
+[supervise 05:47:21] launch [/home/simon/venv/general/bin/python3 -m sparsifier.obd_sparsifier experiments/e34_obd_full_seed_2.json] (attempt 0/5)
+[supervise 09:43:05] DONE experiments/e34_obd_full_seed_2.json rc=0
+[supervise 09:43:05] QUEUE COMPLETE: /home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e25_stupidity_seed_1.json=ok, /home/simon/venv/general/bin/python3 scripts/train.py experiments/e25_stupidity_seed_2.json=ok, /home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e25_stupidity_seed_2.json=ok, /home/simon/venv/general/bin/python3 scripts/train.py experiments/e25_stupidity_seed_3.json=ok, /home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e25_stupidity_seed_3.json=ok, /home/simon/venv/general/bin/python3 scripts/train.py experiments/e25_stupidity_seed_4.json=ok, /home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e25_stupidity_seed_4.json=ok, /home/simon/venv/general/bin/python3 scripts/train.py experiments/e34_obd_full_seed_1.json=ok, /home/simon/venv/general/bin/python3 -m sparsifier.obd_sparsifier experiments/e34_obd_full_seed_1.json=ok, /home/simon/venv/general/bin/python3 scripts/train.py experiments/e34_obd_full_seed_2.json=ok, /home/simon/venv/general/bin/python3 -m sparsifier.obd_sparsifier experiments/e34_obd_full_seed_2.json=ok
+```
+
+**2026-09-27 16:52** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e25_seed_1 | 2159 | 100.0 % | 0.107 | 2.431626e+06 |
+| e25_seed_2 | 2159 | 100.0 % | 0.107 | 1.567784e+06 |
+| e25_seed_3 | 2159 | 100.0 % | 0.087 | 2.302118e+06 |
+| e25_seed_4 | 2159 | 100.0 % | 0.107 | 2.013833e+06 |
+| e34_seed_1 | 2159 | 100.0 % | 0.107 | 2.439091e+06 |
+| e34_seed_2 | 2159 | 100.0 % | 0.107 | 1.567781e+06 |
+
+```
+[supervise 05:47:21] DONE experiments/e34_obd_full_seed_2.json rc=0
+[supervise 05:47:21] launch [/home/simon/venv/general/bin/python3 -m sparsifier.obd_sparsifier experiments/e34_obd_full_seed_2.json] (attempt 0/5)
+[supervise 09:43:05] DONE experiments/e34_obd_full_seed_2.json rc=0
+[supervise 09:43:05] QUEUE COMPLETE: /home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e25_stupidity_seed_1.json=ok, /home/simon/venv/general/bin/python3 scripts/train.py experiments/e25_stupidity_seed_2.json=ok, /home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e25_stupidity_seed_2.json=ok, /home/simon/venv/general/bin/python3 scripts/train.py experiments/e25_stupidity_seed_3.json=ok, /home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e25_stupidity_seed_3.json=ok, /home/simon/venv/general/bin/python3 scripts/train.py experiments/e25_stupidity_seed_4.json=ok, /home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e25_stupidity_seed_4.json=ok, /home/simon/venv/general/bin/python3 scripts/train.py experiments/e34_obd_full_seed_1.json=ok, /home/simon/venv/general/bin/python3 -m sparsifier.obd_sparsifier experiments/e34_obd_full_seed_1.json=ok, /home/simon/venv/general/bin/python3 scripts/train.py experiments/e34_obd_full_seed_2.json=ok, /home/simon/venv/general/bin/python3 -m sparsifier.obd_sparsifier experiments/e34_obd_full_seed_2.json=ok
+```
+
+**2026-09-27 17:10** — queue complete (09:43). The completion watcher and the logger failed to
+exit because their own command lines matched the supervisor `pgrep` pattern (bug in the
+watcher, not in the runs); both were stopped manually and the `@reboot` crontab entry removed.
