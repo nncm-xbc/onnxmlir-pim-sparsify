@@ -1103,3 +1103,416 @@ to each run's last valid checkpoint is unaffected; lost steps are recomputed det
 [supervise 07:51:21] launch [/home/simon/venv/general/bin/python3 -m sparsifier.magnitude_sparsifier experiments/e35_magnitude_full_seed_2.json] (attempt 0/5)
 [supervise 07:56:21] launch [/home/simon/venv/general/bin/python3 -m sparsifier.magnitude_sparsifier experiments/e35_magnitude_full_seed_1.json] (attempt 0/5)
 ```
+
+**2026-09-28 08:26** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e35_magnitude_full_seed_1 | 1344 | 62.2 % | 0.868 | 4.993094e+04 |
+| e35_magnitude_full_seed_2 | 256 | 11.9 % | 0.911 | 1.310947e+02 |
+
+```
+[supervise 07:51:21] GAVE UP on experiments/e35_magnitude_full_seed_1.json after 5 restarts
+[supervise 07:51:21] launch [/home/simon/venv/general/bin/python3 -m sparsifier.magnitude_sparsifier experiments/e35_magnitude_full_seed_2.json] (attempt 0/5)
+[supervise 07:56:21] launch [/home/simon/venv/general/bin/python3 -m sparsifier.magnitude_sparsifier experiments/e35_magnitude_full_seed_1.json] (attempt 0/5)
+```
+
+**2026-09-28 08:56** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e35_magnitude_full_seed_1 | 1889 | 87.5 % | 0.511 | 6.125446e+05 |
+| e35_magnitude_full_seed_2 | 256 | 11.9 % | 0.911 | 1.310947e+02 |
+
+```
+[supervise 07:51:21] GAVE UP on experiments/e35_magnitude_full_seed_1.json after 5 restarts
+[supervise 07:51:21] launch [/home/simon/venv/general/bin/python3 -m sparsifier.magnitude_sparsifier experiments/e35_magnitude_full_seed_2.json] (attempt 0/5)
+[supervise 07:56:21] launch [/home/simon/venv/general/bin/python3 -m sparsifier.magnitude_sparsifier experiments/e35_magnitude_full_seed_1.json] (attempt 0/5)
+```
+
+**2026-09-28 09:26** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e35_magnitude_full_seed_1 | 2159 | 100.0 % | 0.107 | 2.431433e+06 |
+| e35_magnitude_full_seed_2 | 532 | 24.6 % | 0.910 | 1.244374e+03 |
+
+```
+[supervise 07:56:21] launch [/home/simon/venv/general/bin/python3 -m sparsifier.magnitude_sparsifier experiments/e35_magnitude_full_seed_1.json] (attempt 0/5)
+[supervise 09:10:43] DONE experiments/e35_magnitude_full_seed_1.json rc=0
+[supervise 09:10:43] launch [/home/simon/venv/general/bin/python3 -m sparsifier.magnitude_sparsifier experiments/e35_magnitude_full_seed_2.json] (attempt 0/5)
+```
+
+**2026-09-28 09:56** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e35_magnitude_full_seed_1 | 2159 | 100.0 % | 0.107 | 2.431433e+06 |
+| e35_magnitude_full_seed_2 | 1076 | 49.8 % | 0.902 | 1.269161e+04 |
+
+```
+[supervise 07:56:21] launch [/home/simon/venv/general/bin/python3 -m sparsifier.magnitude_sparsifier experiments/e35_magnitude_full_seed_1.json] (attempt 0/5)
+[supervise 09:10:43] DONE experiments/e35_magnitude_full_seed_1.json rc=0
+[supervise 09:10:43] launch [/home/simon/venv/general/bin/python3 -m sparsifier.magnitude_sparsifier experiments/e35_magnitude_full_seed_2.json] (attempt 0/5)
+```
+
+**2026-09-28 10:26** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e35_magnitude_full_seed_1 | 2159 | 100.0 % | 0.107 | 2.431433e+06 |
+| e35_magnitude_full_seed_2 | 1620 | 75.0 % | 0.772 | 1.346684e+05 |
+
+```
+[supervise 07:56:21] launch [/home/simon/venv/general/bin/python3 -m sparsifier.magnitude_sparsifier experiments/e35_magnitude_full_seed_1.json] (attempt 0/5)
+[supervise 09:10:43] DONE experiments/e35_magnitude_full_seed_1.json rc=0
+[supervise 09:10:43] launch [/home/simon/venv/general/bin/python3 -m sparsifier.magnitude_sparsifier experiments/e35_magnitude_full_seed_2.json] (attempt 0/5)
+```
+
+**2026-09-28 10:56** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e35_magnitude_full_seed_1 | 2159 | 100.0 % | 0.107 | 2.431433e+06 |
+| e35_magnitude_full_seed_2 | 2159 | 100.0 % | 0.107 | 1.567781e+06 |
+| e35_magnitude_full_seed_3 | 23 | 1.1 % | 0.916 | 1.824837e-01 |
+
+```
+[supervise 09:10:43] launch [/home/simon/venv/general/bin/python3 -m sparsifier.magnitude_sparsifier experiments/e35_magnitude_full_seed_2.json] (attempt 0/5)
+[supervise 10:54:55] DONE experiments/e35_magnitude_full_seed_2.json rc=0
+[supervise 10:54:55] launch [/home/simon/venv/general/bin/python3 -m sparsifier.magnitude_sparsifier experiments/e35_magnitude_full_seed_3.json] (attempt 0/5)
+```
+
+**2026-09-28 11:26** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e35_magnitude_full_seed_1 | 2159 | 100.0 % | 0.107 | 2.431433e+06 |
+| e35_magnitude_full_seed_2 | 2159 | 100.0 % | 0.107 | 1.567781e+06 |
+| e35_magnitude_full_seed_3 | 566 | 26.2 % | 0.916 | 1.377734e+03 |
+
+```
+[supervise 09:10:43] launch [/home/simon/venv/general/bin/python3 -m sparsifier.magnitude_sparsifier experiments/e35_magnitude_full_seed_2.json] (attempt 0/5)
+[supervise 10:54:55] DONE experiments/e35_magnitude_full_seed_2.json rc=0
+[supervise 10:54:55] launch [/home/simon/venv/general/bin/python3 -m sparsifier.magnitude_sparsifier experiments/e35_magnitude_full_seed_3.json] (attempt 0/5)
+```
+
+**2026-09-28 11:56** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e35_magnitude_full_seed_1 | 2159 | 100.0 % | 0.107 | 2.431433e+06 |
+| e35_magnitude_full_seed_2 | 2159 | 100.0 % | 0.107 | 1.567781e+06 |
+| e35_magnitude_full_seed_3 | 1109 | 51.3 % | 0.914 | 2.067358e+04 |
+
+```
+[supervise 09:10:43] launch [/home/simon/venv/general/bin/python3 -m sparsifier.magnitude_sparsifier experiments/e35_magnitude_full_seed_2.json] (attempt 0/5)
+[supervise 10:54:55] DONE experiments/e35_magnitude_full_seed_2.json rc=0
+[supervise 10:54:55] launch [/home/simon/venv/general/bin/python3 -m sparsifier.magnitude_sparsifier experiments/e35_magnitude_full_seed_3.json] (attempt 0/5)
+```
+
+**2026-09-28 12:26** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e35_magnitude_full_seed_1 | 2159 | 100.0 % | 0.107 | 2.431433e+06 |
+| e35_magnitude_full_seed_2 | 2159 | 100.0 % | 0.107 | 1.567781e+06 |
+| e35_magnitude_full_seed_3 | 1652 | 76.5 % | 0.858 | 1.645801e+05 |
+
+```
+[supervise 09:10:43] launch [/home/simon/venv/general/bin/python3 -m sparsifier.magnitude_sparsifier experiments/e35_magnitude_full_seed_2.json] (attempt 0/5)
+[supervise 10:54:55] DONE experiments/e35_magnitude_full_seed_2.json rc=0
+[supervise 10:54:55] launch [/home/simon/venv/general/bin/python3 -m sparsifier.magnitude_sparsifier experiments/e35_magnitude_full_seed_3.json] (attempt 0/5)
+```
+
+**2026-09-28 12:56** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e35_magnitude_full_seed_1 | 2159 | 100.0 % | 0.107 | 2.431433e+06 |
+| e35_magnitude_full_seed_2 | 2159 | 100.0 % | 0.107 | 1.567781e+06 |
+| e35_magnitude_full_seed_3 | 2159 | 100.0 % | 0.087 | 2.279166e+06 |
+| e35_magnitude_full_seed_4 | 42 | 1.9 % | 0.920 | 1.612114e+00 |
+
+```
+[supervise 10:54:55] launch [/home/simon/venv/general/bin/python3 -m sparsifier.magnitude_sparsifier experiments/e35_magnitude_full_seed_3.json] (attempt 0/5)
+[supervise 12:53:53] DONE experiments/e35_magnitude_full_seed_3.json rc=0
+[supervise 12:53:53] launch [/home/simon/venv/general/bin/python3 -m sparsifier.magnitude_sparsifier experiments/e35_magnitude_full_seed_4.json] (attempt 0/5)
+```
+
+**2026-09-28 13:26** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e35_magnitude_full_seed_1 | 2159 | 100.0 % | 0.107 | 2.431433e+06 |
+| e35_magnitude_full_seed_2 | 2159 | 100.0 % | 0.107 | 1.567781e+06 |
+| e35_magnitude_full_seed_3 | 2159 | 100.0 % | 0.087 | 2.279166e+06 |
+| e35_magnitude_full_seed_4 | 584 | 27.0 % | 0.918 | 3.093140e+03 |
+
+```
+[supervise 10:54:55] launch [/home/simon/venv/general/bin/python3 -m sparsifier.magnitude_sparsifier experiments/e35_magnitude_full_seed_3.json] (attempt 0/5)
+[supervise 12:53:53] DONE experiments/e35_magnitude_full_seed_3.json rc=0
+[supervise 12:53:53] launch [/home/simon/venv/general/bin/python3 -m sparsifier.magnitude_sparsifier experiments/e35_magnitude_full_seed_4.json] (attempt 0/5)
+```
+
+**2026-09-28 13:56** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e35_magnitude_full_seed_1 | 2159 | 100.0 % | 0.107 | 2.431433e+06 |
+| e35_magnitude_full_seed_2 | 2159 | 100.0 % | 0.107 | 1.567781e+06 |
+| e35_magnitude_full_seed_3 | 2159 | 100.0 % | 0.087 | 2.279166e+06 |
+| e35_magnitude_full_seed_4 | 1127 | 52.2 % | 0.916 | 3.040703e+04 |
+
+```
+[supervise 10:54:55] launch [/home/simon/venv/general/bin/python3 -m sparsifier.magnitude_sparsifier experiments/e35_magnitude_full_seed_3.json] (attempt 0/5)
+[supervise 12:53:53] DONE experiments/e35_magnitude_full_seed_3.json rc=0
+[supervise 12:53:53] launch [/home/simon/venv/general/bin/python3 -m sparsifier.magnitude_sparsifier experiments/e35_magnitude_full_seed_4.json] (attempt 0/5)
+```
+
+**2026-09-28 14:26** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e35_magnitude_full_seed_1 | 2159 | 100.0 % | 0.107 | 2.431433e+06 |
+| e35_magnitude_full_seed_2 | 2159 | 100.0 % | 0.107 | 1.567781e+06 |
+| e35_magnitude_full_seed_3 | 2159 | 100.0 % | 0.087 | 2.279166e+06 |
+| e35_magnitude_full_seed_4 | 1668 | 77.2 % | 0.831 | 2.412745e+05 |
+
+```
+[supervise 10:54:55] launch [/home/simon/venv/general/bin/python3 -m sparsifier.magnitude_sparsifier experiments/e35_magnitude_full_seed_3.json] (attempt 0/5)
+[supervise 12:53:53] DONE experiments/e35_magnitude_full_seed_3.json rc=0
+[supervise 12:53:53] launch [/home/simon/venv/general/bin/python3 -m sparsifier.magnitude_sparsifier experiments/e35_magnitude_full_seed_4.json] (attempt 0/5)
+```
+
+**2026-09-28 14:56** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e35_magnitude_full_seed_1 | 2159 | 100.0 % | 0.107 | 2.431433e+06 |
+| e35_magnitude_full_seed_2 | 2159 | 100.0 % | 0.107 | 1.567781e+06 |
+| e35_magnitude_full_seed_3 | 2159 | 100.0 % | 0.087 | 2.279166e+06 |
+| e35_magnitude_full_seed_4 | 2159 | 100.0 % | 0.107 | 2.013176e+06 |
+| e36_kwon_full_seed_1 | 62 | 2.9 % | 0.906 | 2.449136e+03 |
+
+```
+[supervise 12:53:53] launch [/home/simon/venv/general/bin/python3 -m sparsifier.magnitude_sparsifier experiments/e35_magnitude_full_seed_4.json] (attempt 0/5)
+[supervise 14:52:47] DONE experiments/e35_magnitude_full_seed_4.json rc=0
+[supervise 14:52:47] launch [/home/simon/venv/general/bin/python3 -m sparsifier.kwon_sparsifier experiments/e36_kwon_full_seed_1.json] (attempt 0/5)
+```
+
+**2026-09-28 15:26** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e35_magnitude_full_seed_1 | 2159 | 100.0 % | 0.107 | 2.431433e+06 |
+| e35_magnitude_full_seed_2 | 2159 | 100.0 % | 0.107 | 1.567781e+06 |
+| e35_magnitude_full_seed_3 | 2159 | 100.0 % | 0.087 | 2.279166e+06 |
+| e35_magnitude_full_seed_4 | 2159 | 100.0 % | 0.107 | 2.013176e+06 |
+| e36_kwon_full_seed_1 | 604 | 28.0 % | 0.888 | 8.399718e+03 |
+
+```
+[supervise 12:53:53] launch [/home/simon/venv/general/bin/python3 -m sparsifier.magnitude_sparsifier experiments/e35_magnitude_full_seed_4.json] (attempt 0/5)
+[supervise 14:52:47] DONE experiments/e35_magnitude_full_seed_4.json rc=0
+[supervise 14:52:47] launch [/home/simon/venv/general/bin/python3 -m sparsifier.kwon_sparsifier experiments/e36_kwon_full_seed_1.json] (attempt 0/5)
+```
+
+**2026-09-28 15:56** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e35_magnitude_full_seed_1 | 2159 | 100.0 % | 0.107 | 2.431433e+06 |
+| e35_magnitude_full_seed_2 | 2159 | 100.0 % | 0.107 | 1.567781e+06 |
+| e35_magnitude_full_seed_3 | 2159 | 100.0 % | 0.087 | 2.279166e+06 |
+| e35_magnitude_full_seed_4 | 2159 | 100.0 % | 0.107 | 2.013176e+06 |
+| e36_kwon_full_seed_1 | 1144 | 53.0 % | 0.661 | 5.661930e+04 |
+
+```
+[supervise 12:53:53] launch [/home/simon/venv/general/bin/python3 -m sparsifier.magnitude_sparsifier experiments/e35_magnitude_full_seed_4.json] (attempt 0/5)
+[supervise 14:52:47] DONE experiments/e35_magnitude_full_seed_4.json rc=0
+[supervise 14:52:47] launch [/home/simon/venv/general/bin/python3 -m sparsifier.kwon_sparsifier experiments/e36_kwon_full_seed_1.json] (attempt 0/5)
+```
+
+**2026-09-28 16:26** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e35_magnitude_full_seed_1 | 2159 | 100.0 % | 0.107 | 2.431433e+06 |
+| e35_magnitude_full_seed_2 | 2159 | 100.0 % | 0.107 | 1.567781e+06 |
+| e35_magnitude_full_seed_3 | 2159 | 100.0 % | 0.087 | 2.279166e+06 |
+| e35_magnitude_full_seed_4 | 2159 | 100.0 % | 0.107 | 2.013176e+06 |
+| e36_kwon_full_seed_1 | 1685 | 78.0 % | 0.456 | 3.411505e+05 |
+
+```
+[supervise 12:53:53] launch [/home/simon/venv/general/bin/python3 -m sparsifier.magnitude_sparsifier experiments/e35_magnitude_full_seed_4.json] (attempt 0/5)
+[supervise 14:52:47] DONE experiments/e35_magnitude_full_seed_4.json rc=0
+[supervise 14:52:47] launch [/home/simon/venv/general/bin/python3 -m sparsifier.kwon_sparsifier experiments/e36_kwon_full_seed_1.json] (attempt 0/5)
+```
+
+**2026-09-28 16:56** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e35_magnitude_full_seed_1 | 2159 | 100.0 % | 0.107 | 2.431433e+06 |
+| e35_magnitude_full_seed_2 | 2159 | 100.0 % | 0.107 | 1.567781e+06 |
+| e35_magnitude_full_seed_3 | 2159 | 100.0 % | 0.087 | 2.279166e+06 |
+| e35_magnitude_full_seed_4 | 2159 | 100.0 % | 0.107 | 2.013176e+06 |
+| e36_kwon_full_seed_1 | 2159 | 100.0 % | 0.107 | 2.431433e+06 |
+| e36_kwon_full_seed_2 | 70 | 3.2 % | 0.909 | 2.507232e+02 |
+
+```
+[supervise 14:52:47] launch [/home/simon/venv/general/bin/python3 -m sparsifier.kwon_sparsifier experiments/e36_kwon_full_seed_1.json] (attempt 0/5)
+[supervise 16:52:19] DONE experiments/e36_kwon_full_seed_1.json rc=0
+[supervise 16:52:19] launch [/home/simon/venv/general/bin/python3 -m sparsifier.kwon_sparsifier experiments/e36_kwon_full_seed_2.json] (attempt 0/5)
+```
+
+**2026-09-28 17:26** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e35_magnitude_full_seed_1 | 2159 | 100.0 % | 0.107 | 2.431433e+06 |
+| e35_magnitude_full_seed_2 | 2159 | 100.0 % | 0.107 | 1.567781e+06 |
+| e35_magnitude_full_seed_3 | 2159 | 100.0 % | 0.087 | 2.279166e+06 |
+| e35_magnitude_full_seed_4 | 2159 | 100.0 % | 0.107 | 2.013176e+06 |
+| e36_kwon_full_seed_1 | 2159 | 100.0 % | 0.107 | 2.431433e+06 |
+| e36_kwon_full_seed_2 | 610 | 28.2 % | 0.874 | 8.282588e+03 |
+
+```
+[supervise 14:52:47] launch [/home/simon/venv/general/bin/python3 -m sparsifier.kwon_sparsifier experiments/e36_kwon_full_seed_1.json] (attempt 0/5)
+[supervise 16:52:19] DONE experiments/e36_kwon_full_seed_1.json rc=0
+[supervise 16:52:19] launch [/home/simon/venv/general/bin/python3 -m sparsifier.kwon_sparsifier experiments/e36_kwon_full_seed_2.json] (attempt 0/5)
+```
+
+**2026-09-28 17:56** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e35_magnitude_full_seed_1 | 2159 | 100.0 % | 0.107 | 2.431433e+06 |
+| e35_magnitude_full_seed_2 | 2159 | 100.0 % | 0.107 | 1.567781e+06 |
+| e35_magnitude_full_seed_3 | 2159 | 100.0 % | 0.087 | 2.279166e+06 |
+| e35_magnitude_full_seed_4 | 2159 | 100.0 % | 0.107 | 2.013176e+06 |
+| e36_kwon_full_seed_1 | 2159 | 100.0 % | 0.107 | 2.431433e+06 |
+| e36_kwon_full_seed_2 | 1152 | 53.3 % | 0.677 | 4.951363e+04 |
+
+```
+[supervise 14:52:47] launch [/home/simon/venv/general/bin/python3 -m sparsifier.kwon_sparsifier experiments/e36_kwon_full_seed_1.json] (attempt 0/5)
+[supervise 16:52:19] DONE experiments/e36_kwon_full_seed_1.json rc=0
+[supervise 16:52:19] launch [/home/simon/venv/general/bin/python3 -m sparsifier.kwon_sparsifier experiments/e36_kwon_full_seed_2.json] (attempt 0/5)
+```
+
+**2026-09-28 18:26** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e35_magnitude_full_seed_1 | 2159 | 100.0 % | 0.107 | 2.431433e+06 |
+| e35_magnitude_full_seed_2 | 2159 | 100.0 % | 0.107 | 1.567781e+06 |
+| e35_magnitude_full_seed_3 | 2159 | 100.0 % | 0.087 | 2.279166e+06 |
+| e35_magnitude_full_seed_4 | 2159 | 100.0 % | 0.107 | 2.013176e+06 |
+| e36_kwon_full_seed_1 | 2159 | 100.0 % | 0.107 | 2.431433e+06 |
+| e36_kwon_full_seed_2 | 1696 | 78.5 % | 0.533 | 2.752357e+05 |
+
+```
+[supervise 14:52:47] launch [/home/simon/venv/general/bin/python3 -m sparsifier.kwon_sparsifier experiments/e36_kwon_full_seed_1.json] (attempt 0/5)
+[supervise 16:52:19] DONE experiments/e36_kwon_full_seed_1.json rc=0
+[supervise 16:52:19] launch [/home/simon/venv/general/bin/python3 -m sparsifier.kwon_sparsifier experiments/e36_kwon_full_seed_2.json] (attempt 0/5)
+```
+
+**2026-09-28 18:56** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e35_magnitude_full_seed_1 | 2159 | 100.0 % | 0.107 | 2.431433e+06 |
+| e35_magnitude_full_seed_2 | 2159 | 100.0 % | 0.107 | 1.567781e+06 |
+| e35_magnitude_full_seed_3 | 2159 | 100.0 % | 0.087 | 2.279166e+06 |
+| e35_magnitude_full_seed_4 | 2159 | 100.0 % | 0.107 | 2.013176e+06 |
+| e36_kwon_full_seed_1 | 2159 | 100.0 % | 0.107 | 2.431433e+06 |
+| e36_kwon_full_seed_2 | 2159 | 100.0 % | 0.107 | 1.567789e+06 |
+| e36_kwon_full_seed_3 | 79 | 3.7 % | 0.914 | 1.010218e+02 |
+
+```
+[supervise 16:52:19] launch [/home/simon/venv/general/bin/python3 -m sparsifier.kwon_sparsifier experiments/e36_kwon_full_seed_2.json] (attempt 0/5)
+[supervise 18:51:51] DONE experiments/e36_kwon_full_seed_2.json rc=0
+[supervise 18:51:51] launch [/home/simon/venv/general/bin/python3 -m sparsifier.kwon_sparsifier experiments/e36_kwon_full_seed_3.json] (attempt 0/5)
+```
+
+**2026-09-28 19:26** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e35_magnitude_full_seed_1 | 2159 | 100.0 % | 0.107 | 2.431433e+06 |
+| e35_magnitude_full_seed_2 | 2159 | 100.0 % | 0.107 | 1.567781e+06 |
+| e35_magnitude_full_seed_3 | 2159 | 100.0 % | 0.087 | 2.279166e+06 |
+| e35_magnitude_full_seed_4 | 2159 | 100.0 % | 0.107 | 2.013176e+06 |
+| e36_kwon_full_seed_1 | 2159 | 100.0 % | 0.107 | 2.431433e+06 |
+| e36_kwon_full_seed_2 | 2159 | 100.0 % | 0.107 | 1.567789e+06 |
+| e36_kwon_full_seed_3 | 621 | 28.7 % | 0.889 | 1.004159e+04 |
+
+```
+[supervise 16:52:19] launch [/home/simon/venv/general/bin/python3 -m sparsifier.kwon_sparsifier experiments/e36_kwon_full_seed_2.json] (attempt 0/5)
+[supervise 18:51:51] DONE experiments/e36_kwon_full_seed_2.json rc=0
+[supervise 18:51:51] launch [/home/simon/venv/general/bin/python3 -m sparsifier.kwon_sparsifier experiments/e36_kwon_full_seed_3.json] (attempt 0/5)
+```
+
+**2026-09-28 19:56** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e35_magnitude_full_seed_1 | 2159 | 100.0 % | 0.107 | 2.431433e+06 |
+| e35_magnitude_full_seed_2 | 2159 | 100.0 % | 0.107 | 1.567781e+06 |
+| e35_magnitude_full_seed_3 | 2159 | 100.0 % | 0.087 | 2.279166e+06 |
+| e35_magnitude_full_seed_4 | 2159 | 100.0 % | 0.107 | 2.013176e+06 |
+| e36_kwon_full_seed_1 | 2159 | 100.0 % | 0.107 | 2.431433e+06 |
+| e36_kwon_full_seed_2 | 2159 | 100.0 % | 0.107 | 1.567789e+06 |
+| e36_kwon_full_seed_3 | 1162 | 53.8 % | 0.646 | 3.715829e+04 |
+
+```
+[supervise 16:52:19] launch [/home/simon/venv/general/bin/python3 -m sparsifier.kwon_sparsifier experiments/e36_kwon_full_seed_2.json] (attempt 0/5)
+[supervise 18:51:51] DONE experiments/e36_kwon_full_seed_2.json rc=0
+[supervise 18:51:51] launch [/home/simon/venv/general/bin/python3 -m sparsifier.kwon_sparsifier experiments/e36_kwon_full_seed_3.json] (attempt 0/5)
+```
+
+**2026-09-28 20:26** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e35_magnitude_full_seed_1 | 2159 | 100.0 % | 0.107 | 2.431433e+06 |
+| e35_magnitude_full_seed_2 | 2159 | 100.0 % | 0.107 | 1.567781e+06 |
+| e35_magnitude_full_seed_3 | 2159 | 100.0 % | 0.087 | 2.279166e+06 |
+| e35_magnitude_full_seed_4 | 2159 | 100.0 % | 0.107 | 2.013176e+06 |
+| e36_kwon_full_seed_1 | 2159 | 100.0 % | 0.107 | 2.431433e+06 |
+| e36_kwon_full_seed_2 | 2159 | 100.0 % | 0.107 | 1.567789e+06 |
+| e36_kwon_full_seed_3 | 1694 | 78.4 % | 0.579 | 3.567972e+05 |
+
+```
+[supervise 16:52:19] launch [/home/simon/venv/general/bin/python3 -m sparsifier.kwon_sparsifier experiments/e36_kwon_full_seed_2.json] (attempt 0/5)
+[supervise 18:51:51] DONE experiments/e36_kwon_full_seed_2.json rc=0
+[supervise 18:51:51] launch [/home/simon/venv/general/bin/python3 -m sparsifier.kwon_sparsifier experiments/e36_kwon_full_seed_3.json] (attempt 0/5)
+```
+
+**2026-09-28 22:10** — (re)launch of `scripts/run/queue_seedband2.txt`: 8 commands queued
+
+**2026-09-28 22:10** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e36_kwon_full_seed_3 | 1897 | 87.8 % | 0.304 | 8.862545e+05 |
+
+```
+[supervise 18:51:51] DONE experiments/e36_kwon_full_seed_2.json rc=0
+[supervise 18:51:51] launch [/home/simon/venv/general/bin/python3 -m sparsifier.kwon_sparsifier experiments/e36_kwon_full_seed_3.json] (attempt 0/5)
+step 1883 | acc=0.3170 | NZ=   277 | sparsity=0.8718 | d_m=8.5335e+05[supervise 22:10:53] launch [/home/simon/venv/general/bin/python3 -m sparsifier.kwon_sparsifier experiments/e36_kwon_full_seed_3.js
+```
+
+**2026-09-28 22:15 — third crash; hardware lead.** The host went down again at ~20:38
+(last GPU telemetry line 20:38:43; reboot 22:09). Magnitude seeds 1–4 and Kwon seeds 1–2
+had completed (9/14 runs); Kwon seed 3 was at step 1 898. The `@reboot` hook relaunched the
+queue unaided and Kwon seed 3 resumed from its last checkpoint (CSV clean, no NUL bytes) —
+the checkpoint hardening worked. GPU telemetry over 12.5 h of full load was unremarkable:
+74–76 °C, ≤ 101 W, no throttle reasons, normal readings up to the last line. Motherboard
+sensors (ASUS WMI) however read the **+12 V rail at 10.1–10.2 V** under this load — about 16 %
+below nominal, outside the ATX ±5 % window (11.4–12.6 V). Together with four abrupt stops
+under sustained load and no kernel/GPU/thermal log entry, this points at the power supply
+(or the board's 12 V sensing) rather than the GPU or the software. A board-telemetry logger
+(`scripts/run/board_telemetry.sh` → `artifacts/seedband/board_telemetry.csv`: +12 V, +5 V,
+Vcore, CPU/VRM/chipset temperature, VRM current every 10 s, synced to disk) now runs alongside
+the queue, so the rail voltage just before the next crash will be on record.

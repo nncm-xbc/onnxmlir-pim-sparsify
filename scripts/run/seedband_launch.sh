@@ -33,4 +33,9 @@ echo $! > $PID
 # GPU telemetry every 10 s, to diagnose the unexplained host crashes (see experiment log).
 setsid nohup nvidia-smi --query-gpu=timestamp,temperature.gpu,power.draw,utilization.gpu,clocks.sm,clocks_throttle_reasons.active \
   --format=csv,noheader -l 10 >> $DIR/gpu_telemetry.csv 2>&1 < /dev/null &
+BPID=$DIR/board_telemetry.pid
+if ! { [ -f $BPID ] && kill -0 "$(cat $BPID)" 2>/dev/null; }; then
+  setsid nohup scripts/run/board_telemetry.sh $DIR/board_telemetry.csv > /dev/null 2>&1 < /dev/null &
+  echo $! > $BPID
+fi
 setsid nohup scripts/run/seedband_logger.sh "$LOG" $DIR/$TAG.resume.txt $PID $DIR/$TAG.supervise.log 1800 > /dev/null 2>&1 < /dev/null &
