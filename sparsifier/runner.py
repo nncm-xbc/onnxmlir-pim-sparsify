@@ -16,6 +16,7 @@ returning ``(pruned_net, meta)`` where ``meta`` exposes ``layer_idx``, ``i``,
 import csv
 import json
 import os
+import shutil
 
 import numpy as np
 
@@ -39,10 +40,19 @@ def _latest_checkpoint(output_folder):
                 steps.append(int(name[len('step_'):]))
             except ValueError:
                 pass
-    if not steps:
-        return None
-    s = max(steps)
-    return s, os.path.join(ckpt_root, 'step_%04d' % s)
+    # Newest checkpoint whose files all load: a host crash mid-write can leave
+    # zero-length .npy files (seen 2026-09-28), so fall back to an older one.
+    for s in sorted(steps, reverse=True):
+        d = os.path.join(ckpt_root, 'step_%04d' % s)
+        try:
+            for f in os.listdir(d):
+                if f.endswith('.npy'):
+                    np.load(os.path.join(d, f))
+        except (OSError, ValueError, EOFError):
+            print("WARNING: skipping unreadable checkpoint %s" % d)
+            continue
+        return s, d
+    return None
 
 
 def _truncate_log(log_path, keep_through_step):
@@ -190,11 +200,20 @@ def run_sparsifier(cfg_path, prune_fn, *, output_subdir, log_name,
             log_file.flush()
 
             if i % sp['checkpoint_every'] == 0:
+                # Atomic, durable checkpoint: write to a temp dir, fsync, rename.
+                os.fsync(log_file.fileno())
                 ckpt_dir = os.path.join(output_folder, 'checkpoints', 'step_%04d' % i)
-                os.makedirs(ckpt_dir, exist_ok=True)
+                tmp_dir = ckpt_dir + '.tmp'
+                shutil.rmtree(tmp_dir, ignore_errors=True)
+                os.makedirs(tmp_dir)
                 for li, layer in enumerate(net):
-                    np.save(os.path.join(ckpt_dir, 'W_%d.npy' % li), layer.W)
-                    np.save(os.path.join(ckpt_dir, 'b_%d.npy' % li), layer.b)
+                    for fn, arr in (('W_%d.npy' % li, layer.W), ('b_%d.npy' % li, layer.b)):
+                        with open(os.path.join(tmp_dir, fn), 'wb') as fh:
+                            np.save(fh, arr)
+                            fh.flush()
+                            os.fsync(fh.fileno())
+                shutil.rmtree(ckpt_dir, ignore_errors=True)
+                os.replace(tmp_dir, ckpt_dir)
 
     print("%s log saved to: %s" % (loop_label, log_path))
     for i, l in enumerate(net):

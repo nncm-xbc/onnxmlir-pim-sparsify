@@ -30,4 +30,7 @@ export JAX_PLATFORMS=cuda
 setsid nohup /home/simon/venv/general/bin/python3 scripts/run/supervise.py $DIR/$TAG.resume.txt \
   >> $DIR/$TAG.supervise.log 2>&1 < /dev/null &
 echo $! > $PID
+# GPU telemetry every 10 s, to diagnose the unexplained host crashes (see experiment log).
+setsid nohup nvidia-smi --query-gpu=timestamp,temperature.gpu,power.draw,utilization.gpu,clocks.sm,clocks_throttle_reasons.active \
+  --format=csv,noheader -l 10 >> $DIR/gpu_telemetry.csv 2>&1 < /dev/null &
 setsid nohup scripts/run/seedband_logger.sh "$LOG" $DIR/$TAG.resume.txt $PID $DIR/$TAG.supervise.log 1800 > /dev/null 2>&1 < /dev/null &

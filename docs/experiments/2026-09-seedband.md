@@ -1027,3 +1027,79 @@ re-installed). Metrics: `scripts/analyze_seedband.py` (extended to five selector
 magnitude/Kwon/OBS rows reproduce the manuscript table exactly).
 
 ## E.4 Progress checkpoints (auto-appended)
+
+**2026-09-27 18:20** — (re)launch of `scripts/run/queue_seedband2.txt`: 14 commands queued
+
+**2026-09-27 18:20** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+
+```
+[supervise 18:20:55] launch [/home/simon/venv/general/bin/python3 -m sparsifier.magnitude_sparsifier experiments/e35_magnitude_full_seed_1.json] (attempt 0/5)
+```
+
+**2026-09-27 18:50** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e35_magnitude_full_seed_1 | 494 | 22.9 % | 0.905 | 1.117056e+03 |
+
+```
+[supervise 18:20:55] launch [/home/simon/venv/general/bin/python3 -m sparsifier.magnitude_sparsifier experiments/e35_magnitude_full_seed_1.json] (attempt 0/5)
+```
+
+**2026-09-27 20:01** — (re)launch of `scripts/run/queue_seedband2.txt`: 14 commands queued
+
+**2026-09-27 20:01** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+
+```
+[supervise 18:20:55] launch [/home/simon/venv/general/bin/python3 -m sparsifier.magnitude_sparsifier experiments/e35_magnitude_full_seed_1.json] (attempt 0/5)
+step  821 | acc=0.9030 | NZ=  1339 | sparsity=0.3801 | d_m=5.6552e+03[supervise 20:01:36] launch [/home/simon/venv/general/bin/python3 -m sparsifier.magnitude_sparsifier experiments/e35_magnitude_full
+```
+
+**2026-09-28 07:50** — (re)launch of `scripts/run/queue_seedband2.txt`: 14 commands queued
+
+**2026-09-28 07:50** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e35_magnitude_full_seed_2 | 240 | 11.1 % | 0.911 | 1.168168e+02 |
+
+```
+[supervise 20:01:54] EXIT experiments/e35_magnitude_full_seed_1.json rc=1 -- will resume from checkpoint
+[supervise 20:01:54] GAVE UP on experiments/e35_magnitude_full_seed_1.json after 5 restarts
+[supervise 20:01:54] launch [/home/simon/venv/general/bin/python3 -m sparsifier.magnitude_sparsifier experiments/e35_magnitude_full_seed_2.json] (attempt 0/5)
+```
+
+**2026-09-28 08:30 — two host crashes + corrupt checkpoint.** Timeline from `last -x` and
+`journalctl`: the host went down abruptly at ~19:15 on 09-27 (e35 magnitude seed 1 at step
+823), rebooted at 20:00 (kernel 7.0.0-31 → -34), and went down again at ~20:16; it was back at
+07:49 on 09-28. Neither boot's journal records a kernel, GPU (NVRM/Xid), OOM or thermal event
+before it ends — consistent with a hard freeze or power loss, as on 09-25 at 00:52. All three
+stops happened under sustained GPU load. Both relaunches (20:01, 07:51) failed on seed 1 with
+`EOFError`: checkpoint `step_0850` existed but its six `.npy` files were zero-length (page
+cache lost), and the CSV tail was NUL bytes; the supervisor gave up on seed 1 and moved to seed 2.
+Fix in `sparsifier/runner.py`: checkpoint discovery skips checkpoints that fail to load
+(seed 1 now resumes from `step_0800`; the CSV is truncated to it), and checkpoints are written
+atomically (temp dir + fsync + rename; the CSV is fsynced at each checkpoint). Tests 56/56.
+The launcher now also records GPU telemetry every 10 s (`artifacts/seedband/gpu_telemetry.csv`:
+temperature, power, utilisation, SM clock, throttle reasons) to diagnose further crashes. Data up
+to each run's last valid checkpoint is unaffected; lost steps are recomputed deterministically.
+
+**2026-09-28 07:56** — (re)launch of `scripts/run/queue_seedband2.txt`: 14 commands queued
+
+**2026-09-28 07:56** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e35_magnitude_full_seed_2 | 256 | 11.9 % | 0.911 | 1.310947e+02 |
+
+```
+[supervise 07:51:21] GAVE UP on experiments/e35_magnitude_full_seed_1.json after 5 restarts
+[supervise 07:51:21] launch [/home/simon/venv/general/bin/python3 -m sparsifier.magnitude_sparsifier experiments/e35_magnitude_full_seed_2.json] (attempt 0/5)
+[supervise 07:56:21] launch [/home/simon/venv/general/bin/python3 -m sparsifier.magnitude_sparsifier experiments/e35_magnitude_full_seed_1.json] (attempt 0/5)
+```
