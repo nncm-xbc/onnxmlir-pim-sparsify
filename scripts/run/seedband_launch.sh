@@ -26,7 +26,7 @@ while IFS= read -r ln; do
   echo "$ln" >> $DIR/$TAG.resume.txt
 done < "$QUEUE"
 printf '\n**%s** — (re)launch of `%s`: %s commands queued\n' "$(date '+%Y-%m-%d %H:%M')" "$QUEUE" "$(wc -l < $DIR/$TAG.resume.txt)" >> "$LOG"
-export JAX_PLATFORMS=cuda
+export JAX_PLATFORMS=cuda RESTART_SLEEP=60 MAX_RESTARTS=10
 setsid nohup /home/simon/venv/general/bin/python3 scripts/run/supervise.py $DIR/$TAG.resume.txt \
   >> $DIR/$TAG.supervise.log 2>&1 < /dev/null &
 echo $! > $PID

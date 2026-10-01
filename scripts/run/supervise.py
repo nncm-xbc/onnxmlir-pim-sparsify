@@ -102,8 +102,10 @@ def run_one(cmd):
         # context), a bare relaunch will re-hang; giving up after MAX_RESTARTS
         # avoids an infinite kill/relaunch loop. Upgrade path: `nvidia-smi
         # --gpu-reset` between attempts if that ever becomes the common case.
-        if killed:
-            time.sleep(RESTART_SLEEP)
+        # Sleep before every relaunch, not only after a stall-kill: on 2026-09-29 a
+        # fast rc!=0 loop (GPU memory not yet released by the dead child) burned all
+        # retries in ~15 s and marked six runs GAVE UP.
+        time.sleep(RESTART_SLEEP)
     log("GAVE UP on %s after %d restarts" % (config, MAX_RESTARTS))
     return False
 

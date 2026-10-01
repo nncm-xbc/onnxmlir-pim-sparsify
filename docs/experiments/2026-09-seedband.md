@@ -1516,3 +1516,259 @@ under sustained load and no kernel/GPU/thermal log entry, this points at the pow
 (`scripts/run/board_telemetry.sh` → `artifacts/seedband/board_telemetry.csv`: +12 V, +5 V,
 Vcore, CPU/VRM/chipset temperature, VRM current every 10 s, synced to disk) now runs alongside
 the queue, so the rail voltage just before the next crash will be on record.
+
+**2026-09-28 22:40** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e36_kwon_full_seed_3 | 2159 | 100.0 % | 0.087 | 2.279165e+06 |
+| e36_kwon_full_seed_4 | 208 | 9.6 % | 0.919 | 1.323762e+03 |
+
+```
+step 1883 | acc=0.3170 | NZ=   277 | sparsity=0.8718 | d_m=8.5335e+05[supervise 22:10:53] launch [/home/simon/venv/general/bin/python3 -m sparsifier.kwon_sparsifier experiments/e36_kwon_full_seed_3.js
+[supervise 22:28:34] DONE experiments/e36_kwon_full_seed_3.json rc=0
+[supervise 22:28:34] launch [/home/simon/venv/general/bin/python3 -m sparsifier.kwon_sparsifier experiments/e36_kwon_full_seed_4.json] (attempt 0/5)
+```
+
+**2026-09-29 19:48** — (re)launch of `scripts/run/queue_seedband2.txt`: 7 commands queued
+
+**2026-09-29 19:48** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e36_kwon_full_seed_4 | 513 | 23.8 % | 0.915 | 1.123685e+04 |
+
+```
+step 1883 | acc=0.3170 | NZ=   277 | sparsity=0.8718 | d_m=8.5335e+05[supervise 22:10:53] launch [/home/simon/venv/general/bin/python3 -m sparsifier.kwon_sparsifier experiments/e36_kwon_full_seed_3.js
+[supervise 22:28:34] DONE experiments/e36_kwon_full_seed_3.json rc=0
+[supervise 22:28:34] launch [/home/simon/venv/general/bin/python3 -m sparsifier.kwon_sparsifier experiments/e36_kwon_full_seed_4.json] (attempt 0/5)
+```
+
+**2026-09-29 20:18** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e36_kwon_full_seed_4 | 1028 | 47.6 % | 0.888 | 6.405740e+04 |
+
+```
+[supervise 22:28:34] DONE experiments/e36_kwon_full_seed_3.json rc=0
+[supervise 22:28:34] launch [/home/simon/venv/general/bin/python3 -m sparsifier.kwon_sparsifier experiments/e36_kwon_full_seed_4.json] (attempt 0/5)
+step  467 | acc=0.9170 | NZ=  1693 | sparsity=0.2162 | d_m=9.7293e+03[supervise 19:48:40] launch [/home/simon/venv/general/bin/python3 -m sparsifier.kwon_sparsifier experiments/e36_kwon_full_seed_4.js
+```
+
+**2026-09-29 20:48** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e36_kwon_full_seed_4 | 1554 | 71.9 % | 0.659 | 3.006074e+05 |
+
+```
+[supervise 22:28:34] DONE experiments/e36_kwon_full_seed_3.json rc=0
+[supervise 22:28:34] launch [/home/simon/venv/general/bin/python3 -m sparsifier.kwon_sparsifier experiments/e36_kwon_full_seed_4.json] (attempt 0/5)
+step  467 | acc=0.9170 | NZ=  1693 | sparsity=0.2162 | d_m=9.7293e+03[supervise 19:48:40] launch [/home/simon/venv/general/bin/python3 -m sparsifier.kwon_sparsifier experiments/e36_kwon_full_seed_4.js
+```
+
+**2026-09-29 21:18** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e36_kwon_full_seed_4 | 2095 | 97.0 % | 0.105 | 1.961407e+06 |
+
+```
+[supervise 22:28:34] DONE experiments/e36_kwon_full_seed_3.json rc=0
+[supervise 22:28:34] launch [/home/simon/venv/general/bin/python3 -m sparsifier.kwon_sparsifier experiments/e36_kwon_full_seed_4.json] (attempt 0/5)
+step  467 | acc=0.9170 | NZ=  1693 | sparsity=0.2162 | d_m=9.7293e+03[supervise 19:48:40] launch [/home/simon/venv/general/bin/python3 -m sparsifier.kwon_sparsifier experiments/e36_kwon_full_seed_4.js
+```
+
+**2026-09-29 21:48** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e34_obd_full_seed_3 | 239 | 11.1 % | 0.917 | 8.070590e+01 |
+| e36_kwon_full_seed_4 | 2159 | 100.0 % | 0.107 | 2.013480e+06 |
+
+```
+step  467 | acc=0.9170 | NZ=  1693 | sparsity=0.2162 | d_m=9.7293e+03[supervise 19:48:40] launch [/home/simon/venv/general/bin/python3 -m sparsifier.kwon_sparsifier experiments/e36_kwon_full_seed_4.js
+[supervise 21:22:15] DONE experiments/e36_kwon_full_seed_4.json rc=0
+[supervise 21:22:15] launch [/home/simon/venv/general/bin/python3 -m sparsifier.obd_sparsifier experiments/e34_obd_full_seed_3.json] (attempt 0/5)
+```
+
+**2026-09-29 22:18** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e34_obd_full_seed_3 | 400 | 18.5 % | 0.907 | 3.057396e+02 |
+| e36_kwon_full_seed_4 | 2159 | 100.0 % | 0.107 | 2.013480e+06 |
+
+```
+[supervise 22:18:40] EXIT experiments/e34_obd_full_seed_3.json rc=1 -- will resume from checkpoint
+[supervise 22:18:40] GAVE UP on experiments/e34_obd_full_seed_3.json after 5 restarts
+[supervise 22:18:40] launch [/home/simon/venv/general/bin/python3 -m sparsifier.obd_sparsifier experiments/e34_obd_full_seed_4.json] (attempt 0/5)
+```
+
+**2026-09-29 22:48** — supervisor exited
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e34_obd_full_seed_3 | 400 | 18.5 % | 0.907 | 3.057396e+02 |
+| e36_kwon_full_seed_4 | 2159 | 100.0 % | 0.107 | 2.013480e+06 |
+
+```
+[supervise 22:20:23] EXIT experiments/e37_obs_full_seed_4.json rc=1 -- will resume from checkpoint
+[supervise 22:20:23] GAVE UP on experiments/e37_obs_full_seed_4.json after 5 restarts
+[supervise 22:20:23] QUEUE COMPLETE: /home/simon/venv/general/bin/python3 -m sparsifier.kwon_sparsifier experiments/e36_kwon_full_seed_4.json=ok, /home/simon/venv/general/bin/python3 -m sparsifier.obd
+```
+
+**2026-09-30 19:33** — (re)launch of `scripts/run/queue_seedband2.txt`: 6 commands queued
+
+**2026-09-30 19:33** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e34_obd_full_seed_3 | 400 | 18.5 % | 0.907 | 3.057396e+02 |
+
+```
+[supervise 22:20:23] GAVE UP on experiments/e37_obs_full_seed_4.json after 5 restarts
+[supervise 22:20:23] QUEUE COMPLETE: /home/simon/venv/general/bin/python3 -m sparsifier.kwon_sparsifier experiments/e36_kwon_full_seed_4.json=ok, /home/simon/venv/general/bin/python3 -m sparsifier.obd
+[supervise 19:33:41] launch [/home/simon/venv/general/bin/python3 -m sparsifier.obd_sparsifier experiments/e34_obd_full_seed_3.json] (attempt 0/5)
+```
+
+**2026-09-30 20:03** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e34_obd_full_seed_3 | 677 | 31.3 % | 0.869 | 1.546829e+03 |
+
+```
+[supervise 22:20:23] GAVE UP on experiments/e37_obs_full_seed_4.json after 5 restarts
+[supervise 22:20:23] QUEUE COMPLETE: /home/simon/venv/general/bin/python3 -m sparsifier.kwon_sparsifier experiments/e36_kwon_full_seed_4.json=ok, /home/simon/venv/general/bin/python3 -m sparsifier.obd
+[supervise 19:33:41] launch [/home/simon/venv/general/bin/python3 -m sparsifier.obd_sparsifier experiments/e34_obd_full_seed_3.json] (attempt 0/5)
+```
+
+**2026-09-30 20:33** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e34_obd_full_seed_3 | 954 | 44.2 % | 0.720 | 6.548888e+03 |
+
+```
+[supervise 22:20:23] GAVE UP on experiments/e37_obs_full_seed_4.json after 5 restarts
+[supervise 22:20:23] QUEUE COMPLETE: /home/simon/venv/general/bin/python3 -m sparsifier.kwon_sparsifier experiments/e36_kwon_full_seed_4.json=ok, /home/simon/venv/general/bin/python3 -m sparsifier.obd
+[supervise 19:33:41] launch [/home/simon/venv/general/bin/python3 -m sparsifier.obd_sparsifier experiments/e34_obd_full_seed_3.json] (attempt 0/5)
+```
+
+**2026-09-30 21:03** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e34_obd_full_seed_3 | 1230 | 56.9 % | 0.672 | 1.739265e+04 |
+
+```
+[supervise 22:20:23] GAVE UP on experiments/e37_obs_full_seed_4.json after 5 restarts
+[supervise 22:20:23] QUEUE COMPLETE: /home/simon/venv/general/bin/python3 -m sparsifier.kwon_sparsifier experiments/e36_kwon_full_seed_4.json=ok, /home/simon/venv/general/bin/python3 -m sparsifier.obd
+[supervise 19:33:41] launch [/home/simon/venv/general/bin/python3 -m sparsifier.obd_sparsifier experiments/e34_obd_full_seed_3.json] (attempt 0/5)
+```
+
+**2026-09-30 21:33** — (re)launch of `scripts/run/queue_seedband2.txt`: 6 commands queued
+
+**2026-09-30 21:33** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e34_obd_full_seed_3 | 1481 | 68.6 % | 0.609 | 4.526384e+04 |
+
+```
+[supervise 22:20:23] QUEUE COMPLETE: /home/simon/venv/general/bin/python3 -m sparsifier.kwon_sparsifier experiments/e36_kwon_full_seed_4.json=ok, /home/simon/venv/general/bin/python3 -m sparsifier.obd
+[supervise 19:33:41] launch [/home/simon/venv/general/bin/python3 -m sparsifier.obd_sparsifier experiments/e34_obd_full_seed_3.json] (attempt 0/5)
+step 1455 | acc=0.6010 | NZ=   705 | sparsity=0.6736 | d_m=4.3003e+04[supervise 21:33:21] launch [/home/simon/venv/general/bin/python3 -m sparsifier.obd_sparsifier experiments/e34_obd_full_seed_3.json
+```
+
+**2026-09-30 22:03** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e34_obd_full_seed_3 | 1685 | 78.0 % | 0.599 | 1.263849e+05 |
+
+```
+[supervise 21:37:15] launch [/home/simon/venv/general/bin/python3 -m sparsifier.obd_sparsifier experiments/e34_obd_full_seed_3.json] (attempt 1/5)
+[supervise 21:37:32] EXIT experiments/e34_obd_full_seed_3.json rc=1 -- will resume from checkpoint
+[supervise 21:37:32] launch [/home/simon/venv/general/bin/python3 -m sparsifier.obd_sparsifier experiments/e34_obd_full_seed_3.json] (attempt 2/5)
+```
+
+**2026-09-30 22:33** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e34_obd_full_seed_3 | 1959 | 90.7 % | 0.385 | 6.120487e+05 |
+
+```
+[supervise 21:37:15] launch [/home/simon/venv/general/bin/python3 -m sparsifier.obd_sparsifier experiments/e34_obd_full_seed_3.json] (attempt 1/5)
+[supervise 21:37:32] EXIT experiments/e34_obd_full_seed_3.json rc=1 -- will resume from checkpoint
+[supervise 21:37:32] launch [/home/simon/venv/general/bin/python3 -m sparsifier.obd_sparsifier experiments/e34_obd_full_seed_3.json] (attempt 2/5)
+```
+
+**2026-09-30 23:03** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e34_obd_full_seed_3 | 2159 | 100.0 % | 0.087 | 2.301754e+06 |
+| e34_obd_full_seed_4 | 80 | 3.7 % | 0.920 | 7.407263e-03 |
+
+```
+[supervise 21:37:32] launch [/home/simon/venv/general/bin/python3 -m sparsifier.obd_sparsifier experiments/e34_obd_full_seed_3.json] (attempt 2/5)
+[supervise 22:55:08] DONE experiments/e34_obd_full_seed_3.json rc=0
+[supervise 22:55:08] launch [/home/simon/venv/general/bin/python3 -m sparsifier.obd_sparsifier experiments/e34_obd_full_seed_4.json] (attempt 0/5)
+```
+
+**2026-09-30 23:33** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e34_obd_full_seed_3 | 2159 | 100.0 % | 0.087 | 2.301754e+06 |
+| e34_obd_full_seed_4 | 352 | 16.3 % | 0.920 | 3.337226e+01 |
+
+```
+[supervise 21:37:32] launch [/home/simon/venv/general/bin/python3 -m sparsifier.obd_sparsifier experiments/e34_obd_full_seed_3.json] (attempt 2/5)
+[supervise 22:55:08] DONE experiments/e34_obd_full_seed_3.json rc=0
+[supervise 22:55:08] launch [/home/simon/venv/general/bin/python3 -m sparsifier.obd_sparsifier experiments/e34_obd_full_seed_4.json] (attempt 0/5)
+```
+
+**2026-10-01 08:01** — (re)launch of `scripts/run/queue_seedband2.txt`: 5 commands queued
+
+**2026-10-01 08:01** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e34_obd_full_seed_4 | 441 | 20.4 % | 0.920 | 1.891506e+02 |
+
+```
+[supervise 22:55:08] DONE experiments/e34_obd_full_seed_3.json rc=0
+[supervise 22:55:08] launch [/home/simon/venv/general/bin/python3 -m sparsifier.obd_sparsifier experiments/e34_obd_full_seed_4.json] (attempt 0/5)
+step  349 | acc=0.9200 | NZ=  1811 | sparsity=0.1616 | d_m=3.1264e+01[supervise 08:01:39] launch [/home/simon/venv/general/bin/python3 -m sparsifier.obd_sparsifier experiments/e34_obd_full_seed_4.json
+```
+
+**2026-10-01 08:05** — (re)launch of `scripts/run/queue_seedband2.txt`: 5 commands queued
+
+**2026-10-01 08:05** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e34_obd_full_seed_4 | 433 | 20.0 % | 0.919 | 1.625131e+02 |
+
+```
+[supervise 22:55:08] launch [/home/simon/venv/general/bin/python3 -m sparsifier.obd_sparsifier experiments/e34_obd_full_seed_4.json] (attempt 0/5)
+step  349 | acc=0.9200 | NZ=  1811 | sparsity=0.1616 | d_m=3.1264e+01[supervise 08:01:39] launch [/home/simon/venv/general/bin/python3 -m sparsifier.obd_sparsifier experiments/e34_obd_full_seed_4.json
+[supervise 08:05:48] launch [/home/simon/venv/general/bin/python3 -m sparsifier.obd_sparsifier experiments/e34_obd_full_seed_4.json] (attempt 0/10)
+```
+
+**2026-10-01 08:15 — supervisor retry bug fixed; queue restarted.** Reboot history (`last -x`):
+hosts went down 09-27 19:15, 09-27 20:16, 09-28 20:38, 09-29 23:01, 09-30 21:31, 09-30 23:43 —
+six abrupt stops in four days, all under GPU load; `+12V` reads 10.08 V at 08:05 today. On
+09-29 the supervisor marked OBD seeds 3–4 and OBS seeds 1–4 `GAVE UP` within ~2 min: after a
+non-zero exit it relaunched immediately (the 15 s pause applied only after a stall-kill), so
+five retries fired before the dead child's GPU memory was released (`RESOURCE_EXHAUSTED`,
+`No BLAS support for stream`). Fix: `supervise.py` now sleeps before every relaunch;
+`seedband_launch.sh` sets `RESTART_SLEEP=60 MAX_RESTARTS=10`. The running supervisor (old
+code) was stopped at OBD seed 4 step 433 and relaunched; the run resumed from checkpoint
+`step_0400` (verified: no duplicate steps). Remaining: OBD seed 4 (~3.3 h) + OBS seeds 1–4
+(~1.6 h each) ≈ 10 h. Data so far: magnitude 1–4, Kwon 1–4, OBD 3 complete (11/14 runs).
