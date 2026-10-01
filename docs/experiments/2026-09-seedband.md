@@ -1772,3 +1772,349 @@ five retries fired before the dead child's GPU memory was released (`RESOURCE_EX
 code) was stopped at OBD seed 4 step 433 and relaunched; the run resumed from checkpoint
 `step_0400` (verified: no duplicate steps). Remaining: OBD seed 4 (~3.3 h) + OBS seeds 1–4
 (~1.6 h each) ≈ 10 h. Data so far: magnitude 1–4, Kwon 1–4, OBD 3 complete (11/14 runs).
+
+**2026-10-01 08:35** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e34_obd_full_seed_4 | 675 | 31.2 % | 0.917 | 2.081501e+03 |
+
+```
+[supervise 22:55:08] launch [/home/simon/venv/general/bin/python3 -m sparsifier.obd_sparsifier experiments/e34_obd_full_seed_4.json] (attempt 0/5)
+step  349 | acc=0.9200 | NZ=  1811 | sparsity=0.1616 | d_m=3.1264e+01[supervise 08:01:39] launch [/home/simon/venv/general/bin/python3 -m sparsifier.obd_sparsifier experiments/e34_obd_full_seed_4.json
+[supervise 08:05:48] launch [/home/simon/venv/general/bin/python3 -m sparsifier.obd_sparsifier experiments/e34_obd_full_seed_4.json] (attempt 0/10)
+```
+
+**2026-10-01 09:05** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e34_obd_full_seed_4 | 950 | 44.0 % | 0.921 | 1.066718e+04 |
+
+```
+[supervise 22:55:08] launch [/home/simon/venv/general/bin/python3 -m sparsifier.obd_sparsifier experiments/e34_obd_full_seed_4.json] (attempt 0/5)
+step  349 | acc=0.9200 | NZ=  1811 | sparsity=0.1616 | d_m=3.1264e+01[supervise 08:01:39] launch [/home/simon/venv/general/bin/python3 -m sparsifier.obd_sparsifier experiments/e34_obd_full_seed_4.json
+[supervise 08:05:48] launch [/home/simon/venv/general/bin/python3 -m sparsifier.obd_sparsifier experiments/e34_obd_full_seed_4.json] (attempt 0/10)
+```
+
+**2026-10-01 09:35** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e34_obd_full_seed_4 | 1225 | 56.7 % | 0.910 | 3.542622e+04 |
+
+```
+[supervise 22:55:08] launch [/home/simon/venv/general/bin/python3 -m sparsifier.obd_sparsifier experiments/e34_obd_full_seed_4.json] (attempt 0/5)
+step  349 | acc=0.9200 | NZ=  1811 | sparsity=0.1616 | d_m=3.1264e+01[supervise 08:01:39] launch [/home/simon/venv/general/bin/python3 -m sparsifier.obd_sparsifier experiments/e34_obd_full_seed_4.json
+[supervise 08:05:48] launch [/home/simon/venv/general/bin/python3 -m sparsifier.obd_sparsifier experiments/e34_obd_full_seed_4.json] (attempt 0/10)
+```
+
+**2026-10-01 10:05** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e34_obd_full_seed_4 | 1498 | 69.4 % | 0.868 | 9.812449e+04 |
+
+```
+[supervise 22:55:08] launch [/home/simon/venv/general/bin/python3 -m sparsifier.obd_sparsifier experiments/e34_obd_full_seed_4.json] (attempt 0/5)
+step  349 | acc=0.9200 | NZ=  1811 | sparsity=0.1616 | d_m=3.1264e+01[supervise 08:01:39] launch [/home/simon/venv/general/bin/python3 -m sparsifier.obd_sparsifier experiments/e34_obd_full_seed_4.json
+[supervise 08:05:48] launch [/home/simon/venv/general/bin/python3 -m sparsifier.obd_sparsifier experiments/e34_obd_full_seed_4.json] (attempt 0/10)
+```
+
+**2026-10-01 10:35** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e34_obd_full_seed_4 | 1772 | 82.0 % | 0.677 | 3.071127e+05 |
+
+```
+[supervise 22:55:08] launch [/home/simon/venv/general/bin/python3 -m sparsifier.obd_sparsifier experiments/e34_obd_full_seed_4.json] (attempt 0/5)
+step  349 | acc=0.9200 | NZ=  1811 | sparsity=0.1616 | d_m=3.1264e+01[supervise 08:01:39] launch [/home/simon/venv/general/bin/python3 -m sparsifier.obd_sparsifier experiments/e34_obd_full_seed_4.json
+[supervise 08:05:48] launch [/home/simon/venv/general/bin/python3 -m sparsifier.obd_sparsifier experiments/e34_obd_full_seed_4.json] (attempt 0/10)
+```
+
+**2026-10-01 11:05** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e34_obd_full_seed_4 | 2046 | 94.7 % | 0.248 | 1.318799e+06 |
+
+```
+[supervise 22:55:08] launch [/home/simon/venv/general/bin/python3 -m sparsifier.obd_sparsifier experiments/e34_obd_full_seed_4.json] (attempt 0/5)
+step  349 | acc=0.9200 | NZ=  1811 | sparsity=0.1616 | d_m=3.1264e+01[supervise 08:01:39] launch [/home/simon/venv/general/bin/python3 -m sparsifier.obd_sparsifier experiments/e34_obd_full_seed_4.json
+[supervise 08:05:48] launch [/home/simon/venv/general/bin/python3 -m sparsifier.obd_sparsifier experiments/e34_obd_full_seed_4.json] (attempt 0/10)
+```
+
+**2026-10-01 11:35** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e34_obd_full_seed_4 | 2159 | 100.0 % | 0.107 | 2.013715e+06 |
+| e37_obs_full_seed_1 | 400 | 18.5 % | 0.905 | 1.691239e+01 |
+
+```
+[supervise 08:05:48] launch [/home/simon/venv/general/bin/python3 -m sparsifier.obd_sparsifier experiments/e34_obd_full_seed_4.json] (attempt 0/10)
+[supervise 11:18:06] DONE experiments/e34_obd_full_seed_4.json rc=0
+[supervise 11:18:06] launch [/home/simon/venv/general/bin/python3 -m sparsifier.obs_sparsifier experiments/e37_obs_full_seed_1.json] (attempt 0/10)
+```
+
+**2026-10-01 12:05** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e34_obd_full_seed_4 | 2159 | 100.0 % | 0.107 | 2.013715e+06 |
+| e37_obs_full_seed_1 | 1082 | 50.1 % | 0.776 | 5.100111e+03 |
+
+```
+[supervise 08:05:48] launch [/home/simon/venv/general/bin/python3 -m sparsifier.obd_sparsifier experiments/e34_obd_full_seed_4.json] (attempt 0/10)
+[supervise 11:18:06] DONE experiments/e34_obd_full_seed_4.json rc=0
+[supervise 11:18:06] launch [/home/simon/venv/general/bin/python3 -m sparsifier.obs_sparsifier experiments/e37_obs_full_seed_1.json] (attempt 0/10)
+```
+
+**2026-10-01 12:35** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e34_obd_full_seed_4 | 2159 | 100.0 % | 0.107 | 2.013715e+06 |
+| e37_obs_full_seed_1 | 1764 | 81.7 % | 0.517 | 4.747431e+05 |
+
+```
+[supervise 08:05:48] launch [/home/simon/venv/general/bin/python3 -m sparsifier.obd_sparsifier experiments/e34_obd_full_seed_4.json] (attempt 0/10)
+[supervise 11:18:06] DONE experiments/e34_obd_full_seed_4.json rc=0
+[supervise 11:18:06] launch [/home/simon/venv/general/bin/python3 -m sparsifier.obs_sparsifier experiments/e37_obs_full_seed_1.json] (attempt 0/10)
+```
+
+**2026-10-01 13:05** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e34_obd_full_seed_4 | 2159 | 100.0 % | 0.107 | 2.013715e+06 |
+| e37_obs_full_seed_1 | 2159 | 100.0 % | 0.099 | 4.192535e+07 |
+| e37_obs_full_seed_2 | 285 | 13.2 % | 0.912 | 4.053513e+01 |
+
+```
+[supervise 11:18:06] launch [/home/simon/venv/general/bin/python3 -m sparsifier.obs_sparsifier experiments/e37_obs_full_seed_1.json] (attempt 0/10)
+[supervise 12:53:11] DONE experiments/e37_obs_full_seed_1.json rc=0
+[supervise 12:53:11] launch [/home/simon/venv/general/bin/python3 -m sparsifier.obs_sparsifier experiments/e37_obs_full_seed_2.json] (attempt 0/10)
+```
+
+**2026-10-01 13:35** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e34_obd_full_seed_4 | 2159 | 100.0 % | 0.107 | 2.013715e+06 |
+| e37_obs_full_seed_1 | 2159 | 100.0 % | 0.099 | 4.192535e+07 |
+| e37_obs_full_seed_2 | 969 | 44.9 % | 0.898 | 3.211392e+03 |
+
+```
+[supervise 11:18:06] launch [/home/simon/venv/general/bin/python3 -m sparsifier.obs_sparsifier experiments/e37_obs_full_seed_1.json] (attempt 0/10)
+[supervise 12:53:11] DONE experiments/e37_obs_full_seed_1.json rc=0
+[supervise 12:53:11] launch [/home/simon/venv/general/bin/python3 -m sparsifier.obs_sparsifier experiments/e37_obs_full_seed_2.json] (attempt 0/10)
+```
+
+**2026-10-01 14:05** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e34_obd_full_seed_4 | 2159 | 100.0 % | 0.107 | 2.013715e+06 |
+| e37_obs_full_seed_1 | 2159 | 100.0 % | 0.099 | 4.192535e+07 |
+| e37_obs_full_seed_2 | 1651 | 76.4 % | 0.688 | 9.133333e+04 |
+
+```
+[supervise 11:18:06] launch [/home/simon/venv/general/bin/python3 -m sparsifier.obs_sparsifier experiments/e37_obs_full_seed_1.json] (attempt 0/10)
+[supervise 12:53:11] DONE experiments/e37_obs_full_seed_1.json rc=0
+[supervise 12:53:11] launch [/home/simon/venv/general/bin/python3 -m sparsifier.obs_sparsifier experiments/e37_obs_full_seed_2.json] (attempt 0/10)
+```
+
+**2026-10-01 14:35** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e34_obd_full_seed_4 | 2159 | 100.0 % | 0.107 | 2.013715e+06 |
+| e37_obs_full_seed_1 | 2159 | 100.0 % | 0.099 | 4.192535e+07 |
+| e37_obs_full_seed_2 | 2159 | 100.0 % | 0.126 | 3.112355e+07 |
+| e37_obs_full_seed_3 | 172 | 8.0 % | 0.919 | 1.098873e+01 |
+
+```
+[supervise 12:53:11] launch [/home/simon/venv/general/bin/python3 -m sparsifier.obs_sparsifier experiments/e37_obs_full_seed_2.json] (attempt 0/10)
+[supervise 14:28:08] DONE experiments/e37_obs_full_seed_2.json rc=0
+[supervise 14:28:08] launch [/home/simon/venv/general/bin/python3 -m sparsifier.obs_sparsifier experiments/e37_obs_full_seed_3.json] (attempt 0/10)
+```
+
+**2026-10-01 15:05** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e34_obd_full_seed_4 | 2159 | 100.0 % | 0.107 | 2.013715e+06 |
+| e37_obs_full_seed_1 | 2159 | 100.0 % | 0.099 | 4.192535e+07 |
+| e37_obs_full_seed_2 | 2159 | 100.0 % | 0.126 | 3.112355e+07 |
+| e37_obs_full_seed_3 | 857 | 39.7 % | 0.832 | 4.214660e+03 |
+
+```
+[supervise 12:53:11] launch [/home/simon/venv/general/bin/python3 -m sparsifier.obs_sparsifier experiments/e37_obs_full_seed_2.json] (attempt 0/10)
+[supervise 14:28:08] DONE experiments/e37_obs_full_seed_2.json rc=0
+[supervise 14:28:08] launch [/home/simon/venv/general/bin/python3 -m sparsifier.obs_sparsifier experiments/e37_obs_full_seed_3.json] (attempt 0/10)
+```
+
+**2026-10-01 15:35** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e34_obd_full_seed_4 | 2159 | 100.0 % | 0.107 | 2.013715e+06 |
+| e37_obs_full_seed_1 | 2159 | 100.0 % | 0.099 | 4.192535e+07 |
+| e37_obs_full_seed_2 | 2159 | 100.0 % | 0.126 | 3.112355e+07 |
+| e37_obs_full_seed_3 | 1541 | 71.3 % | 0.559 | 9.616828e+04 |
+
+```
+[supervise 12:53:11] launch [/home/simon/venv/general/bin/python3 -m sparsifier.obs_sparsifier experiments/e37_obs_full_seed_2.json] (attempt 0/10)
+[supervise 14:28:08] DONE experiments/e37_obs_full_seed_2.json rc=0
+[supervise 14:28:08] launch [/home/simon/venv/general/bin/python3 -m sparsifier.obs_sparsifier experiments/e37_obs_full_seed_3.json] (attempt 0/10)
+```
+
+**2026-10-01 16:05** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e34_obd_full_seed_4 | 2159 | 100.0 % | 0.107 | 2.013715e+06 |
+| e37_obs_full_seed_1 | 2159 | 100.0 % | 0.099 | 4.192535e+07 |
+| e37_obs_full_seed_2 | 2159 | 100.0 % | 0.126 | 3.112355e+07 |
+| e37_obs_full_seed_3 | 2159 | 100.0 % | 0.126 | 5.251624e+07 |
+| e37_obs_full_seed_4 | 62 | 2.9 % | 0.920 | 1.506234e-05 |
+
+```
+[supervise 14:28:08] launch [/home/simon/venv/general/bin/python3 -m sparsifier.obs_sparsifier experiments/e37_obs_full_seed_3.json] (attempt 0/10)
+[supervise 16:02:58] DONE experiments/e37_obs_full_seed_3.json rc=0
+[supervise 16:02:58] launch [/home/simon/venv/general/bin/python3 -m sparsifier.obs_sparsifier experiments/e37_obs_full_seed_4.json] (attempt 0/10)
+```
+
+**2026-10-01 16:35** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e34_obd_full_seed_4 | 2159 | 100.0 % | 0.107 | 2.013715e+06 |
+| e37_obs_full_seed_1 | 2159 | 100.0 % | 0.099 | 4.192535e+07 |
+| e37_obs_full_seed_2 | 2159 | 100.0 % | 0.126 | 3.112355e+07 |
+| e37_obs_full_seed_3 | 2159 | 100.0 % | 0.126 | 5.251624e+07 |
+| e37_obs_full_seed_4 | 750 | 34.7 % | 0.821 | 5.381169e+03 |
+
+```
+[supervise 14:28:08] launch [/home/simon/venv/general/bin/python3 -m sparsifier.obs_sparsifier experiments/e37_obs_full_seed_3.json] (attempt 0/10)
+[supervise 16:02:58] DONE experiments/e37_obs_full_seed_3.json rc=0
+[supervise 16:02:58] launch [/home/simon/venv/general/bin/python3 -m sparsifier.obs_sparsifier experiments/e37_obs_full_seed_4.json] (attempt 0/10)
+```
+
+**2026-10-01 17:05** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e34_obd_full_seed_4 | 2159 | 100.0 % | 0.107 | 2.013715e+06 |
+| e37_obs_full_seed_1 | 2159 | 100.0 % | 0.099 | 4.192535e+07 |
+| e37_obs_full_seed_2 | 2159 | 100.0 % | 0.126 | 3.112355e+07 |
+| e37_obs_full_seed_3 | 2159 | 100.0 % | 0.126 | 5.251624e+07 |
+| e37_obs_full_seed_4 | 1441 | 66.7 % | 0.659 | 1.563829e+05 |
+
+```
+[supervise 14:28:08] launch [/home/simon/venv/general/bin/python3 -m sparsifier.obs_sparsifier experiments/e37_obs_full_seed_3.json] (attempt 0/10)
+[supervise 16:02:58] DONE experiments/e37_obs_full_seed_3.json rc=0
+[supervise 16:02:58] launch [/home/simon/venv/general/bin/python3 -m sparsifier.obs_sparsifier experiments/e37_obs_full_seed_4.json] (attempt 0/10)
+```
+
+**2026-10-01 17:35** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e34_obd_full_seed_4 | 2159 | 100.0 % | 0.107 | 2.013715e+06 |
+| e37_obs_full_seed_1 | 2159 | 100.0 % | 0.099 | 4.192535e+07 |
+| e37_obs_full_seed_2 | 2159 | 100.0 % | 0.126 | 3.112355e+07 |
+| e37_obs_full_seed_3 | 2159 | 100.0 % | 0.126 | 5.251624e+07 |
+| e37_obs_full_seed_4 | 2131 | 98.7 % | 0.147 | 1.138876e+09 |
+
+```
+[supervise 14:28:08] launch [/home/simon/venv/general/bin/python3 -m sparsifier.obs_sparsifier experiments/e37_obs_full_seed_3.json] (attempt 0/10)
+[supervise 16:02:58] DONE experiments/e37_obs_full_seed_3.json rc=0
+[supervise 16:02:58] launch [/home/simon/venv/general/bin/python3 -m sparsifier.obs_sparsifier experiments/e37_obs_full_seed_4.json] (attempt 0/10)
+```
+
+**2026-10-01 18:05** — supervisor exited
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e34_obd_full_seed_4 | 2159 | 100.0 % | 0.107 | 2.013715e+06 |
+| e37_obs_full_seed_1 | 2159 | 100.0 % | 0.099 | 4.192535e+07 |
+| e37_obs_full_seed_2 | 2159 | 100.0 % | 0.126 | 3.112355e+07 |
+| e37_obs_full_seed_3 | 2159 | 100.0 % | 0.126 | 5.251624e+07 |
+| e37_obs_full_seed_4 | 2159 | 100.0 % | 0.087 | 2.965286e+07 |
+
+```
+[supervise 16:02:58] launch [/home/simon/venv/general/bin/python3 -m sparsifier.obs_sparsifier experiments/e37_obs_full_seed_4.json] (attempt 0/10)
+[supervise 17:37:00] DONE experiments/e37_obs_full_seed_4.json rc=0
+[supervise 17:37:00] QUEUE COMPLETE: /home/simon/venv/general/bin/python3 -m sparsifier.obd_sparsifier experiments/e34_obd_full_seed_4.json=ok, /home/simon/venv/general/bin/python3 -m sparsifier.obs_s
+```
+
+## E.5 Results (queue complete 2026-10-01 17:37; 14/14 runs, every run 2 160 steps)
+
+Pairing re-verified after the runs: all 16 copied dense nets byte-identical to the e25 net of
+their seed. Numbers from `scripts/analyze_seedband.py`; definitions of §4.
+
+### E.5.1 Aggregates over seeds 0–4 (mean ± std [min, max])
+
+| Selector | Acc @ 23.1 % | Last sp. acc ≥ 0.85 | Last sp. acc ≥ 0.5 | Collapse |
+|---|---|---|---|---|
+| Exhaustive d_W | 0.884 ± 0.056 [0.785, 0.920] | 52.8 ± 27.4 % [18.0, 79.4] | 88.3 ± 1.4 % | **88.4 ± 1.4 %** [86.8, 90.6] |
+| OBD with d_W | 0.900 ± 0.024 [0.861, 0.920] | 53.1 ± 24.0 % [23.8, 79.9] | 88.5 ± 2.1 % | **88.5 ± 2.0 %** [86.2, 91.6] |
+| Magnitude | 0.913 ± 0.006 [0.905, 0.919] | 73.6 ± 4.2 % [68.0, 78.3] | 88.2 ± 2.1 % | **88.1 ± 2.0 %** [84.7, 89.7] |
+| Kwon (first-order) | 0.896 ± 0.014 [0.885, 0.914] | 45.3 ± 12.0 % [32.2, 58.4] | 75.4 ± 8.8 % | **71.5 ± 9.5 %** [58.5, 81.6] |
+| OBS (layer-wise, no adjustment) | 0.902 ± 0.004 [0.897, 0.907] | 52.2 ± 15.6 % [34.4, 71.0] | 81.3 ± 6.1 % | **81.4 ± 6.1 %** [71.5, 87.9] |
+
+### E.5.2 Paired collapse differences vs the exhaustive search (points of sparsity, seeds 0–4)
+
+| Selector | per seed | mean ± std | later than exhaustive on |
+|---|---|---|---|
+| OBD | +1.06, +0.23, +0.69, +0.93, −2.41 | +0.10 ± 1.44 | 4/5 |
+| Magnitude | −1.62, −0.32, −2.87, +2.87, +0.51 | −0.29 ± 2.18 | 2/5 |
+| Kwon | −12.9, −29.8, −22.5, −5.2, −13.8 | −16.8 ± 9.5 | 0/5 |
+| OBS | −19.1, −5.1, −4.1, +1.06, −7.8 | −7.0 ± 7.5 | 1/5 |
+
+Stop rule (25-step rolling-median displacement > 10× early baseline), 25 runs: for
+**magnitude** it fires 282–306 steps before collapse on every seed with accuracy still
+0.82–0.87; for the other four selectors it fires after the collapse, within 34 steps of it, or
+before 50 % sparsity on 15 of 20 runs (exhaustive 3/5, OBD 3/5, Kwon 5/5, OBS 4/5).
+
+### E.5.3 Hypothesis verdicts
+
+- **H5 (magnitude ties) — supported.** Mean paired difference −0.3 ± 2.2 points, exhaustive
+  later on only 3/5 seeds. Moreover magnitude is the *most consistent* selector on the plateau:
+  accuracy at 23.1 % is 0.913 ± 0.006 against 0.884 ± 0.056, and it holds acc ≥ 0.85 to
+  73.6 ± 4.2 % against 52.8 ± 27.4 %. The seed-0 ordering exhaustive > magnitude at the knee
+  (78.3 vs 74.3 %) is reversed on three of the other four seeds by 12–53 points. On this
+  network family the exhaustive d_W search has **no measurable advantage over magnitude
+  pruning at any sparsity**, and is less reliable before the knee.
+- **H6 (first-order gap) — supported.** Kwon collapses 5.2–29.8 points earlier on every seed
+  (mean 16.8); its collapse is also the most variable adjusted selector (71.5 ± 9.5 %).
+- **H7 (OBD tie) — supported.** Over five pairs the mean difference is +0.10 ± 1.44 points, within
+  the exhaustive std; seed 4 reverses the sign (−2.41), so the earlier "later on every paired
+  seed" observation (3/3) does not persist (4/5). Tied, as Proposition pullback-expansion
+  predicts.
+- **H8 (OBS before every adjusted selector) — refuted on one seed.** On seed 3 OBS (87.9 %)
+  collapses after both the exhaustive search (86.8 %) and OBD (87.7 %), by ≈ 1 point (within
+  noise). On the other four seeds it is 4–19 points earlier. Mean 81.4 ± 6.1 %: between the
+  first-order score and the adjusted selectors, and twice as variable as any of them. The
+  adjustment step, not the selection rule, is what OBS lacks.
+- **H3 revisited (stop rule).** Reliable only for magnitude pruning, whose displacement
+  trajectory is smooth; unusable for the four others.
+
+### E.5.4 Consequences for the manuscript
+
+1. Collapse table: five selectors × five seeds, mean ± std; OBS now included (labelled "no
+   adjustment") rather than excluded.
+2. The selector ordering in the deep regime is **{exhaustive, OBD, magnitude} ≈ 88 % > OBS
+   81 % > Kwon 72 %**. The claim that the exhaustive search "pays off past ~60 % sparsity" must
+   be restricted to the comparison with the first-order and layer-wise selectors; against
+   magnitude it does not pay off at all.
+3. The honest summary becomes: the value of d_W in this study is as a *theory* that explains
+   which cheap selectors work (second-order ⇒ ties; first-order ⇒ fails by Corollary
+   removal-cost(3)) rather than as a selector that beats them.
+4. Stop rule: report as magnitude-only.
+
+Infrastructure note: 7 host crashes during the two queues (+12 V rail 10.0–10.1 V throughout);
+no run lost data beyond its last checkpoint. Total GPU time ≈ 55 h.
