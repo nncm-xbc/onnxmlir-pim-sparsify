@@ -70,17 +70,25 @@ def _truncate_log(log_path, keep_through_step):
         f.writelines(kept)
 
 
-def _build_omega(og_net, x_test, sp, omega_source, scale=1.0):
-    if omega_source == "data":
-        # Lazarevich: real calibration images as Omega instead of noise.
-        # x_test is already scaled by the caller, so data-Omega stays consistent.
-        n_omega = min(sp['omega_samples'], len(x_test))
+def _build_omega(og_net, calib, sp, omega_source, scale=1.0):
+    if omega_source in ("data", "train"):
+        # Real calibration images as Omega instead of noise. "data" = the loaded test
+        # rows (the Lazarevich row of the thesis; contaminates the accuracy metric),
+        # "train" = training rows (test split stays held out). `calib` is already scaled.
+        n_omega = min(sp['omega_samples'], len(calib))
         if n_omega < sp['omega_samples']:
-            print("WARNING: omega_samples=%d requested but only %d calibration images available; using all %d." % (sp['omega_samples'], len(x_test), n_omega))
-        omega = x_test[:n_omega].astype(np.float64)
-        print("Omega: %d real calibration images (data-driven)" % n_omega)
+            print("WARNING: omega_samples=%d requested but only %d calibration images available; using all %d." % (sp['omega_samples'], len(calib), n_omega))
+        omega = calib[:n_omega].astype(np.float64)
+        print("Omega: %d real calibration images (%s split)" % (n_omega, 'test' if omega_source == 'data' else 'training'))
         return omega
     return make_omega(og_net, n_samples=sp['omega_samples'], scale=scale)
+
+
+def load_calibration(cfg, resolve, sp, omega_source, x_test, scale=1.0):
+    """The array _build_omega draws from: x_test for "data", training rows for "train"."""
+    if omega_source != 'train':
+        return x_test
+    return np.genfromtxt(resolve(cfg['data']['x_train']), delimiter=',', max_rows=sp['omega_samples']) / scale
 
 
 def run_sparsifier(cfg_path, prune_fn, *, output_subdir, log_name,
@@ -126,7 +134,9 @@ def run_sparsifier(cfg_path, prune_fn, *, output_subdir, log_name,
     # Deterministic Omega so a resumed run reproduces the same sample as the
     # interrupted one (and for reproducibility generally). Was previously unseeded.
     np.random.seed(int(sp.get('omega_seed', cfg.get('train', {}).get('seed', 0))))
-    omega = _build_omega(og_net, x_test, sp, omega_source, scale=input_scale)
+    omega_source = sp.get('omega_source', omega_source)   # config may override the module default
+    omega = _build_omega(og_net, load_calibration(cfg, resolve, sp, omega_source, x_test, input_scale),
+                         sp, omega_source, scale=input_scale)
     print(
         "Perturbation distance (sanity check): %.4e"
         % float(d(og_net, [

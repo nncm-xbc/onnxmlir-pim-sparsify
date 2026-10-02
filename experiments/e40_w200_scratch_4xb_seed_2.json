@@ -1,0 +1,35 @@
+{
+  "name": "e40_w200_scratch_4xb_seed_2",
+  "topology": [
+    196,
+    128,
+    128,
+    10
+  ],
+  "hidden_activation": "relu",
+  "data": {
+    "x_train": "data/X_train_small.csv",
+    "y_train": "data/Y_train_small.csv",
+    "x_test": "data/X_test_small.csv",
+    "y_test": "data/Y_test_small.csv"
+  },
+  "train": {
+    "epochs": 1000,
+    "batch_size": 128,
+    "seed": 2
+  },
+  "sparsify": {
+    "steps": 500,
+    "do_adjust": true,
+    "omega_samples": 10000,
+    "checkpoint_every": 50,
+    "omega_seed": 2
+  },
+  "_experiment": {
+    "id": "e40_w200_scratch_4xb_seed_2",
+    "description": "[seed 2] Block A control: [196, 128, 128, 10] trained from scratch = the 4-crossbar shape. Baseline \"train the crossbar-shaped network\".",
+    "literature": [
+      "docs/experiments/2026-10-regimes.md"
+    ]
+  }
+}

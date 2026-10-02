@@ -1,0 +1,39 @@
+{
+  "name": "e05_stupidity_point",
+  "topology": [
+    196,
+    10,
+    10,
+    10
+  ],
+  "omega_source": "noise",
+  "B": 10000,
+  "N_prunable": 2160,
+  "n_zero_cost": 225,
+  "zero_cost_fraction": 0.10416666666666667,
+  "cost_quantiles": {
+    "1": 0.0,
+    "5": 0.0,
+    "10": 0.0,
+    "25": 107.97430579324369,
+    "50": 1090.5528158671987,
+    "75": 6083.811396670485,
+    "90": 23669.541905358907,
+    "99": 1062262.0882474869
+  },
+  "units": [
+    {
+      "layer": 0,
+      "width": 10,
+      "dead": 1,
+      "always_on": 5
+    },
+    {
+      "layer": 1,
+      "width": 10,
+      "dead": 1,
+      "always_on": 5
+    }
+  ],
+  "sweep_seconds": 13.2
+}

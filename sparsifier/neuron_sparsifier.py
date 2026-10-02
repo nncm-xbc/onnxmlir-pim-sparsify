@@ -140,9 +140,11 @@ def main():
     total_neurons = int(sum(og_net[l].W.shape[0] for l in hidden_layer_indices))
     print("Total hidden neurons: %d" % total_neurons)
 
-    # omega_source "data" = real x_test images as Omega (default "noise" unchanged).
-    from sparsifier.runner import _build_omega
-    omega = _build_omega(og_net, x_test, sp, sp.get('omega_source', 'noise'))
+    # Omega: "noise" (default), "data" (test rows) or "train" (training rows); seeded.
+    from sparsifier.runner import _build_omega, load_calibration
+    src = sp.get('omega_source', 'noise')
+    np.random.seed(int(sp.get('omega_seed', cfg.get('train', {}).get('seed', 0))))
+    omega = _build_omega(og_net, load_calibration(cfg, resolve, sp, src, x_test), sp, src)
     print(
         "Perturbation distance (sanity check): %.4e"
         % float(d(og_net, [

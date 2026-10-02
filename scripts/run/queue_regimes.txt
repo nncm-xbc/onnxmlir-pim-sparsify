@@ -1,0 +1,104 @@
+# Regimes queue — Block A (structured width-200) first, then Block B (harder tasks), then Block C (width-50 weight-level).
+# Reordered 2026-10-02: A is the hardware result and the one the thesis needs first; B and C can be stopped at any block boundary.
+# Launch: scripts/run/seedband_launch.sh scripts/run/queue_regimes.txt docs/experiments/2026-10-regimes.md
+# Resumable; re-running the launcher skips finished runs. Estimated 115 h total (B 11 h, A 28 h, C 75 h).
+
+# ---- B0: redundancy diagnostic on existing nets (minutes)
+python scripts/zero_cost_fraction.py experiments/e05_stupidity_point.json
+python scripts/zero_cost_fraction.py experiments/e25_stupidity_seed_1.json
+python scripts/zero_cost_fraction.py experiments/e25_stupidity_seed_2.json
+python scripts/zero_cost_fraction.py experiments/e25_stupidity_seed_3.json
+python scripts/zero_cost_fraction.py experiments/e25_stupidity_seed_4.json
+python scripts/zero_cost_fraction.py experiments/e03_width_50_seed_0.json
+python scripts/zero_cost_fraction.py experiments/e03_width_200_seed_0.json
+# ---- A: structured pruning of [196,200,200,10] to crossbar boundaries, 5 seeds
+python scripts/train.py experiments/e38_w200_neuron_data_seed_0.json
+python -m sparsifier.neuron_sparsifier experiments/e38_w200_neuron_data_seed_0.json
+python -m sparsifier.neuron_magnitude_sparsifier experiments/e38_w200_neuron_data_seed_0.json
+python scripts/train.py experiments/e39_w200_neuron_noise_seed_0.json
+python -m sparsifier.neuron_sparsifier experiments/e39_w200_neuron_noise_seed_0.json
+python scripts/train.py experiments/e38_w200_neuron_data_seed_1.json
+python -m sparsifier.neuron_sparsifier experiments/e38_w200_neuron_data_seed_1.json
+python -m sparsifier.neuron_magnitude_sparsifier experiments/e38_w200_neuron_data_seed_1.json
+python scripts/train.py experiments/e39_w200_neuron_noise_seed_1.json
+python -m sparsifier.neuron_sparsifier experiments/e39_w200_neuron_noise_seed_1.json
+python scripts/train.py experiments/e38_w200_neuron_data_seed_2.json
+python -m sparsifier.neuron_sparsifier experiments/e38_w200_neuron_data_seed_2.json
+python -m sparsifier.neuron_magnitude_sparsifier experiments/e38_w200_neuron_data_seed_2.json
+python scripts/train.py experiments/e38_w200_neuron_data_seed_3.json
+python -m sparsifier.neuron_sparsifier experiments/e38_w200_neuron_data_seed_3.json
+python -m sparsifier.neuron_magnitude_sparsifier experiments/e38_w200_neuron_data_seed_3.json
+python scripts/train.py experiments/e38_w200_neuron_data_seed_4.json
+python -m sparsifier.neuron_sparsifier experiments/e38_w200_neuron_data_seed_4.json
+python -m sparsifier.neuron_magnitude_sparsifier experiments/e38_w200_neuron_data_seed_4.json
+# A controls: from-scratch training at the tile-aligned shapes (4, 6, 7 crossbars), 5 seeds
+python scripts/train.py experiments/e40_w200_scratch_4xb_seed_0.json
+python scripts/train.py experiments/e40_w200_scratch_6xb_seed_0.json
+python scripts/train.py experiments/e40_w200_scratch_7xb_seed_0.json
+python scripts/train.py experiments/e40_w200_scratch_4xb_seed_1.json
+python scripts/train.py experiments/e40_w200_scratch_6xb_seed_1.json
+python scripts/train.py experiments/e40_w200_scratch_7xb_seed_1.json
+python scripts/train.py experiments/e40_w200_scratch_4xb_seed_2.json
+python scripts/train.py experiments/e40_w200_scratch_6xb_seed_2.json
+python scripts/train.py experiments/e40_w200_scratch_7xb_seed_2.json
+python scripts/train.py experiments/e40_w200_scratch_4xb_seed_3.json
+python scripts/train.py experiments/e40_w200_scratch_6xb_seed_3.json
+python scripts/train.py experiments/e40_w200_scratch_7xb_seed_3.json
+python scripts/train.py experiments/e40_w200_scratch_4xb_seed_4.json
+python scripts/train.py experiments/e40_w200_scratch_6xb_seed_4.json
+python scripts/train.py experiments/e40_w200_scratch_7xb_seed_4.json
+# A: OBD neuron selector DROPPED 2026-10-02 — smoke run did not finish step 0 in 20 min on the width-200 net (41k Hessian-vector products per step)
+
+
+# ---- B1: five datasets at the baseline net, three selectors on the SAME dense net (shared config)
+python scripts/train.py experiments/e26_fashion.json
+python scripts/zero_cost_fraction.py experiments/e26_fashion.json
+python -m sparsifier.sparsifier experiments/e26_fashion.json
+python -m sparsifier.magnitude_sparsifier experiments/e26_fashion.json
+python -m sparsifier.obd_sparsifier experiments/e26_fashion.json
+python scripts/train.py experiments/e27_kmnist.json
+python scripts/zero_cost_fraction.py experiments/e27_kmnist.json
+python -m sparsifier.sparsifier experiments/e27_kmnist.json
+python -m sparsifier.magnitude_sparsifier experiments/e27_kmnist.json
+python -m sparsifier.obd_sparsifier experiments/e27_kmnist.json
+python scripts/train.py experiments/e28_usps.json
+python scripts/zero_cost_fraction.py experiments/e28_usps.json
+python -m sparsifier.sparsifier experiments/e28_usps.json
+python -m sparsifier.magnitude_sparsifier experiments/e28_usps.json
+python -m sparsifier.obd_sparsifier experiments/e28_usps.json
+python scripts/train.py experiments/e29_s1_teacher.json
+python scripts/zero_cost_fraction.py experiments/e29_s1_teacher.json
+python -m sparsifier.sparsifier experiments/e29_s1_teacher.json
+python -m sparsifier.magnitude_sparsifier experiments/e29_s1_teacher.json
+python -m sparsifier.obd_sparsifier experiments/e29_s1_teacher.json
+python scripts/train.py experiments/e30_s2_planted.json
+python scripts/zero_cost_fraction.py experiments/e30_s2_planted.json
+python -m sparsifier.sparsifier experiments/e30_s2_planted.json
+python -m sparsifier.magnitude_sparsifier experiments/e30_s2_planted.json
+python -m sparsifier.obd_sparsifier experiments/e30_s2_planted.json
+# ---- B2: Omega-gap tests (S1 noise vs data, MNIST data-Omega paired with e11)
+python scripts/train.py experiments/e31_s1_neuron_noise.json
+python -m sparsifier.neuron_sparsifier experiments/e31_s1_neuron_noise.json
+python scripts/train.py experiments/e32_s1_neuron_data.json
+python -m sparsifier.neuron_sparsifier experiments/e32_s1_neuron_data.json
+# e33 reuses e11 dense net (already copied into artifacts/e33_neuron_data)
+python -m sparsifier.neuron_sparsifier experiments/e33_neuron_data.json
+
+# ---- C: width-50 weight-level full budget (12 800 steps), 5 seeds; magnitude first (cheap), exhaustive, then OBD seeds 0-1
+python scripts/train.py experiments/e41_w50_full_seed_0.json
+python scripts/train.py experiments/e41_w50_full_seed_1.json
+python scripts/train.py experiments/e41_w50_full_seed_2.json
+python scripts/train.py experiments/e41_w50_full_seed_3.json
+python scripts/train.py experiments/e41_w50_full_seed_4.json
+python -m sparsifier.magnitude_sparsifier experiments/e41_w50_full_seed_0.json
+python -m sparsifier.magnitude_sparsifier experiments/e41_w50_full_seed_1.json
+python -m sparsifier.magnitude_sparsifier experiments/e41_w50_full_seed_2.json
+python -m sparsifier.magnitude_sparsifier experiments/e41_w50_full_seed_3.json
+python -m sparsifier.magnitude_sparsifier experiments/e41_w50_full_seed_4.json
+python -m sparsifier.sparsifier experiments/e41_w50_full_seed_0.json
+python -m sparsifier.sparsifier experiments/e41_w50_full_seed_1.json
+python -m sparsifier.sparsifier experiments/e41_w50_full_seed_2.json
+python -m sparsifier.sparsifier experiments/e41_w50_full_seed_3.json
+python -m sparsifier.sparsifier experiments/e41_w50_full_seed_4.json
+python -m sparsifier.obd_sparsifier experiments/e41_w50_full_seed_0.json
+python -m sparsifier.obd_sparsifier experiments/e41_w50_full_seed_1.json

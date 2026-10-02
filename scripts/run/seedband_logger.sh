@@ -15,8 +15,9 @@ while :; do
     echo "|---|---|---|---|---|"
     for cfg in $(grep -v '^#' "$QUEUE" | grep -o 'experiments/[^ ]*\.json' | sort -u); do
       name=$(basename "$cfg" .json)
-      csv=$(ls artifacts/$name/*sparsified/*sparsification_log.csv 2>/dev/null | head -1)
-      [ -n "$csv" ] && tail -1 "$csv" | awk -F, -v r="$name" '$1 ~ /^[0-9]+$/ {printf "| %s | %s | %.1f %% | %.3f | %s |\n", r, $1, $4*100, $5, $6}'
+      for csv in $(ls artifacts/$name/*sparsified/*sparsification_log.csv 2>/dev/null); do
+        tail -1 "$csv" | awk -F, -v r="$name/$(basename $(dirname $csv))" '$1 ~ /^[0-9]+$/ {printf "| %s | %s | %.1f %% | %.3f | %s |\n", r, $1, $4*100, $5, $6}'
+      done
     done
     echo ""
     echo '```'

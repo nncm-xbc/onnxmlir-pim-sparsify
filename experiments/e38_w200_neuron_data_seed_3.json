@@ -1,0 +1,36 @@
+{
+  "name": "e38_w200_neuron_data_seed_3",
+  "topology": [
+    196,
+    200,
+    200,
+    10
+  ],
+  "hidden_activation": "relu",
+  "data": {
+    "x_train": "data/X_train_small.csv",
+    "y_train": "data/Y_train_small.csv",
+    "x_test": "data/X_test_small.csv",
+    "y_test": "data/Y_test_small.csv"
+  },
+  "train": {
+    "epochs": 1000,
+    "batch_size": 128,
+    "seed": 3
+  },
+  "sparsify": {
+    "steps": 400,
+    "do_adjust": true,
+    "omega_samples": 10000,
+    "omega_source": "train",
+    "omega_seed": 3,
+    "checkpoint_every": 20
+  },
+  "_experiment": {
+    "id": "e38_w200_neuron_data_seed_3",
+    "description": "[seed 3] Block A. Neuron pruning of the width-200 net to exhaustion (400 hidden neurons) with Omega = 10 000 TRAINING images (test split held out). Shared dense net for three selectors: manifold (neuron_sparsifier), magnitude (neuron_magnitude_sparsifier), OBD (neuron_obd_sparsifier, seeds 0-2). Analysis: scripts/analyze_crossbar.py (accuracy vs crossbar count).",
+    "literature": [
+      "docs/experiments/2026-10-regimes.md"
+    ]
+  }
+}

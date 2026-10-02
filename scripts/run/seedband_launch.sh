@@ -17,10 +17,15 @@ while IFS= read -r ln; do
     *scripts/train.py*)
       name=$(python3 -c "import json,sys;print(json.load(open(sys.argv[1]))['name'])" "${ln##* }")
       [ -f "artifacts/$name/W_0.npy" ] && continue ;;
-    *sparsifier*)  # skip runs whose log already holds every step
+    *zero_cost_fraction*)
+      name=$(python3 -c "import json,sys;print(json.load(open(sys.argv[1]))['name'])" "${ln##* }")
+      [ -f "artifacts/$name/zero_cost.json" ] && continue ;;
+    *sparsifier*)  # skip runs whose log (for THIS selector's subdir) already holds every step
       cfg=${ln##* }
       read -r name steps < <(python3 -c "import json,sys;c=json.load(open(sys.argv[1]));print(c['name'],c['sparsify']['steps'])" "$cfg")
-      csv=$(ls artifacts/$name/*sparsified/*sparsification_log.csv 2>/dev/null | head -1)
+      mod=$(echo "$ln" | grep -o 'sparsifier\.[a-z_]*' | head -1)
+      case "$mod" in sparsifier.sparsifier) sub=sparsified ;; *) sub=${mod#sparsifier.}; sub=${sub%_sparsifier}_sparsified ;; esac
+      csv=$(ls artifacts/$name/$sub/*sparsification_log.csv 2>/dev/null | head -1)
       [ -n "$csv" ] && [ $(( $(wc -l < "$csv") - 1 )) -ge "$steps" ] && continue ;;
   esac
   echo "$ln" >> $DIR/$TAG.resume.txt
