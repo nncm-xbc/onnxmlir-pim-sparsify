@@ -123,3 +123,74 @@ crossbars = 2⌈w₁/128⌉ + ⌈w₁/128⌉⌈w₂/128⌉ + ⌈w₂/128⌉, mir
 *(after each block completes)*
 
 ## 6. Progress checkpoints (auto-appended)
+
+**2026-10-02 08:42** — (re)launch of `scripts/run/queue_regimes.txt`: 87 commands queued
+
+**2026-10-02 08:42** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e03_width_200_seed_0/sparsified | 499 | 0.6 % | 0.969 | 0.000000e+00 |
+| e03_width_50_seed_0/sparsified | 499 | 3.9 % | 0.930 | 0.000000e+00 |
+| e25_stupidity_seed_1/sparsified | 2159 | 100.0 % | 0.107 | 2.431626e+06 |
+| e25_stupidity_seed_2/sparsified | 2159 | 100.0 % | 0.107 | 1.567784e+06 |
+| e25_stupidity_seed_3/sparsified | 2159 | 100.0 % | 0.087 | 2.302118e+06 |
+| e25_stupidity_seed_4/sparsified | 2159 | 100.0 % | 0.107 | 2.013833e+06 |
+
+```
+[supervise 08:42:20] launch [/home/simon/venv/general/bin/python3 scripts/zero_cost_fraction.py experiments/e25_stupidity_seed_1.json] (attempt 0/10)
+```
+
+**2026-10-02 09:12** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e03_width_200_seed_0/sparsified | 499 | 0.6 % | 0.969 | 0.000000e+00 |
+| e03_width_50_seed_0/sparsified | 499 | 3.9 % | 0.930 | 0.000000e+00 |
+| e25_stupidity_seed_1/sparsified | 2159 | 100.0 % | 0.107 | 2.431626e+06 |
+| e25_stupidity_seed_2/sparsified | 2159 | 100.0 % | 0.107 | 1.567784e+06 |
+| e25_stupidity_seed_3/sparsified | 2159 | 100.0 % | 0.087 | 2.302118e+06 |
+| e25_stupidity_seed_4/sparsified | 2159 | 100.0 % | 0.107 | 2.013833e+06 |
+
+```
+[supervise 08:55:44] launch [/home/simon/venv/general/bin/python3 scripts/zero_cost_fraction.py experiments/e03_width_200_seed_0.json] (attempt 1/10)
+[supervise 09:05:44] STALL experiments/e03_width_200_seed_0.json (no progress for 600s) -- SIGKILL, will resume
+[supervise 09:06:44] launch [/home/simon/venv/general/bin/python3 scripts/zero_cost_fraction.py experiments/e03_width_200_seed_0.json] (attempt 2/10)
+```
+
+**2026-10-02 09:42** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e03_width_200_seed_0/sparsified | 499 | 0.6 % | 0.969 | 0.000000e+00 |
+| e03_width_50_seed_0/sparsified | 499 | 3.9 % | 0.930 | 0.000000e+00 |
+| e25_stupidity_seed_1/sparsified | 2159 | 100.0 % | 0.107 | 2.431626e+06 |
+| e25_stupidity_seed_2/sparsified | 2159 | 100.0 % | 0.107 | 1.567784e+06 |
+| e25_stupidity_seed_3/sparsified | 2159 | 100.0 % | 0.087 | 2.302118e+06 |
+| e25_stupidity_seed_4/sparsified | 2159 | 100.0 % | 0.107 | 2.013833e+06 |
+
+```
+[supervise 09:28:45] launch [/home/simon/venv/general/bin/python3 scripts/zero_cost_fraction.py experiments/e03_width_200_seed_0.json] (attempt 4/10)
+[supervise 09:38:45] STALL experiments/e03_width_200_seed_0.json (no progress for 600s) -- SIGKILL, will resume
+[supervise 09:39:45] launch [/home/simon/venv/general/bin/python3 scripts/zero_cost_fraction.py experiments/e03_width_200_seed_0.json] (attempt 5/10)
+```
+
+**2026-10-02 10:15 — B0 width-200 diagnostic dropped.** `zero_cost_fraction.py` on
+`e03_width_200_seed_0` sweeps ~41 000 weights and writes nothing before the end, so the
+supervisor's 600 s stall watchdog killed it seven times in a row (08:45–10:11, 85 min lost).
+Removed from the queue; the four e25 and the width-50 diagnostics completed. Relaunched; Block A
+starts now. (HB1/HC1 use the e25 / width-50 numbers; the width-200 zero-cost fraction can be
+computed later with `STALL_TIMEOUT=7200` outside the queue.)
+
+**2026-10-02 10:11** — (re)launch of `scripts/run/queue_regimes.txt`: 81 commands queued
+
+**2026-10-02 10:11** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+
+```
+[supervise 10:00:45] STALL experiments/e03_width_200_seed_0.json (no progress for 600s) -- SIGKILL, will resume
+[supervise 10:01:45] launch [/home/simon/venv/general/bin/python3 scripts/zero_cost_fraction.py experiments/e03_width_200_seed_0.json] (attempt 7/10)
+[supervise 10:11:49] launch [/home/simon/venv/general/bin/python3 scripts/train.py experiments/e38_w200_neuron_data_seed_0.json] (attempt 0/10)
+```

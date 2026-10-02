@@ -10,7 +10,7 @@ python scripts/zero_cost_fraction.py experiments/e25_stupidity_seed_2.json
 python scripts/zero_cost_fraction.py experiments/e25_stupidity_seed_3.json
 python scripts/zero_cost_fraction.py experiments/e25_stupidity_seed_4.json
 python scripts/zero_cost_fraction.py experiments/e03_width_50_seed_0.json
-python scripts/zero_cost_fraction.py experiments/e03_width_200_seed_0.json
+# DROPPED 2026-10-02 10:15: zero_cost on the width-200 net exceeds the 600 s stall timeout (writes only at the end); run separately with STALL_TIMEOUT=7200 if wanted
 # ---- A: structured pruning of [196,200,200,10] to crossbar boundaries, 5 seeds
 python scripts/train.py experiments/e38_w200_neuron_data_seed_0.json
 python -m sparsifier.neuron_sparsifier experiments/e38_w200_neuron_data_seed_0.json
