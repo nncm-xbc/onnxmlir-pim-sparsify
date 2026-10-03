@@ -194,3 +194,466 @@ computed later with `STALL_TIMEOUT=7200` outside the queue.)
 [supervise 10:01:45] launch [/home/simon/venv/general/bin/python3 scripts/zero_cost_fraction.py experiments/e03_width_200_seed_0.json] (attempt 7/10)
 [supervise 10:11:49] launch [/home/simon/venv/general/bin/python3 scripts/train.py experiments/e38_w200_neuron_data_seed_0.json] (attempt 0/10)
 ```
+
+**2026-10-02 10:41** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e38_w200_neuron_data_seed_0/neuron_sparsified | 86 | 21.5 % | 0.969 | 4.064299e+02 |
+
+```
+[supervise 10:11:49] launch [/home/simon/venv/general/bin/python3 scripts/train.py experiments/e38_w200_neuron_data_seed_0.json] (attempt 0/10)
+[supervise 10:12:39] DONE experiments/e38_w200_neuron_data_seed_0.json rc=0
+[supervise 10:12:39] launch [/home/simon/venv/general/bin/python3 -m sparsifier.neuron_sparsifier experiments/e38_w200_neuron_data_seed_0.json] (attempt 0/10)
+```
+
+**2026-10-02 11:11** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e38_w200_neuron_data_seed_0/neuron_sparsified | 183 | 45.8 % | 0.968 | 4.274984e+03 |
+
+```
+[supervise 10:11:49] launch [/home/simon/venv/general/bin/python3 scripts/train.py experiments/e38_w200_neuron_data_seed_0.json] (attempt 0/10)
+[supervise 10:12:39] DONE experiments/e38_w200_neuron_data_seed_0.json rc=0
+[supervise 10:12:39] launch [/home/simon/venv/general/bin/python3 -m sparsifier.neuron_sparsifier experiments/e38_w200_neuron_data_seed_0.json] (attempt 0/10)
+```
+
+**2026-10-02 11:41** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e38_w200_neuron_data_seed_0/neuron_sparsified | 293 | 73.2 % | 0.961 | 2.377236e+04 |
+
+```
+[supervise 10:11:49] launch [/home/simon/venv/general/bin/python3 scripts/train.py experiments/e38_w200_neuron_data_seed_0.json] (attempt 0/10)
+[supervise 10:12:39] DONE experiments/e38_w200_neuron_data_seed_0.json rc=0
+[supervise 10:12:39] launch [/home/simon/venv/general/bin/python3 -m sparsifier.neuron_sparsifier experiments/e38_w200_neuron_data_seed_0.json] (attempt 0/10)
+```
+
+**2026-10-02 12:11** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e38_w200_neuron_data_seed_0/neuron_magnitude_sparsified | 22 | 5.5 % | 0.969 | 2.274804e+01 |
+| e38_w200_neuron_data_seed_0/neuron_sparsified | 399 | 100.0 % | 0.107 | 4.535344e+06 |
+
+```
+[supervise 10:12:39] launch [/home/simon/venv/general/bin/python3 -m sparsifier.neuron_sparsifier experiments/e38_w200_neuron_data_seed_0.json] (attempt 0/10)
+[supervise 12:06:22] DONE experiments/e38_w200_neuron_data_seed_0.json rc=0
+[supervise 12:06:22] launch [/home/simon/venv/general/bin/python3 -m sparsifier.neuron_magnitude_sparsifier experiments/e38_w200_neuron_data_seed_0.json] (attempt 0/10)
+```
+
+**2026-10-02 12:41** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e38_w200_neuron_data_seed_0/neuron_magnitude_sparsified | 157 | 39.2 % | 0.967 | 3.923743e+03 |
+| e38_w200_neuron_data_seed_0/neuron_sparsified | 399 | 100.0 % | 0.107 | 4.535344e+06 |
+
+```
+[supervise 10:12:39] launch [/home/simon/venv/general/bin/python3 -m sparsifier.neuron_sparsifier experiments/e38_w200_neuron_data_seed_0.json] (attempt 0/10)
+[supervise 12:06:22] DONE experiments/e38_w200_neuron_data_seed_0.json rc=0
+[supervise 12:06:22] launch [/home/simon/venv/general/bin/python3 -m sparsifier.neuron_magnitude_sparsifier experiments/e38_w200_neuron_data_seed_0.json] (attempt 0/10)
+```
+
+**2026-10-02 13:11** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e38_w200_neuron_data_seed_0/neuron_magnitude_sparsified | 293 | 73.2 % | 0.593 | 1.517177e+06 |
+| e38_w200_neuron_data_seed_0/neuron_sparsified | 399 | 100.0 % | 0.107 | 4.535344e+06 |
+
+```
+[supervise 10:12:39] launch [/home/simon/venv/general/bin/python3 -m sparsifier.neuron_sparsifier experiments/e38_w200_neuron_data_seed_0.json] (attempt 0/10)
+[supervise 12:06:22] DONE experiments/e38_w200_neuron_data_seed_0.json rc=0
+[supervise 12:06:22] launch [/home/simon/venv/general/bin/python3 -m sparsifier.neuron_magnitude_sparsifier experiments/e38_w200_neuron_data_seed_0.json] (attempt 0/10)
+```
+
+**2026-10-02 13:41** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e38_w200_neuron_data_seed_0/neuron_magnitude_sparsified | 399 | 100.0 % | 0.107 | 4.535344e+06 |
+| e38_w200_neuron_data_seed_0/neuron_sparsified | 399 | 100.0 % | 0.107 | 4.535344e+06 |
+| e39_w200_neuron_noise_seed_0/neuron_sparsified | 49 | 12.2 % | 0.960 | 3.231976e+00 |
+
+```
+[supervise 13:27:52] launch [/home/simon/venv/general/bin/python3 scripts/train.py experiments/e39_w200_neuron_noise_seed_0.json] (attempt 0/10)
+[supervise 13:28:45] DONE experiments/e39_w200_neuron_noise_seed_0.json rc=0
+[supervise 13:28:45] launch [/home/simon/venv/general/bin/python3 -m sparsifier.neuron_sparsifier experiments/e39_w200_neuron_noise_seed_0.json] (attempt 0/10)
+```
+
+**2026-10-02 14:11** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e38_w200_neuron_data_seed_0/neuron_magnitude_sparsified | 399 | 100.0 % | 0.107 | 4.535344e+06 |
+| e38_w200_neuron_data_seed_0/neuron_sparsified | 399 | 100.0 % | 0.107 | 4.535344e+06 |
+| e39_w200_neuron_noise_seed_0/neuron_sparsified | 142 | 35.5 % | 0.692 | 4.614797e+03 |
+
+```
+[supervise 13:27:52] launch [/home/simon/venv/general/bin/python3 scripts/train.py experiments/e39_w200_neuron_noise_seed_0.json] (attempt 0/10)
+[supervise 13:28:45] DONE experiments/e39_w200_neuron_noise_seed_0.json rc=0
+[supervise 13:28:45] launch [/home/simon/venv/general/bin/python3 -m sparsifier.neuron_sparsifier experiments/e39_w200_neuron_noise_seed_0.json] (attempt 0/10)
+```
+
+**2026-10-02 14:41** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e38_w200_neuron_data_seed_0/neuron_magnitude_sparsified | 399 | 100.0 % | 0.107 | 4.535344e+06 |
+| e38_w200_neuron_data_seed_0/neuron_sparsified | 399 | 100.0 % | 0.107 | 4.535344e+06 |
+| e39_w200_neuron_noise_seed_0/neuron_sparsified | 246 | 61.5 % | 0.496 | 2.726007e+04 |
+
+```
+[supervise 13:27:52] launch [/home/simon/venv/general/bin/python3 scripts/train.py experiments/e39_w200_neuron_noise_seed_0.json] (attempt 0/10)
+[supervise 13:28:45] DONE experiments/e39_w200_neuron_noise_seed_0.json rc=0
+[supervise 13:28:45] launch [/home/simon/venv/general/bin/python3 -m sparsifier.neuron_sparsifier experiments/e39_w200_neuron_noise_seed_0.json] (attempt 0/10)
+```
+
+**2026-10-02 15:11** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e38_w200_neuron_data_seed_0/neuron_magnitude_sparsified | 399 | 100.0 % | 0.107 | 4.535344e+06 |
+| e38_w200_neuron_data_seed_0/neuron_sparsified | 399 | 100.0 % | 0.107 | 4.535344e+06 |
+| e39_w200_neuron_noise_seed_0/neuron_sparsified | 367 | 91.8 % | 0.333 | 7.633182e+04 |
+
+```
+[supervise 13:27:52] launch [/home/simon/venv/general/bin/python3 scripts/train.py experiments/e39_w200_neuron_noise_seed_0.json] (attempt 0/10)
+[supervise 13:28:45] DONE experiments/e39_w200_neuron_noise_seed_0.json rc=0
+[supervise 13:28:45] launch [/home/simon/venv/general/bin/python3 -m sparsifier.neuron_sparsifier experiments/e39_w200_neuron_noise_seed_0.json] (attempt 0/10)
+```
+
+**2026-10-02 15:41** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e38_w200_neuron_data_seed_0/neuron_magnitude_sparsified | 399 | 100.0 % | 0.107 | 4.535344e+06 |
+| e38_w200_neuron_data_seed_0/neuron_sparsified | 399 | 100.0 % | 0.107 | 4.535344e+06 |
+| e38_w200_neuron_data_seed_1/neuron_sparsified | 63 | 15.8 % | 0.960 | 2.313379e+02 |
+| e39_w200_neuron_noise_seed_0/neuron_sparsified | 399 | 100.0 % | 0.087 | 1.159988e+06 |
+
+```
+[supervise 15:18:36] launch [/home/simon/venv/general/bin/python3 scripts/train.py experiments/e38_w200_neuron_data_seed_1.json] (attempt 0/10)
+[supervise 15:19:28] DONE experiments/e38_w200_neuron_data_seed_1.json rc=0
+[supervise 15:19:28] launch [/home/simon/venv/general/bin/python3 -m sparsifier.neuron_sparsifier experiments/e38_w200_neuron_data_seed_1.json] (attempt 0/10)
+```
+
+**2026-10-02 16:11** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e38_w200_neuron_data_seed_0/neuron_magnitude_sparsified | 399 | 100.0 % | 0.107 | 4.535344e+06 |
+| e38_w200_neuron_data_seed_0/neuron_sparsified | 399 | 100.0 % | 0.107 | 4.535344e+06 |
+| e38_w200_neuron_data_seed_1/neuron_sparsified | 157 | 39.2 % | 0.964 | 3.208377e+03 |
+| e39_w200_neuron_noise_seed_0/neuron_sparsified | 399 | 100.0 % | 0.087 | 1.159988e+06 |
+
+```
+[supervise 15:18:36] launch [/home/simon/venv/general/bin/python3 scripts/train.py experiments/e38_w200_neuron_data_seed_1.json] (attempt 0/10)
+[supervise 15:19:28] DONE experiments/e38_w200_neuron_data_seed_1.json rc=0
+[supervise 15:19:28] launch [/home/simon/venv/general/bin/python3 -m sparsifier.neuron_sparsifier experiments/e38_w200_neuron_data_seed_1.json] (attempt 0/10)
+```
+
+**2026-10-02 16:41** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e38_w200_neuron_data_seed_0/neuron_magnitude_sparsified | 399 | 100.0 % | 0.107 | 4.535344e+06 |
+| e38_w200_neuron_data_seed_0/neuron_sparsified | 399 | 100.0 % | 0.107 | 4.535344e+06 |
+| e38_w200_neuron_data_seed_1/neuron_sparsified | 263 | 65.8 % | 0.959 | 1.430141e+04 |
+| e39_w200_neuron_noise_seed_0/neuron_sparsified | 399 | 100.0 % | 0.087 | 1.159988e+06 |
+
+```
+[supervise 15:18:36] launch [/home/simon/venv/general/bin/python3 scripts/train.py experiments/e38_w200_neuron_data_seed_1.json] (attempt 0/10)
+[supervise 15:19:28] DONE experiments/e38_w200_neuron_data_seed_1.json rc=0
+[supervise 15:19:28] launch [/home/simon/venv/general/bin/python3 -m sparsifier.neuron_sparsifier experiments/e38_w200_neuron_data_seed_1.json] (attempt 0/10)
+```
+
+**2026-10-02 17:11** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e38_w200_neuron_data_seed_0/neuron_magnitude_sparsified | 399 | 100.0 % | 0.107 | 4.535344e+06 |
+| e38_w200_neuron_data_seed_0/neuron_sparsified | 399 | 100.0 % | 0.107 | 4.535344e+06 |
+| e38_w200_neuron_data_seed_1/neuron_sparsified | 387 | 96.8 % | 0.821 | 8.460772e+05 |
+| e39_w200_neuron_noise_seed_0/neuron_sparsified | 399 | 100.0 % | 0.087 | 1.159988e+06 |
+
+```
+[supervise 15:18:36] launch [/home/simon/venv/general/bin/python3 scripts/train.py experiments/e38_w200_neuron_data_seed_1.json] (attempt 0/10)
+[supervise 15:19:28] DONE experiments/e38_w200_neuron_data_seed_1.json rc=0
+[supervise 15:19:28] launch [/home/simon/venv/general/bin/python3 -m sparsifier.neuron_sparsifier experiments/e38_w200_neuron_data_seed_1.json] (attempt 0/10)
+```
+
+**2026-10-02 17:41** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e38_w200_neuron_data_seed_0/neuron_magnitude_sparsified | 399 | 100.0 % | 0.107 | 4.535344e+06 |
+| e38_w200_neuron_data_seed_0/neuron_sparsified | 399 | 100.0 % | 0.107 | 4.535344e+06 |
+| e38_w200_neuron_data_seed_1/neuron_magnitude_sparsified | 121 | 30.2 % | 0.964 | 2.379466e+03 |
+| e38_w200_neuron_data_seed_1/neuron_sparsified | 399 | 100.0 % | 0.087 | 4.945521e+06 |
+| e39_w200_neuron_noise_seed_0/neuron_sparsified | 399 | 100.0 % | 0.087 | 1.159988e+06 |
+
+```
+[supervise 15:19:28] launch [/home/simon/venv/general/bin/python3 -m sparsifier.neuron_sparsifier experiments/e38_w200_neuron_data_seed_1.json] (attempt 0/10)
+[supervise 17:14:07] DONE experiments/e38_w200_neuron_data_seed_1.json rc=0
+[supervise 17:14:07] launch [/home/simon/venv/general/bin/python3 -m sparsifier.neuron_magnitude_sparsifier experiments/e38_w200_neuron_data_seed_1.json] (attempt 0/10)
+```
+
+**2026-10-02 18:11** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e38_w200_neuron_data_seed_0/neuron_magnitude_sparsified | 399 | 100.0 % | 0.107 | 4.535344e+06 |
+| e38_w200_neuron_data_seed_0/neuron_sparsified | 399 | 100.0 % | 0.107 | 4.535344e+06 |
+| e38_w200_neuron_data_seed_1/neuron_magnitude_sparsified | 258 | 64.5 % | 0.887 | 4.523429e+05 |
+| e38_w200_neuron_data_seed_1/neuron_sparsified | 399 | 100.0 % | 0.087 | 4.945521e+06 |
+| e39_w200_neuron_noise_seed_0/neuron_sparsified | 399 | 100.0 % | 0.087 | 1.159988e+06 |
+
+```
+[supervise 15:19:28] launch [/home/simon/venv/general/bin/python3 -m sparsifier.neuron_sparsifier experiments/e38_w200_neuron_data_seed_1.json] (attempt 0/10)
+[supervise 17:14:07] DONE experiments/e38_w200_neuron_data_seed_1.json rc=0
+[supervise 17:14:07] launch [/home/simon/venv/general/bin/python3 -m sparsifier.neuron_magnitude_sparsifier experiments/e38_w200_neuron_data_seed_1.json] (attempt 0/10)
+```
+
+**2026-10-02 18:41** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e38_w200_neuron_data_seed_0/neuron_magnitude_sparsified | 399 | 100.0 % | 0.107 | 4.535344e+06 |
+| e38_w200_neuron_data_seed_0/neuron_sparsified | 399 | 100.0 % | 0.107 | 4.535344e+06 |
+| e38_w200_neuron_data_seed_1/neuron_magnitude_sparsified | 399 | 100.0 % | 0.107 | 4.777770e+06 |
+| e38_w200_neuron_data_seed_1/neuron_sparsified | 399 | 100.0 % | 0.087 | 4.945521e+06 |
+| e39_w200_neuron_noise_seed_0/neuron_sparsified | 399 | 100.0 % | 0.087 | 1.159988e+06 |
+| e39_w200_neuron_noise_seed_1/neuron_sparsified | 30 | 7.5 % | 0.950 | 2.704322e-01 |
+
+```
+[supervise 18:32:30] launch [/home/simon/venv/general/bin/python3 scripts/train.py experiments/e39_w200_neuron_noise_seed_1.json] (attempt 0/10)
+[supervise 18:33:22] DONE experiments/e39_w200_neuron_noise_seed_1.json rc=0
+[supervise 18:33:22] launch [/home/simon/venv/general/bin/python3 -m sparsifier.neuron_sparsifier experiments/e39_w200_neuron_noise_seed_1.json] (attempt 0/10)
+```
+
+**2026-10-02 19:11** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e38_w200_neuron_data_seed_0/neuron_magnitude_sparsified | 399 | 100.0 % | 0.107 | 4.535344e+06 |
+| e38_w200_neuron_data_seed_0/neuron_sparsified | 399 | 100.0 % | 0.107 | 4.535344e+06 |
+| e38_w200_neuron_data_seed_1/neuron_magnitude_sparsified | 399 | 100.0 % | 0.107 | 4.777770e+06 |
+| e38_w200_neuron_data_seed_1/neuron_sparsified | 399 | 100.0 % | 0.087 | 4.945521e+06 |
+| e39_w200_neuron_noise_seed_0/neuron_sparsified | 399 | 100.0 % | 0.087 | 1.159988e+06 |
+| e39_w200_neuron_noise_seed_1/neuron_sparsified | 121 | 30.2 % | 0.768 | 3.186201e+03 |
+
+```
+[supervise 18:32:30] launch [/home/simon/venv/general/bin/python3 scripts/train.py experiments/e39_w200_neuron_noise_seed_1.json] (attempt 0/10)
+[supervise 18:33:22] DONE experiments/e39_w200_neuron_noise_seed_1.json rc=0
+[supervise 18:33:22] launch [/home/simon/venv/general/bin/python3 -m sparsifier.neuron_sparsifier experiments/e39_w200_neuron_noise_seed_1.json] (attempt 0/10)
+```
+
+**2026-10-02 19:41** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e38_w200_neuron_data_seed_0/neuron_magnitude_sparsified | 399 | 100.0 % | 0.107 | 4.535344e+06 |
+| e38_w200_neuron_data_seed_0/neuron_sparsified | 399 | 100.0 % | 0.107 | 4.535344e+06 |
+| e38_w200_neuron_data_seed_1/neuron_magnitude_sparsified | 399 | 100.0 % | 0.107 | 4.777770e+06 |
+| e38_w200_neuron_data_seed_1/neuron_sparsified | 399 | 100.0 % | 0.087 | 4.945521e+06 |
+| e39_w200_neuron_noise_seed_0/neuron_sparsified | 399 | 100.0 % | 0.087 | 1.159988e+06 |
+| e39_w200_neuron_noise_seed_1/neuron_sparsified | 223 | 55.8 % | 0.592 | 1.900091e+04 |
+
+```
+[supervise 18:32:30] launch [/home/simon/venv/general/bin/python3 scripts/train.py experiments/e39_w200_neuron_noise_seed_1.json] (attempt 0/10)
+[supervise 18:33:22] DONE experiments/e39_w200_neuron_noise_seed_1.json rc=0
+[supervise 18:33:22] launch [/home/simon/venv/general/bin/python3 -m sparsifier.neuron_sparsifier experiments/e39_w200_neuron_noise_seed_1.json] (attempt 0/10)
+```
+
+**2026-10-02 20:11** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e38_w200_neuron_data_seed_0/neuron_magnitude_sparsified | 399 | 100.0 % | 0.107 | 4.535344e+06 |
+| e38_w200_neuron_data_seed_0/neuron_sparsified | 399 | 100.0 % | 0.107 | 4.535344e+06 |
+| e38_w200_neuron_data_seed_1/neuron_magnitude_sparsified | 399 | 100.0 % | 0.107 | 4.777770e+06 |
+| e38_w200_neuron_data_seed_1/neuron_sparsified | 399 | 100.0 % | 0.087 | 4.945521e+06 |
+| e39_w200_neuron_noise_seed_0/neuron_sparsified | 399 | 100.0 % | 0.087 | 1.159988e+06 |
+| e39_w200_neuron_noise_seed_1/neuron_sparsified | 341 | 85.2 % | 0.466 | 4.507746e+04 |
+
+```
+[supervise 18:32:30] launch [/home/simon/venv/general/bin/python3 scripts/train.py experiments/e39_w200_neuron_noise_seed_1.json] (attempt 0/10)
+[supervise 18:33:22] DONE experiments/e39_w200_neuron_noise_seed_1.json rc=0
+[supervise 18:33:22] launch [/home/simon/venv/general/bin/python3 -m sparsifier.neuron_sparsifier experiments/e39_w200_neuron_noise_seed_1.json] (attempt 0/10)
+```
+
+**2026-10-02 20:41** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e38_w200_neuron_data_seed_0/neuron_magnitude_sparsified | 399 | 100.0 % | 0.107 | 4.535344e+06 |
+| e38_w200_neuron_data_seed_0/neuron_sparsified | 399 | 100.0 % | 0.107 | 4.535344e+06 |
+| e38_w200_neuron_data_seed_1/neuron_magnitude_sparsified | 399 | 100.0 % | 0.107 | 4.777770e+06 |
+| e38_w200_neuron_data_seed_1/neuron_sparsified | 399 | 100.0 % | 0.087 | 4.945521e+06 |
+| e38_w200_neuron_data_seed_2/neuron_sparsified | 46 | 11.5 % | 0.962 | 2.219513e+01 |
+| e39_w200_neuron_noise_seed_0/neuron_sparsified | 399 | 100.0 % | 0.087 | 1.159988e+06 |
+| e39_w200_neuron_noise_seed_1/neuron_sparsified | 399 | 100.0 % | 0.087 | 1.239544e+06 |
+
+```
+[supervise 20:24:34] launch [/home/simon/venv/general/bin/python3 scripts/train.py experiments/e38_w200_neuron_data_seed_2.json] (attempt 0/10)
+[supervise 20:25:28] DONE experiments/e38_w200_neuron_data_seed_2.json rc=0
+[supervise 20:25:28] launch [/home/simon/venv/general/bin/python3 -m sparsifier.neuron_sparsifier experiments/e38_w200_neuron_data_seed_2.json] (attempt 0/10)
+```
+
+**2026-10-02 21:11** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e38_w200_neuron_data_seed_0/neuron_magnitude_sparsified | 399 | 100.0 % | 0.107 | 4.535344e+06 |
+| e38_w200_neuron_data_seed_0/neuron_sparsified | 399 | 100.0 % | 0.107 | 4.535344e+06 |
+| e38_w200_neuron_data_seed_1/neuron_magnitude_sparsified | 399 | 100.0 % | 0.107 | 4.777770e+06 |
+| e38_w200_neuron_data_seed_1/neuron_sparsified | 399 | 100.0 % | 0.087 | 4.945521e+06 |
+| e38_w200_neuron_data_seed_2/neuron_sparsified | 139 | 34.8 % | 0.961 | 1.505656e+03 |
+| e39_w200_neuron_noise_seed_0/neuron_sparsified | 399 | 100.0 % | 0.087 | 1.159988e+06 |
+| e39_w200_neuron_noise_seed_1/neuron_sparsified | 399 | 100.0 % | 0.087 | 1.239544e+06 |
+
+```
+[supervise 20:24:34] launch [/home/simon/venv/general/bin/python3 scripts/train.py experiments/e38_w200_neuron_data_seed_2.json] (attempt 0/10)
+[supervise 20:25:28] DONE experiments/e38_w200_neuron_data_seed_2.json rc=0
+[supervise 20:25:28] launch [/home/simon/venv/general/bin/python3 -m sparsifier.neuron_sparsifier experiments/e38_w200_neuron_data_seed_2.json] (attempt 0/10)
+```
+
+**2026-10-02 21:41** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e38_w200_neuron_data_seed_0/neuron_magnitude_sparsified | 399 | 100.0 % | 0.107 | 4.535344e+06 |
+| e38_w200_neuron_data_seed_0/neuron_sparsified | 399 | 100.0 % | 0.107 | 4.535344e+06 |
+| e38_w200_neuron_data_seed_1/neuron_magnitude_sparsified | 399 | 100.0 % | 0.107 | 4.777770e+06 |
+| e38_w200_neuron_data_seed_1/neuron_sparsified | 399 | 100.0 % | 0.087 | 4.945521e+06 |
+| e38_w200_neuron_data_seed_2/neuron_sparsified | 242 | 60.5 % | 0.958 | 1.060691e+04 |
+| e39_w200_neuron_noise_seed_0/neuron_sparsified | 399 | 100.0 % | 0.087 | 1.159988e+06 |
+| e39_w200_neuron_noise_seed_1/neuron_sparsified | 399 | 100.0 % | 0.087 | 1.239544e+06 |
+
+```
+[supervise 20:24:34] launch [/home/simon/venv/general/bin/python3 scripts/train.py experiments/e38_w200_neuron_data_seed_2.json] (attempt 0/10)
+[supervise 20:25:28] DONE experiments/e38_w200_neuron_data_seed_2.json rc=0
+[supervise 20:25:28] launch [/home/simon/venv/general/bin/python3 -m sparsifier.neuron_sparsifier experiments/e38_w200_neuron_data_seed_2.json] (attempt 0/10)
+```
+
+**2026-10-02 22:11** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e38_w200_neuron_data_seed_0/neuron_magnitude_sparsified | 399 | 100.0 % | 0.107 | 4.535344e+06 |
+| e38_w200_neuron_data_seed_0/neuron_sparsified | 399 | 100.0 % | 0.107 | 4.535344e+06 |
+| e38_w200_neuron_data_seed_1/neuron_magnitude_sparsified | 399 | 100.0 % | 0.107 | 4.777770e+06 |
+| e38_w200_neuron_data_seed_1/neuron_sparsified | 399 | 100.0 % | 0.087 | 4.945521e+06 |
+| e38_w200_neuron_data_seed_2/neuron_sparsified | 363 | 90.8 % | 0.923 | 2.427546e+05 |
+| e39_w200_neuron_noise_seed_0/neuron_sparsified | 399 | 100.0 % | 0.087 | 1.159988e+06 |
+| e39_w200_neuron_noise_seed_1/neuron_sparsified | 399 | 100.0 % | 0.087 | 1.239544e+06 |
+
+```
+[supervise 20:24:34] launch [/home/simon/venv/general/bin/python3 scripts/train.py experiments/e38_w200_neuron_data_seed_2.json] (attempt 0/10)
+[supervise 20:25:28] DONE experiments/e38_w200_neuron_data_seed_2.json rc=0
+[supervise 20:25:28] launch [/home/simon/venv/general/bin/python3 -m sparsifier.neuron_sparsifier experiments/e38_w200_neuron_data_seed_2.json] (attempt 0/10)
+```
+
+**2026-10-02 22:41** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e38_w200_neuron_data_seed_0/neuron_magnitude_sparsified | 399 | 100.0 % | 0.107 | 4.535344e+06 |
+| e38_w200_neuron_data_seed_0/neuron_sparsified | 399 | 100.0 % | 0.107 | 4.535344e+06 |
+| e38_w200_neuron_data_seed_1/neuron_magnitude_sparsified | 399 | 100.0 % | 0.107 | 4.777770e+06 |
+| e38_w200_neuron_data_seed_1/neuron_sparsified | 399 | 100.0 % | 0.087 | 4.945521e+06 |
+| e38_w200_neuron_data_seed_2/neuron_magnitude_sparsified | 89 | 22.2 % | 0.962 | 6.696542e+02 |
+| e38_w200_neuron_data_seed_2/neuron_sparsified | 399 | 100.0 % | 0.116 | 4.791953e+06 |
+| e39_w200_neuron_noise_seed_0/neuron_sparsified | 399 | 100.0 % | 0.087 | 1.159988e+06 |
+| e39_w200_neuron_noise_seed_1/neuron_sparsified | 399 | 100.0 % | 0.087 | 1.239544e+06 |
+
+```
+[supervise 20:25:28] launch [/home/simon/venv/general/bin/python3 -m sparsifier.neuron_sparsifier experiments/e38_w200_neuron_data_seed_2.json] (attempt 0/10)
+[supervise 22:19:27] DONE experiments/e38_w200_neuron_data_seed_2.json rc=0
+[supervise 22:19:31] launch [/home/simon/venv/general/bin/python3 -m sparsifier.neuron_magnitude_sparsifier experiments/e38_w200_neuron_data_seed_2.json] (attempt 0/10)
+```
+
+**2026-10-02 23:11** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e38_w200_neuron_data_seed_0/neuron_magnitude_sparsified | 399 | 100.0 % | 0.107 | 4.535344e+06 |
+| e38_w200_neuron_data_seed_0/neuron_sparsified | 399 | 100.0 % | 0.107 | 4.535344e+06 |
+| e38_w200_neuron_data_seed_1/neuron_magnitude_sparsified | 399 | 100.0 % | 0.107 | 4.777770e+06 |
+| e38_w200_neuron_data_seed_1/neuron_sparsified | 399 | 100.0 % | 0.087 | 4.945521e+06 |
+| e38_w200_neuron_data_seed_2/neuron_magnitude_sparsified | 224 | 56.0 % | 0.956 | 1.897282e+04 |
+| e38_w200_neuron_data_seed_2/neuron_sparsified | 399 | 100.0 % | 0.116 | 4.791953e+06 |
+| e39_w200_neuron_noise_seed_0/neuron_sparsified | 399 | 100.0 % | 0.087 | 1.159988e+06 |
+| e39_w200_neuron_noise_seed_1/neuron_sparsified | 399 | 100.0 % | 0.087 | 1.239544e+06 |
+
+```
+[supervise 20:25:28] launch [/home/simon/venv/general/bin/python3 -m sparsifier.neuron_sparsifier experiments/e38_w200_neuron_data_seed_2.json] (attempt 0/10)
+[supervise 22:19:27] DONE experiments/e38_w200_neuron_data_seed_2.json rc=0
+[supervise 22:19:31] launch [/home/simon/venv/general/bin/python3 -m sparsifier.neuron_magnitude_sparsifier experiments/e38_w200_neuron_data_seed_2.json] (attempt 0/10)
+```
+
+**2026-10-02 23:41** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e38_w200_neuron_data_seed_0/neuron_magnitude_sparsified | 399 | 100.0 % | 0.107 | 4.535344e+06 |
+| e38_w200_neuron_data_seed_0/neuron_sparsified | 399 | 100.0 % | 0.107 | 4.535344e+06 |
+| e38_w200_neuron_data_seed_1/neuron_magnitude_sparsified | 399 | 100.0 % | 0.107 | 4.777770e+06 |
+| e38_w200_neuron_data_seed_1/neuron_sparsified | 399 | 100.0 % | 0.087 | 4.945521e+06 |
+| e38_w200_neuron_data_seed_2/neuron_magnitude_sparsified | 362 | 90.5 % | 0.087 | 5.019970e+06 |
+| e38_w200_neuron_data_seed_2/neuron_sparsified | 399 | 100.0 % | 0.116 | 4.791953e+06 |
+| e39_w200_neuron_noise_seed_0/neuron_sparsified | 399 | 100.0 % | 0.087 | 1.159988e+06 |
+| e39_w200_neuron_noise_seed_1/neuron_sparsified | 399 | 100.0 % | 0.087 | 1.239544e+06 |
+
+```
+[supervise 20:25:28] launch [/home/simon/venv/general/bin/python3 -m sparsifier.neuron_sparsifier experiments/e38_w200_neuron_data_seed_2.json] (attempt 0/10)
+[supervise 22:19:27] DONE experiments/e38_w200_neuron_data_seed_2.json rc=0
+[supervise 22:19:31] launch [/home/simon/venv/general/bin/python3 -m sparsifier.neuron_magnitude_sparsifier experiments/e38_w200_neuron_data_seed_2.json] (attempt 0/10)
+```
+
+**2026-10-03 00:11** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e38_w200_neuron_data_seed_0/neuron_magnitude_sparsified | 399 | 100.0 % | 0.107 | 4.535344e+06 |
+| e38_w200_neuron_data_seed_0/neuron_sparsified | 399 | 100.0 % | 0.107 | 4.535344e+06 |
+| e38_w200_neuron_data_seed_1/neuron_magnitude_sparsified | 399 | 100.0 % | 0.107 | 4.777770e+06 |
+| e38_w200_neuron_data_seed_1/neuron_sparsified | 399 | 100.0 % | 0.087 | 4.945521e+06 |
+| e38_w200_neuron_data_seed_2/neuron_magnitude_sparsified | 399 | 100.0 % | 0.107 | 4.588431e+06 |
+| e38_w200_neuron_data_seed_2/neuron_sparsified | 399 | 100.0 % | 0.116 | 4.791953e+06 |
+| e38_w200_neuron_data_seed_3/neuron_sparsified | 79 | 19.8 % | 0.962 | 5.489563e+02 |
+| e39_w200_neuron_noise_seed_0/neuron_sparsified | 399 | 100.0 % | 0.087 | 1.159988e+06 |
+| e39_w200_neuron_noise_seed_1/neuron_sparsified | 399 | 100.0 % | 0.087 | 1.239544e+06 |
+
+```
+[supervise 23:43:33] launch [/home/simon/venv/general/bin/python3 scripts/train.py experiments/e38_w200_neuron_data_seed_3.json] (attempt 0/10)
+[supervise 23:44:28] DONE experiments/e38_w200_neuron_data_seed_3.json rc=0
+[supervise 23:44:28] launch [/home/simon/venv/general/bin/python3 -m sparsifier.neuron_sparsifier experiments/e38_w200_neuron_data_seed_3.json] (attempt 0/10)
+```
+
+**2026-10-03 10:27** — (re)launch of `scripts/run/queue_regimes.txt`: 67 commands queued
+
+**2026-10-03 10:27** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e38_w200_neuron_data_seed_3/neuron_sparsified | 149 | 37.2 % | 0.963 | 2.611117e+03 |
+
+```
+[supervise 23:44:28] DONE experiments/e38_w200_neuron_data_seed_3.json rc=0
+[supervise 23:44:28] launch [/home/simon/venv/general/bin/python3 -m sparsifier.neuron_sparsifier experiments/e38_w200_neuron_data_seed_3.json] (attempt 0/10)
+step   90 | acc=0.9630 | neurons_pruned=  90/ 400 | sparsity=0.2250 | d_m=8.0022e+02[supervise 10:27:26] launch [/home/simon/venv/general/bin/python3 -m sparsifier.neuron_sparsifier experiments/e38_w2
+```
+
+**2026-10-03 10:35 — eighth host crash; neuron runs are not resumable.** Host down 00:34–10:26
+(`last -x`; GPU telemetry normal to the end, +12 V 10.08 V). The `@reboot` hook relaunched the
+queue at 10:27 (67 commands left). The interrupted run, e38 seed 3 d_W search (step 149 of 400,
+checkpoint `step_0140`), **restarted from step 0**: the neuron sparsifiers write W-only
+checkpoints (no biases, not atomic), which `_latest_checkpoint` deliberately ignores, so
+resume only works for the weight-level runs. Cost here 40 min; left as is (a mid-run fix would
+change code under a running queue; neuron runs are ≤ 2 h each). Completed: seeds 0–2 all
+variants, noise-Ω seeds 0–1. Block A ETA ≈ 17:15 today.
