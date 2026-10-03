@@ -657,3 +657,80 @@ checkpoints (no biases, not atomic), which `_latest_checkpoint` deliberately ign
 resume only works for the weight-level runs. Cost here 40 min; left as is (a mid-run fix would
 change code under a running queue; neuron runs are ≤ 2 h each). Completed: seeds 0–2 all
 variants, noise-Ω seeds 0–1. Block A ETA ≈ 17:15 today.
+
+**2026-10-03 10:57** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e38_w200_neuron_data_seed_3/neuron_sparsified | 89 | 22.2 % | 0.963 | 7.976916e+02 |
+
+```
+[supervise 23:44:28] DONE experiments/e38_w200_neuron_data_seed_3.json rc=0
+[supervise 23:44:28] launch [/home/simon/venv/general/bin/python3 -m sparsifier.neuron_sparsifier experiments/e38_w200_neuron_data_seed_3.json] (attempt 0/10)
+step   90 | acc=0.9630 | neurons_pruned=  90/ 400 | sparsity=0.2250 | d_m=8.0022e+02[supervise 10:27:26] launch [/home/simon/venv/general/bin/python3 -m sparsifier.neuron_sparsifier experiments/e38_w2
+```
+
+**2026-10-03 11:27** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e38_w200_neuron_data_seed_3/neuron_sparsified | 179 | 44.8 % | 0.961 | 3.642059e+03 |
+
+```
+[supervise 23:44:28] DONE experiments/e38_w200_neuron_data_seed_3.json rc=0
+[supervise 23:44:28] launch [/home/simon/venv/general/bin/python3 -m sparsifier.neuron_sparsifier experiments/e38_w200_neuron_data_seed_3.json] (attempt 0/10)
+step   90 | acc=0.9630 | neurons_pruned=  90/ 400 | sparsity=0.2250 | d_m=8.0022e+02[supervise 10:27:26] launch [/home/simon/venv/general/bin/python3 -m sparsifier.neuron_sparsifier experiments/e38_w2
+```
+
+**2026-10-03 11:57** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e38_w200_neuron_data_seed_3/neuron_sparsified | 288 | 72.0 % | 0.952 | 2.619122e+04 |
+
+```
+[supervise 23:44:28] DONE experiments/e38_w200_neuron_data_seed_3.json rc=0
+[supervise 23:44:28] launch [/home/simon/venv/general/bin/python3 -m sparsifier.neuron_sparsifier experiments/e38_w200_neuron_data_seed_3.json] (attempt 0/10)
+step   90 | acc=0.9630 | neurons_pruned=  90/ 400 | sparsity=0.2250 | d_m=8.0022e+02[supervise 10:27:26] launch [/home/simon/venv/general/bin/python3 -m sparsifier.neuron_sparsifier experiments/e38_w2
+```
+
+**2026-10-03 12:27** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e38_w200_neuron_data_seed_3/neuron_magnitude_sparsified | 18 | 4.5 % | 0.962 | 1.796537e+01 |
+| e38_w200_neuron_data_seed_3/neuron_sparsified | 399 | 100.0 % | 0.099 | 5.256802e+06 |
+
+```
+step   90 | acc=0.9630 | neurons_pruned=  90/ 400 | sparsity=0.2250 | d_m=8.0022e+02[supervise 10:27:26] launch [/home/simon/venv/general/bin/python3 -m sparsifier.neuron_sparsifier experiments/e38_w2
+[supervise 12:22:58] DONE experiments/e38_w200_neuron_data_seed_3.json rc=0
+[supervise 12:22:58] launch [/home/simon/venv/general/bin/python3 -m sparsifier.neuron_magnitude_sparsifier experiments/e38_w200_neuron_data_seed_3.json] (attempt 0/10)
+```
+
+**2026-10-03 12:57** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e38_w200_neuron_data_seed_3/neuron_magnitude_sparsified | 144 | 36.0 % | 0.962 | 4.010019e+03 |
+| e38_w200_neuron_data_seed_3/neuron_sparsified | 399 | 100.0 % | 0.099 | 5.256802e+06 |
+
+```
+step   90 | acc=0.9630 | neurons_pruned=  90/ 400 | sparsity=0.2250 | d_m=8.0022e+02[supervise 10:27:26] launch [/home/simon/venv/general/bin/python3 -m sparsifier.neuron_sparsifier experiments/e38_w2
+[supervise 12:22:58] DONE experiments/e38_w200_neuron_data_seed_3.json rc=0
+[supervise 12:22:58] launch [/home/simon/venv/general/bin/python3 -m sparsifier.neuron_magnitude_sparsifier experiments/e38_w200_neuron_data_seed_3.json] (attempt 0/10)
+```
+
+**2026-10-03 13:27** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e38_w200_neuron_data_seed_3/neuron_magnitude_sparsified | 272 | 68.0 % | 0.801 | 9.642633e+05 |
+| e38_w200_neuron_data_seed_3/neuron_sparsified | 399 | 100.0 % | 0.099 | 5.256802e+06 |
+
+```
+step   90 | acc=0.9630 | neurons_pruned=  90/ 400 | sparsity=0.2250 | d_m=8.0022e+02[supervise 10:27:26] launch [/home/simon/venv/general/bin/python3 -m sparsifier.neuron_sparsifier experiments/e38_w2
+[supervise 12:22:58] DONE experiments/e38_w200_neuron_data_seed_3.json rc=0
+[supervise 12:22:58] launch [/home/simon/venv/general/bin/python3 -m sparsifier.neuron_magnitude_sparsifier experiments/e38_w200_neuron_data_seed_3.json] (attempt 0/10)
+```
+
+**2026-10-03 13:29** — queue PAUSED by user (supervisor stopped during e38 seed-3 magnitude at step 281; @reboot hook removed). Resume: `scripts/run/seedband_launch.sh scripts/run/queue_regimes.txt docs/experiments/2026-10-regimes.md` (skips the 20 finished runs; the interrupted neuron run restarts from step 0).
