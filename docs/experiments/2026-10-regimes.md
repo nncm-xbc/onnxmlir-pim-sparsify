@@ -1031,3 +1031,25 @@ step  189 | acc=0.9600 | neurons_pruned= 189/ 400 | sparsity=0.4725 | d_m=9.0408
 [supervise 21:31:55] DONE experiments/e27_kmnist.json rc=0
 [supervise 21:31:55] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e27_kmnist.json] (attempt 0/10)
 ```
+
+**2026-10-03 22:21** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e26_fashion/magnitude_sparsified | 499 | 23.1 % | 0.806 | 9.102411e+02 |
+| e26_fashion/obd_sparsified | 499 | 23.1 % | 0.807 | 1.427573e+03 |
+| e26_fashion/sparsified | 499 | 23.1 % | 0.807 | 1.491830e+03 |
+| e27_kmnist/magnitude_sparsified | 291 | 13.5 % | 0.704 | 6.821083e+02 |
+| e27_kmnist/sparsified | 499 | 23.1 % | 0.532 | 3.732659e+03 |
+| e38_w200_neuron_data_seed_3/neuron_magnitude_sparsified | 399 | 100.0 % | 0.116 | 4.837949e+06 |
+| e38_w200_neuron_data_seed_3/neuron_sparsified | 399 | 100.0 % | 0.099 | 5.256802e+06 |
+| e38_w200_neuron_data_seed_4/neuron_magnitude_sparsified | 399 | 100.0 % | 0.107 | 4.678919e+06 |
+| e38_w200_neuron_data_seed_4/neuron_sparsified | 399 | 100.0 % | 0.107 | 4.678919e+06 |
+
+```
+[supervise 21:31:55] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e27_kmnist.json] (attempt 0/10)
+[supervise 22:03:49] DONE experiments/e27_kmnist.json rc=0
+[supervise 22:03:49] launch [/home/simon/venv/general/bin/python3 -m sparsifier.magnitude_sparsifier experiments/e27_kmnist.json] (attempt 0/10)
+```
+
+**2026-10-03 22:30** — queue INTERRUPTED by user for the night (Block A complete and analysed; Block B in progress, 47/87 commands done; stopped during: -m sparsifier.magnitude_sparsifier experiments/e27_kmnist.json; @reboot hook removed). Resume: `scripts/run/seedband_launch.sh scripts/run/queue_regimes.txt docs/experiments/2026-10-regimes.md` — skips finished runs; a weight-level run resumes from its checkpoint, a neuron run restarts.
