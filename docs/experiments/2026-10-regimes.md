@@ -75,6 +75,44 @@ boundary followed by compaction (`backend/compact.py`) is the only sparsity that
   (2 seeds) within 2 points of one another; zero-cost fraction at width 50 ≥ baseline's.
   *Refuted if* the exhaustive search collapses > 2 points later than magnitude on ≥ 4 seeds.
 
+### Block D — `[784,512,512,10]` on full-resolution MNIST, structured pruning to crossbar boundaries (added 2026-10-04)
+
+**Motivation.** Block A's selector advantage (search ≫ magnitude at 4 crossbars) is the thesis's
+one result where the method beats its cheap competitor. It was obtained at 80k weights on
+14×14 inputs. Block D asks whether it survives a 10× larger net on the standard dataset:
+670k weights, 1 024 hidden neurons, 48 crossbars dense at S = 128 (784 inputs = 7 tiles,
+512 = 4), pruned to `[128,128]` = 9 crossbars. Weight-level selectors are not run at this size:
+the exhaustive search is O(N²) and infeasible here (manuscript limitation); the structured
+search is O(neurons) per step and is the variant the hardware chapter needs.
+
+**Budget.** Measured on the seed-0 net with B = 10 000: 154 s prune + 91 s adjust per step
+(GPU shared with Block B), i.e. ~55 h per 800-step run. Block D therefore uses **B = 2 000**
+training images, validated by **D0**: e38 seed 0 rerun at B = 2 000 on the identical dense
+net must reproduce the B = 10 000 accuracies at 7 and 4 crossbars within 1 point (the weight-
+level B-ablation of the manuscript found insensitivity over 10²–10⁵; D0 checks the same for
+structured data-Ω pruning). Estimated: D0 35 min, controls 15 × ~7 min, search ~11 h and
+magnitude ~4 h per seed → ≈ 80 h for five seeds. Neuron runs now checkpoint every 10 steps
+with resumable (W + b, atomic) checkpoints, so a crash costs ≤ 10 steps.
+
+**Hypotheses (pre-registered).**
+- **HD0 (budget).** |acc(B=2000) − acc(B=10000)| ≤ 1 point at 7 and 4 crossbars on e38 seed 0.
+  *Refuted if* > 1 point at either count → Block D must use B = 10 000 and fewer seeds.
+- **HD1 (advantage persists at scale).** At 9 crossbars the search is ≥ 2 points above magnitude
+  on ≥ 4 of 5 seeds, and the mechanism is the same: magnitude reaches 9 crossbars by draining
+  one layer below 128 while the search takes both layers to the boundary.
+  *Refuted if* mean gap < 1 point.
+- **HD2 (ties the retrained control at every count).** Search within 1 point of the
+  from-scratch `[784,w,w,10]` net at 33, 20 and 9 crossbars (w = 384, 256, 128), paired by seed.
+- **HD3 (dense accuracy held to 20 crossbars).** The search is within 1 point of dense
+  (seed-0 dense 0.958) at 20 crossbars on every seed — a 2.4× tile reduction at no cost.
+- **HD4 (magnitude is fine until a layer hits the boundary).** Magnitude ties the search at the
+  first count it reaches with both layers ≥ 128 (33 or 20 crossbars), as at width 200.
+
+**Conditions.** `data/mnist784/` (raw 28×28 pixels 0–255 from the Colab CSVs, no resize; same
+20k/10k rows), SGD lr 0.01, 1 000 epochs, seed = run seed; dense seed-0 net 0.958 test
+accuracy (train 1.000). Configs e42 (search + magnitude, shared net), e43 (controls), e44 (D0).
+Queue `scripts/run/queue_regimesD.txt`, 31 commands; launch after Block C.
+
 ## 3. Conditions
 
 Common: MNIST-style CSVs (14×14, first 10 000 train / 1 000 test rows), SGD lr 0.01, 1 000 epochs
@@ -1053,3 +1091,240 @@ step  189 | acc=0.9600 | neurons_pruned= 189/ 400 | sparsity=0.4725 | d_m=9.0408
 ```
 
 **2026-10-03 22:30** — queue INTERRUPTED by user for the night (Block A complete and analysed; Block B in progress, 47/87 commands done; stopped during: -m sparsifier.magnitude_sparsifier experiments/e27_kmnist.json; @reboot hook removed). Resume: `scripts/run/seedband_launch.sh scripts/run/queue_regimes.txt docs/experiments/2026-10-regimes.md` — skips finished runs; a weight-level run resumes from its checkpoint, a neuron run restarts.
+
+**2026-10-04 09:52** — (re)launch of `scripts/run/queue_regimes.txt`: 39 commands queued
+
+**2026-10-04 09:52** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e27_kmnist/magnitude_sparsified | 458 | 21.2 % | 0.705 | 2.566574e+03 |
+| e27_kmnist/sparsified | 499 | 23.1 % | 0.532 | 3.732659e+03 |
+
+```
+[supervise 22:03:49] DONE experiments/e27_kmnist.json rc=0
+[supervise 22:03:49] launch [/home/simon/venv/general/bin/python3 -m sparsifier.magnitude_sparsifier experiments/e27_kmnist.json] (attempt 0/10)
+step  349 | acc=0.7040 | NZ=  1811 | sparsity=0.1616 | d_m=1.1120e+03[supervise 09:52:29] launch [/home/simon/venv/general/bin/python3 -m sparsifier.magnitude_sparsifier experiments/e27_kmnist.json] (
+```
+
+**2026-10-04 10:22** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e27_kmnist/magnitude_sparsified | 499 | 23.1 % | 0.709 | 3.403265e+03 |
+| e27_kmnist/obd_sparsified | 248 | 11.5 % | 0.581 | 4.064381e+02 |
+| e27_kmnist/sparsified | 499 | 23.1 % | 0.532 | 3.732659e+03 |
+
+```
+step  349 | acc=0.7040 | NZ=  1811 | sparsity=0.1616 | d_m=1.1120e+03[supervise 09:52:29] launch [/home/simon/venv/general/bin/python3 -m sparsifier.magnitude_sparsifier experiments/e27_kmnist.json] (
+[supervise 09:55:17] DONE experiments/e27_kmnist.json rc=0
+[supervise 09:55:17] launch [/home/simon/venv/general/bin/python3 -m sparsifier.obd_sparsifier experiments/e27_kmnist.json] (attempt 0/10)
+```
+
+**2026-10-04 10:52** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e27_kmnist/magnitude_sparsified | 499 | 23.1 % | 0.709 | 3.403265e+03 |
+| e27_kmnist/obd_sparsified | 499 | 23.1 % | 0.536 | 3.280454e+03 |
+| e27_kmnist/sparsified | 499 | 23.1 % | 0.532 | 3.732659e+03 |
+| e28_usps/sparsified | 45 | 2.1 % | 0.918 | 5.618712e-03 |
+
+```
+[supervise 10:50:28] launch [/home/simon/venv/general/bin/python3 scripts/zero_cost_fraction.py experiments/e28_usps.json] (attempt 0/10)
+[supervise 10:50:41] DONE experiments/e28_usps.json rc=0
+[supervise 10:50:41] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e28_usps.json] (attempt 0/10)
+```
+
+**2026-10-04 11:22** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e27_kmnist/magnitude_sparsified | 499 | 23.1 % | 0.709 | 3.403265e+03 |
+| e27_kmnist/obd_sparsified | 499 | 23.1 % | 0.536 | 3.280454e+03 |
+| e27_kmnist/sparsified | 499 | 23.1 % | 0.532 | 3.732659e+03 |
+| e28_usps/magnitude_sparsified | 1 | 0.0 % | 0.918 | 5.511580e-10 |
+| e28_usps/sparsified | 499 | 23.1 % | 0.917 | 3.622925e+01 |
+
+```
+[supervise 10:50:41] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e28_usps.json] (attempt 0/10)
+[supervise 11:22:18] DONE experiments/e28_usps.json rc=0
+[supervise 11:22:18] launch [/home/simon/venv/general/bin/python3 -m sparsifier.magnitude_sparsifier experiments/e28_usps.json] (attempt 0/10)
+```
+
+**2026-10-04 11:52** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e27_kmnist/magnitude_sparsified | 499 | 23.1 % | 0.709 | 3.403265e+03 |
+| e27_kmnist/obd_sparsified | 499 | 23.1 % | 0.536 | 3.280454e+03 |
+| e27_kmnist/sparsified | 499 | 23.1 % | 0.532 | 3.732659e+03 |
+| e28_usps/magnitude_sparsified | 499 | 23.1 % | 0.918 | 8.651375e+02 |
+| e28_usps/obd_sparsified | 6 | 0.3 % | 0.918 | 8.317425e-04 |
+| e28_usps/sparsified | 499 | 23.1 % | 0.917 | 3.622925e+01 |
+
+```
+[supervise 11:22:18] launch [/home/simon/venv/general/bin/python3 -m sparsifier.magnitude_sparsifier experiments/e28_usps.json] (attempt 0/10)
+[supervise 11:51:40] DONE experiments/e28_usps.json rc=0
+[supervise 11:51:40] launch [/home/simon/venv/general/bin/python3 -m sparsifier.obd_sparsifier experiments/e28_usps.json] (attempt 0/10)
+```
+
+**2026-10-04 12:22** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e27_kmnist/magnitude_sparsified | 499 | 23.1 % | 0.709 | 3.403265e+03 |
+| e27_kmnist/obd_sparsified | 499 | 23.1 % | 0.536 | 3.280454e+03 |
+| e27_kmnist/sparsified | 499 | 23.1 % | 0.532 | 3.732659e+03 |
+| e28_usps/magnitude_sparsified | 499 | 23.1 % | 0.918 | 8.651375e+02 |
+| e28_usps/obd_sparsified | 280 | 13.0 % | 0.917 | 8.138076e+00 |
+| e28_usps/sparsified | 499 | 23.1 % | 0.917 | 3.622925e+01 |
+
+```
+[supervise 11:22:18] launch [/home/simon/venv/general/bin/python3 -m sparsifier.magnitude_sparsifier experiments/e28_usps.json] (attempt 0/10)
+[supervise 11:51:40] DONE experiments/e28_usps.json rc=0
+[supervise 11:51:40] launch [/home/simon/venv/general/bin/python3 -m sparsifier.obd_sparsifier experiments/e28_usps.json] (attempt 0/10)
+```
+
+**2026-10-04 12:52** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e27_kmnist/magnitude_sparsified | 499 | 23.1 % | 0.709 | 3.403265e+03 |
+| e27_kmnist/obd_sparsified | 499 | 23.1 % | 0.536 | 3.280454e+03 |
+| e27_kmnist/sparsified | 499 | 23.1 % | 0.532 | 3.732659e+03 |
+| e28_usps/magnitude_sparsified | 499 | 23.1 % | 0.918 | 8.651375e+02 |
+| e28_usps/obd_sparsified | 499 | 23.1 % | 0.918 | 5.271754e+01 |
+| e28_usps/sparsified | 499 | 23.1 % | 0.917 | 3.622925e+01 |
+| e29_s1_teacher/sparsified | 34 | 1.6 % | 0.571 | 3.769477e-04 |
+
+```
+[supervise 12:50:08] launch [/home/simon/venv/general/bin/python3 scripts/zero_cost_fraction.py experiments/e29_s1_teacher.json] (attempt 0/10)
+[supervise 12:50:22] DONE experiments/e29_s1_teacher.json rc=0
+[supervise 12:50:22] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e29_s1_teacher.json] (attempt 0/10)
+```
+
+**2026-10-04 13:22** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e27_kmnist/magnitude_sparsified | 499 | 23.1 % | 0.709 | 3.403265e+03 |
+| e27_kmnist/obd_sparsified | 499 | 23.1 % | 0.536 | 3.280454e+03 |
+| e27_kmnist/sparsified | 499 | 23.1 % | 0.532 | 3.732659e+03 |
+| e28_usps/magnitude_sparsified | 499 | 23.1 % | 0.918 | 8.651375e+02 |
+| e28_usps/obd_sparsified | 499 | 23.1 % | 0.918 | 5.271754e+01 |
+| e28_usps/sparsified | 499 | 23.1 % | 0.917 | 3.622925e+01 |
+| e29_s1_teacher/magnitude_sparsified | 31 | 1.4 % | 0.570 | 1.492440e+00 |
+| e29_s1_teacher/sparsified | 499 | 23.1 % | 0.569 | 3.804575e+01 |
+
+```
+[supervise 12:50:22] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e29_s1_teacher.json] (attempt 0/10)
+[supervise 13:20:28] DONE experiments/e29_s1_teacher.json rc=0
+[supervise 13:20:28] launch [/home/simon/venv/general/bin/python3 -m sparsifier.magnitude_sparsifier experiments/e29_s1_teacher.json] (attempt 0/10)
+```
+
+**2026-10-04 13:52** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e27_kmnist/magnitude_sparsified | 499 | 23.1 % | 0.709 | 3.403265e+03 |
+| e27_kmnist/obd_sparsified | 499 | 23.1 % | 0.536 | 3.280454e+03 |
+| e27_kmnist/sparsified | 499 | 23.1 % | 0.532 | 3.732659e+03 |
+| e28_usps/magnitude_sparsified | 499 | 23.1 % | 0.918 | 8.651375e+02 |
+| e28_usps/obd_sparsified | 499 | 23.1 % | 0.918 | 5.271754e+01 |
+| e28_usps/sparsified | 499 | 23.1 % | 0.917 | 3.622925e+01 |
+| e29_s1_teacher/magnitude_sparsified | 499 | 23.1 % | 0.576 | 2.293963e+03 |
+| e29_s1_teacher/obd_sparsified | 33 | 1.5 % | 0.571 | 3.958497e-03 |
+| e29_s1_teacher/sparsified | 499 | 23.1 % | 0.569 | 3.804575e+01 |
+
+```
+[supervise 13:20:28] launch [/home/simon/venv/general/bin/python3 -m sparsifier.magnitude_sparsifier experiments/e29_s1_teacher.json] (attempt 0/10)
+[supervise 13:48:45] DONE experiments/e29_s1_teacher.json rc=0
+[supervise 13:48:45] launch [/home/simon/venv/general/bin/python3 -m sparsifier.obd_sparsifier experiments/e29_s1_teacher.json] (attempt 0/10)
+```
+
+**2026-10-04 14:22** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e27_kmnist/magnitude_sparsified | 499 | 23.1 % | 0.709 | 3.403265e+03 |
+| e27_kmnist/obd_sparsified | 499 | 23.1 % | 0.536 | 3.280454e+03 |
+| e27_kmnist/sparsified | 499 | 23.1 % | 0.532 | 3.732659e+03 |
+| e28_usps/magnitude_sparsified | 499 | 23.1 % | 0.918 | 8.651375e+02 |
+| e28_usps/obd_sparsified | 499 | 23.1 % | 0.918 | 5.271754e+01 |
+| e28_usps/sparsified | 499 | 23.1 % | 0.917 | 3.622925e+01 |
+| e29_s1_teacher/magnitude_sparsified | 499 | 23.1 % | 0.576 | 2.293963e+03 |
+| e29_s1_teacher/obd_sparsified | 307 | 14.2 % | 0.571 | 6.453080e-01 |
+| e29_s1_teacher/sparsified | 499 | 23.1 % | 0.569 | 3.804575e+01 |
+
+```
+[supervise 13:20:28] launch [/home/simon/venv/general/bin/python3 -m sparsifier.magnitude_sparsifier experiments/e29_s1_teacher.json] (attempt 0/10)
+[supervise 13:48:45] DONE experiments/e29_s1_teacher.json rc=0
+[supervise 13:48:45] launch [/home/simon/venv/general/bin/python3 -m sparsifier.obd_sparsifier experiments/e29_s1_teacher.json] (attempt 0/10)
+```
+
+**2026-10-04 14:52** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e27_kmnist/magnitude_sparsified | 499 | 23.1 % | 0.709 | 3.403265e+03 |
+| e27_kmnist/obd_sparsified | 499 | 23.1 % | 0.536 | 3.280454e+03 |
+| e27_kmnist/sparsified | 499 | 23.1 % | 0.532 | 3.732659e+03 |
+| e28_usps/magnitude_sparsified | 499 | 23.1 % | 0.918 | 8.651375e+02 |
+| e28_usps/obd_sparsified | 499 | 23.1 % | 0.918 | 5.271754e+01 |
+| e28_usps/sparsified | 499 | 23.1 % | 0.917 | 3.622925e+01 |
+| e29_s1_teacher/magnitude_sparsified | 499 | 23.1 % | 0.576 | 2.293963e+03 |
+| e29_s1_teacher/obd_sparsified | 499 | 23.1 % | 0.569 | 3.805032e+01 |
+| e29_s1_teacher/sparsified | 499 | 23.1 % | 0.569 | 3.804575e+01 |
+| e30_s2_planted/sparsified | 87 | 4.0 % | 0.801 | 1.866930e-03 |
+
+```
+[supervise 14:47:07] launch [/home/simon/venv/general/bin/python3 scripts/zero_cost_fraction.py experiments/e30_s2_planted.json] (attempt 0/10)
+[supervise 14:47:20] DONE experiments/e30_s2_planted.json rc=0
+[supervise 14:47:20] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e30_s2_planted.json] (attempt 0/10)
+```
+
+**2026-10-04 15:22** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e27_kmnist/magnitude_sparsified | 499 | 23.1 % | 0.709 | 3.403265e+03 |
+| e27_kmnist/obd_sparsified | 499 | 23.1 % | 0.536 | 3.280454e+03 |
+| e27_kmnist/sparsified | 499 | 23.1 % | 0.532 | 3.732659e+03 |
+| e28_usps/magnitude_sparsified | 499 | 23.1 % | 0.918 | 8.651375e+02 |
+| e28_usps/obd_sparsified | 499 | 23.1 % | 0.918 | 5.271754e+01 |
+| e28_usps/sparsified | 499 | 23.1 % | 0.917 | 3.622925e+01 |
+| e29_s1_teacher/magnitude_sparsified | 499 | 23.1 % | 0.576 | 2.293963e+03 |
+| e29_s1_teacher/obd_sparsified | 499 | 23.1 % | 0.569 | 3.805032e+01 |
+| e29_s1_teacher/sparsified | 499 | 23.1 % | 0.569 | 3.804575e+01 |
+| e30_s2_planted/magnitude_sparsified | 93 | 4.3 % | 0.801 | 1.444518e+01 |
+| e30_s2_planted/sparsified | 499 | 23.1 % | 0.801 | 2.247713e-01 |
+
+```
+[supervise 14:47:20] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e30_s2_planted.json] (attempt 0/10)
+[supervise 15:17:11] DONE experiments/e30_s2_planted.json rc=0
+[supervise 15:17:11] launch [/home/simon/venv/general/bin/python3 -m sparsifier.magnitude_sparsifier experiments/e30_s2_planted.json] (attempt 0/10)
+```
+
+**2026-10-04 15:52** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e27_kmnist/magnitude_sparsified | 499 | 23.1 % | 0.709 | 3.403265e+03 |
+| e27_kmnist/obd_sparsified | 499 | 23.1 % | 0.536 | 3.280454e+03 |
+| e27_kmnist/sparsified | 499 | 23.1 % | 0.532 | 3.732659e+03 |
+| e28_usps/magnitude_sparsified | 499 | 23.1 % | 0.918 | 8.651375e+02 |
+| e28_usps/obd_sparsified | 499 | 23.1 % | 0.918 | 5.271754e+01 |
+| e28_usps/sparsified | 499 | 23.1 % | 0.917 | 3.622925e+01 |
+| e29_s1_teacher/magnitude_sparsified | 499 | 23.1 % | 0.576 | 2.293963e+03 |
+| e29_s1_teacher/obd_sparsified | 499 | 23.1 % | 0.569 | 3.805032e+01 |
+| e29_s1_teacher/sparsified | 499 | 23.1 % | 0.569 | 3.804575e+01 |
+| e30_s2_planted/magnitude_sparsified | 499 | 23.1 % | 0.800 | 1.058812e+03 |
+| e30_s2_planted/obd_sparsified | 66 | 3.1 % | 0.801 | 4.208306e-03 |
+| e30_s2_planted/sparsified | 499 | 23.1 % | 0.801 | 2.247713e-01 |
+
+```
+[supervise 15:17:11] launch [/home/simon/venv/general/bin/python3 -m sparsifier.magnitude_sparsifier experiments/e30_s2_planted.json] (attempt 0/10)
+[supervise 15:45:00] DONE experiments/e30_s2_planted.json rc=0
+[supervise 15:45:00] launch [/home/simon/venv/general/bin/python3 -m sparsifier.obd_sparsifier experiments/e30_s2_planted.json] (attempt 0/10)
+```

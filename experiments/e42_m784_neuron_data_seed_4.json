@@ -21,14 +21,14 @@
   "sparsify": {
     "steps": 800,
     "do_adjust": true,
-    "omega_samples": 10000,
+    "omega_samples": 2000,
     "omega_source": "train",
     "omega_seed": 4,
     "checkpoint_every": 10
   },
   "_experiment": {
     "id": "e42_m784_neuron_data_seed_4",
-    "description": "[seed 4] Block D. Structured pruning of [784,512,512,10] on full-resolution MNIST (48 crossbars dense at S=128) with Omega = 10 000 training images; 800 neuron steps reach [128,128] = 9 crossbars. Shared dense net for the d_W neuron search and magnitude neuron pruning (paired).",
+    "description": "[seed 4] Block D. Structured pruning of [784,512,512,10] on full-resolution MNIST (48 crossbars dense at S=128) with Omega = 2 000 training images (B = 10 000 costs ~250 s/step on this net; B = 2 000 validated against B = 10 000 by e44); 800 neuron steps reach [128,128] = 9 crossbars. Shared dense net for the d_W neuron search and magnitude neuron pruning (paired).",
     "literature": [
       "docs/experiments/2026-10-regimes.md"
     ]
