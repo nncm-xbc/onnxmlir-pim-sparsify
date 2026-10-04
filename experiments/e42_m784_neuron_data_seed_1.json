@@ -1,0 +1,36 @@
+{
+  "name": "e42_m784_neuron_data_seed_1",
+  "topology": [
+    784,
+    512,
+    512,
+    10
+  ],
+  "hidden_activation": "relu",
+  "data": {
+    "x_train": "data/mnist784/X_train_small.csv",
+    "y_train": "data/mnist784/Y_train_small.csv",
+    "x_test": "data/mnist784/X_test_small.csv",
+    "y_test": "data/mnist784/Y_test_small.csv"
+  },
+  "train": {
+    "epochs": 1000,
+    "batch_size": 128,
+    "seed": 1
+  },
+  "sparsify": {
+    "steps": 800,
+    "do_adjust": true,
+    "omega_samples": 10000,
+    "omega_source": "train",
+    "omega_seed": 1,
+    "checkpoint_every": 10
+  },
+  "_experiment": {
+    "id": "e42_m784_neuron_data_seed_1",
+    "description": "[seed 1] Block D. Structured pruning of [784,512,512,10] on full-resolution MNIST (48 crossbars dense at S=128) with Omega = 10 000 training images; 800 neuron steps reach [128,128] = 9 crossbars. Shared dense net for the d_W neuron search and magnitude neuron pruning (paired).",
+    "literature": [
+      "docs/experiments/2026-10-regimes.md"
+    ]
+  }
+}

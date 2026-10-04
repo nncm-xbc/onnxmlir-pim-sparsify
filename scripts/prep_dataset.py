@@ -5,7 +5,7 @@
 #   labels one-hot over 10 classes; 20000 train / 10000 test rows (the MNIST
 #   CSVs are Colab's 20k/10k sample, train.py reads the first 10k/1k).
 #
-# usage: python scripts/prep_dataset.py {fashion,kmnist,usps,s1_teacher,s2_planted}
+# usage: python scripts/prep_dataset.py {fashion,kmnist,usps,s1_teacher,s2_planted,mnist784}
 # See docs/dataset-research.md for why these datasets.
 
 import os
@@ -86,9 +86,21 @@ def _s2_planted():
     return x[:N_TRAIN], y[:N_TRAIN], x[N_TRAIN:], y[N_TRAIN:], extra
 
 
+def _mnist784():
+    """Full-resolution MNIST (28x28 = 784 raw pixels, 0-255) from the Colab CSVs in data/;
+    no resize, so values are exact integers. Same 20k/10k rows as the 14x14 files."""
+    out = []
+    for fn in ('mnist_train.csv', 'mnist_test.csv'):
+        a = np.genfromtxt(os.path.join(_repo, 'data', fn), delimiter=',')
+        out += [a[:, 1:], a[:, 0]]
+    return out
+
+
 def build(name):
     extra = {}
-    if name in ('s1_teacher', 's2_planted'):
+    if name == 'mnist784':
+        xtr, ytr, xte, yte = _mnist784()
+    elif name in ('s1_teacher', 's2_planted'):
         xtr, ytr, xte, yte, extra = (_s1_teacher if name == 's1_teacher' else _s2_planted)()
     else:
         import torchvision.datasets as tvd

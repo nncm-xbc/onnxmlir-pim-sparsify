@@ -70,6 +70,39 @@ def _truncate_log(log_path, keep_through_step):
         f.writelines(kept)
 
 
+def resume_state(output_folder, log_path, og_net, label):
+    """(start_step, net): resume from the latest loadable checkpoint if the log exists,
+    truncating the log to the checkpoint step; otherwise a fresh clone of og_net.
+    RESUME=0 forces a fresh run."""
+    start_step, net = 0, clone_network(og_net)
+    resume = _latest_checkpoint(output_folder) if os.environ.get('RESUME', '1') != '0' else None
+    if resume is not None and os.path.exists(log_path):
+        ckpt_step, ckpt_dir = resume
+        net = load_network_params(ckpt_dir)      # W,b restored; mask = (W != 0)
+        start_step = ckpt_step + 1
+        _truncate_log(log_path, ckpt_step)        # drop rows past the checkpoint
+        print("RESUME: %s from checkpoint step %d -> starting at step %d"
+              % (label, ckpt_step, start_step))
+    return start_step, net
+
+
+def save_checkpoint(output_folder, step, net, log_file):
+    """Atomic, durable checkpoint of W and b: fsync the log, write to a temp dir, fsync, rename."""
+    os.fsync(log_file.fileno())
+    ckpt_dir = os.path.join(output_folder, 'checkpoints', 'step_%04d' % step)
+    tmp_dir = ckpt_dir + '.tmp'
+    shutil.rmtree(tmp_dir, ignore_errors=True)
+    os.makedirs(tmp_dir)
+    for li, layer in enumerate(net):
+        for fn, arr in (('W_%d.npy' % li, layer.W), ('b_%d.npy' % li, layer.b)):
+            with open(os.path.join(tmp_dir, fn), 'wb') as fh:
+                np.save(fh, arr)
+                fh.flush()
+                os.fsync(fh.fileno())
+    shutil.rmtree(ckpt_dir, ignore_errors=True)
+    os.replace(tmp_dir, ckpt_dir)
+
+
 def _build_omega(og_net, calib, sp, omega_source, scale=1.0):
     if omega_source in ("data", "train"):
         # Real calibration images as Omega instead of noise. "data" = the loaded test
@@ -153,15 +186,7 @@ def run_sparsifier(cfg_path, prune_fn, *, output_subdir, log_name,
     # a hung/killed run left checkpoints behind, the watchdog relaunches us with
     # the same command, and we pick up where progress was last durably saved.
     # RESUME=0 forces a fresh run.
-    start_step, net = 0, clone_network(og_net)
-    resume = _latest_checkpoint(output_folder) if os.environ.get('RESUME', '1') != '0' else None
-    if resume is not None and os.path.exists(log_path):
-        ckpt_step, ckpt_dir = resume
-        net = load_network_params(ckpt_dir)      # W,b restored; mask = (W != 0)
-        start_step = ckpt_step + 1
-        _truncate_log(log_path, ckpt_step)        # drop rows past the checkpoint
-        print("RESUME: %s from checkpoint step %d -> starting at step %d"
-              % (loop_label, ckpt_step, start_step))
+    start_step, net = resume_state(output_folder, log_path, og_net, loop_label)
 
     log_mode = 'a' if start_step > 0 else 'w'
     with open(log_path, log_mode, newline='') as log_file:
@@ -210,20 +235,7 @@ def run_sparsifier(cfg_path, prune_fn, *, output_subdir, log_name,
             log_file.flush()
 
             if i % sp['checkpoint_every'] == 0:
-                # Atomic, durable checkpoint: write to a temp dir, fsync, rename.
-                os.fsync(log_file.fileno())
-                ckpt_dir = os.path.join(output_folder, 'checkpoints', 'step_%04d' % i)
-                tmp_dir = ckpt_dir + '.tmp'
-                shutil.rmtree(tmp_dir, ignore_errors=True)
-                os.makedirs(tmp_dir)
-                for li, layer in enumerate(net):
-                    for fn, arr in (('W_%d.npy' % li, layer.W), ('b_%d.npy' % li, layer.b)):
-                        with open(os.path.join(tmp_dir, fn), 'wb') as fh:
-                            np.save(fh, arr)
-                            fh.flush()
-                            os.fsync(fh.fileno())
-                shutil.rmtree(ckpt_dir, ignore_errors=True)
-                os.replace(tmp_dir, ckpt_dir)
+                save_checkpoint(output_folder, i, net, log_file)
 
     print("%s log saved to: %s" % (loop_label, log_path))
     for i, l in enumerate(net):

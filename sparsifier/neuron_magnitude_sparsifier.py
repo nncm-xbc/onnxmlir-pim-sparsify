@@ -155,24 +155,24 @@ def run_neuron_sparsifier(cfg_path, prune_fn, output_subdir, log_name, loop_labe
     )
 
     print("Starting %s loop" % loop_label)
-    net = clone_network(og_net)
-
     os.makedirs(output_folder, exist_ok=True)
-
     log_path = os.path.join(output_folder, 'neuron_sparsification_log.csv')
-    with open(log_path, 'w', newline='') as log_file:
+    # Resumable, crash-safe checkpoints (W and b), shared with the weight-level runner.
+    from sparsifier.runner import resume_state, save_checkpoint
+    start_step, net = resume_state(output_folder, log_path, og_net, loop_label)
+    with open(log_path, 'a' if start_step else 'w', newline='') as log_file:
         writer = csv.writer(log_file)
+        if start_step == 0:
+            layer_neuron_cols = ['layer_%d_neurons' % l for l in hidden_layer_indices]
+            header = [
+                'step', 'neurons_pruned', 'total_neurons', 'neuron_sparsity',
+                'val_acc', 'd_manifold', 'd_W',
+                'prune_time_s', 'adjust_time_s',
+                'candidate_layer', 'candidate_neuron',
+            ] + layer_neuron_cols
+            writer.writerow(header)
 
-        layer_neuron_cols = ['layer_%d_neurons' % l for l in hidden_layer_indices]
-        header = [
-            'step', 'neurons_pruned', 'total_neurons', 'neuron_sparsity',
-            'val_acc', 'd_manifold', 'd_W',
-            'prune_time_s', 'adjust_time_s',
-            'candidate_layer', 'candidate_neuron',
-        ] + layer_neuron_cols
-        writer.writerow(header)
-
-        for step in range(sp['steps']):
+        for step in range(start_step, sp['steps']):
             layer_neuron_counts = [
                 int((net[l].W != 0).any(axis=1).sum())
                 for l in hidden_layer_indices
@@ -219,10 +219,7 @@ def run_neuron_sparsifier(cfg_path, prune_fn, output_subdir, log_name, loop_labe
             log_file.flush()
 
             if step % sp['checkpoint_every'] == 0:
-                ckpt_dir = os.path.join(output_folder, 'checkpoints', 'step_%04d' % step)
-                os.makedirs(ckpt_dir, exist_ok=True)
-                for li, layer in enumerate(net):
-                    np.save(os.path.join(ckpt_dir, 'W_%d.npy' % li), layer.W)
+                save_checkpoint(output_folder, step, net, log_file)
 
     print("Neuron sparsification log saved to:", log_path)
     for i, layer in enumerate(net):

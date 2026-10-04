@@ -1,0 +1,34 @@
+{
+  "name": "e43_m784_scratch_20xb_seed_1",
+  "topology": [
+    784,
+    256,
+    256,
+    10
+  ],
+  "hidden_activation": "relu",
+  "data": {
+    "x_train": "data/mnist784/X_train_small.csv",
+    "y_train": "data/mnist784/Y_train_small.csv",
+    "x_test": "data/mnist784/X_test_small.csv",
+    "y_test": "data/mnist784/Y_test_small.csv"
+  },
+  "train": {
+    "epochs": 1000,
+    "batch_size": 128,
+    "seed": 1
+  },
+  "sparsify": {
+    "steps": 500,
+    "do_adjust": true,
+    "omega_samples": 10000,
+    "omega_source": "train",
+    "omega_seed": 1,
+    "checkpoint_every": 20
+  },
+  "_experiment": {
+    "id": "e43_m784_scratch_20xb_seed_1",
+    "description": "[seed 1] Block D control: from-scratch [784,256,256,10] = 20 crossbars.",
+    "literature": []
+  }
+}
