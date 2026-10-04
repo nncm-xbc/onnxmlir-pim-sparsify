@@ -1552,3 +1552,181 @@ step  349 | acc=0.7040 | NZ=  1811 | sparsity=0.1616 | d_m=1.1120e+03[supervise 
 [supervise 17:03:24] DONE experiments/e41_w50_full_seed_4.json rc=0
 [supervise 17:03:24] launch [/home/simon/venv/general/bin/python3 -m sparsifier.magnitude_sparsifier experiments/e41_w50_full_seed_0.json] (attempt 0/10)
 ```
+
+**2026-10-04 18:52** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e27_kmnist/magnitude_sparsified | 499 | 23.1 % | 0.709 | 3.403265e+03 |
+| e27_kmnist/obd_sparsified | 499 | 23.1 % | 0.536 | 3.280454e+03 |
+| e27_kmnist/sparsified | 499 | 23.1 % | 0.532 | 3.732659e+03 |
+| e28_usps/magnitude_sparsified | 499 | 23.1 % | 0.918 | 8.651375e+02 |
+| e28_usps/obd_sparsified | 499 | 23.1 % | 0.918 | 5.271754e+01 |
+| e28_usps/sparsified | 499 | 23.1 % | 0.917 | 3.622925e+01 |
+| e29_s1_teacher/magnitude_sparsified | 499 | 23.1 % | 0.576 | 2.293963e+03 |
+| e29_s1_teacher/obd_sparsified | 499 | 23.1 % | 0.569 | 3.805032e+01 |
+| e29_s1_teacher/sparsified | 499 | 23.1 % | 0.569 | 3.804575e+01 |
+| e30_s2_planted/magnitude_sparsified | 499 | 23.1 % | 0.800 | 1.058812e+03 |
+| e30_s2_planted/obd_sparsified | 499 | 23.1 % | 0.801 | 1.035167e+00 |
+| e30_s2_planted/sparsified | 499 | 23.1 % | 0.801 | 2.247713e-01 |
+| e31_s1_neuron_noise/neuron_sparsified | 14 | 70.0 % | 0.233 | 1.683401e+05 |
+| e32_s1_neuron_data/neuron_sparsified | 14 | 70.0 % | 0.332 | 6.916703e+04 |
+| e33_neuron_data/neuron_sparsified | 14 | 70.0 % | 0.449 | 1.421884e+05 |
+| e41_w50_full_seed_0/magnitude_sparsified | 1477 | 11.5 % | 0.945 | 4.510614e+01 |
+
+```
+[supervise 17:02:43] launch [/home/simon/venv/general/bin/python3 scripts/train.py experiments/e41_w50_full_seed_4.json] (attempt 0/10)
+[supervise 17:03:24] DONE experiments/e41_w50_full_seed_4.json rc=0
+[supervise 17:03:24] launch [/home/simon/venv/general/bin/python3 -m sparsifier.magnitude_sparsifier experiments/e41_w50_full_seed_0.json] (attempt 0/10)
+```
+
+**2026-10-04 19:22** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e27_kmnist/magnitude_sparsified | 499 | 23.1 % | 0.709 | 3.403265e+03 |
+| e27_kmnist/obd_sparsified | 499 | 23.1 % | 0.536 | 3.280454e+03 |
+| e27_kmnist/sparsified | 499 | 23.1 % | 0.532 | 3.732659e+03 |
+| e28_usps/magnitude_sparsified | 499 | 23.1 % | 0.918 | 8.651375e+02 |
+| e28_usps/obd_sparsified | 499 | 23.1 % | 0.918 | 5.271754e+01 |
+| e28_usps/sparsified | 499 | 23.1 % | 0.917 | 3.622925e+01 |
+| e29_s1_teacher/magnitude_sparsified | 499 | 23.1 % | 0.576 | 2.293963e+03 |
+| e29_s1_teacher/obd_sparsified | 499 | 23.1 % | 0.569 | 3.805032e+01 |
+| e29_s1_teacher/sparsified | 499 | 23.1 % | 0.569 | 3.804575e+01 |
+| e30_s2_planted/magnitude_sparsified | 499 | 23.1 % | 0.800 | 1.058812e+03 |
+| e30_s2_planted/obd_sparsified | 499 | 23.1 % | 0.801 | 1.035167e+00 |
+| e30_s2_planted/sparsified | 499 | 23.1 % | 0.801 | 2.247713e-01 |
+| e31_s1_neuron_noise/neuron_sparsified | 14 | 70.0 % | 0.233 | 1.683401e+05 |
+| e32_s1_neuron_data/neuron_sparsified | 14 | 70.0 % | 0.332 | 6.916703e+04 |
+| e33_neuron_data/neuron_sparsified | 14 | 70.0 % | 0.449 | 1.421884e+05 |
+| e41_w50_full_seed_0/magnitude_sparsified | 1748 | 13.7 % | 0.945 | 7.823100e+01 |
+
+```
+[supervise 17:02:43] launch [/home/simon/venv/general/bin/python3 scripts/train.py experiments/e41_w50_full_seed_4.json] (attempt 0/10)
+[supervise 17:03:24] DONE experiments/e41_w50_full_seed_4.json rc=0
+[supervise 17:03:24] launch [/home/simon/venv/general/bin/python3 -m sparsifier.magnitude_sparsifier experiments/e41_w50_full_seed_0.json] (attempt 0/10)
+```
+
+**2026-10-04 19:52** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e27_kmnist/magnitude_sparsified | 499 | 23.1 % | 0.709 | 3.403265e+03 |
+| e27_kmnist/obd_sparsified | 499 | 23.1 % | 0.536 | 3.280454e+03 |
+| e27_kmnist/sparsified | 499 | 23.1 % | 0.532 | 3.732659e+03 |
+| e28_usps/magnitude_sparsified | 499 | 23.1 % | 0.918 | 8.651375e+02 |
+| e28_usps/obd_sparsified | 499 | 23.1 % | 0.918 | 5.271754e+01 |
+| e28_usps/sparsified | 499 | 23.1 % | 0.917 | 3.622925e+01 |
+| e29_s1_teacher/magnitude_sparsified | 499 | 23.1 % | 0.576 | 2.293963e+03 |
+| e29_s1_teacher/obd_sparsified | 499 | 23.1 % | 0.569 | 3.805032e+01 |
+| e29_s1_teacher/sparsified | 499 | 23.1 % | 0.569 | 3.804575e+01 |
+| e30_s2_planted/magnitude_sparsified | 499 | 23.1 % | 0.800 | 1.058812e+03 |
+| e30_s2_planted/obd_sparsified | 499 | 23.1 % | 0.801 | 1.035167e+00 |
+| e30_s2_planted/sparsified | 499 | 23.1 % | 0.801 | 2.247713e-01 |
+| e31_s1_neuron_noise/neuron_sparsified | 14 | 70.0 % | 0.233 | 1.683401e+05 |
+| e32_s1_neuron_data/neuron_sparsified | 14 | 70.0 % | 0.332 | 6.916703e+04 |
+| e33_neuron_data/neuron_sparsified | 14 | 70.0 % | 0.449 | 1.421884e+05 |
+| e41_w50_full_seed_0/magnitude_sparsified | 2100 | 16.4 % | 0.945 | 1.292444e+02 |
+
+```
+[supervise 17:02:43] launch [/home/simon/venv/general/bin/python3 scripts/train.py experiments/e41_w50_full_seed_4.json] (attempt 0/10)
+[supervise 17:03:24] DONE experiments/e41_w50_full_seed_4.json rc=0
+[supervise 17:03:24] launch [/home/simon/venv/general/bin/python3 -m sparsifier.magnitude_sparsifier experiments/e41_w50_full_seed_0.json] (attempt 0/10)
+```
+
+**2026-10-04 20:22** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e27_kmnist/magnitude_sparsified | 499 | 23.1 % | 0.709 | 3.403265e+03 |
+| e27_kmnist/obd_sparsified | 499 | 23.1 % | 0.536 | 3.280454e+03 |
+| e27_kmnist/sparsified | 499 | 23.1 % | 0.532 | 3.732659e+03 |
+| e28_usps/magnitude_sparsified | 499 | 23.1 % | 0.918 | 8.651375e+02 |
+| e28_usps/obd_sparsified | 499 | 23.1 % | 0.918 | 5.271754e+01 |
+| e28_usps/sparsified | 499 | 23.1 % | 0.917 | 3.622925e+01 |
+| e29_s1_teacher/magnitude_sparsified | 499 | 23.1 % | 0.576 | 2.293963e+03 |
+| e29_s1_teacher/obd_sparsified | 499 | 23.1 % | 0.569 | 3.805032e+01 |
+| e29_s1_teacher/sparsified | 499 | 23.1 % | 0.569 | 3.804575e+01 |
+| e30_s2_planted/magnitude_sparsified | 499 | 23.1 % | 0.800 | 1.058812e+03 |
+| e30_s2_planted/obd_sparsified | 499 | 23.1 % | 0.801 | 1.035167e+00 |
+| e30_s2_planted/sparsified | 499 | 23.1 % | 0.801 | 2.247713e-01 |
+| e31_s1_neuron_noise/neuron_sparsified | 14 | 70.0 % | 0.233 | 1.683401e+05 |
+| e32_s1_neuron_data/neuron_sparsified | 14 | 70.0 % | 0.332 | 6.916703e+04 |
+| e33_neuron_data/neuron_sparsified | 14 | 70.0 % | 0.449 | 1.421884e+05 |
+| e41_w50_full_seed_0/magnitude_sparsified | 2501 | 19.5 % | 0.947 | 2.130182e+02 |
+
+```
+[supervise 17:02:43] launch [/home/simon/venv/general/bin/python3 scripts/train.py experiments/e41_w50_full_seed_4.json] (attempt 0/10)
+[supervise 17:03:24] DONE experiments/e41_w50_full_seed_4.json rc=0
+[supervise 17:03:24] launch [/home/simon/venv/general/bin/python3 -m sparsifier.magnitude_sparsifier experiments/e41_w50_full_seed_0.json] (attempt 0/10)
+```
+
+**2026-10-04 20:52** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e27_kmnist/magnitude_sparsified | 499 | 23.1 % | 0.709 | 3.403265e+03 |
+| e27_kmnist/obd_sparsified | 499 | 23.1 % | 0.536 | 3.280454e+03 |
+| e27_kmnist/sparsified | 499 | 23.1 % | 0.532 | 3.732659e+03 |
+| e28_usps/magnitude_sparsified | 499 | 23.1 % | 0.918 | 8.651375e+02 |
+| e28_usps/obd_sparsified | 499 | 23.1 % | 0.918 | 5.271754e+01 |
+| e28_usps/sparsified | 499 | 23.1 % | 0.917 | 3.622925e+01 |
+| e29_s1_teacher/magnitude_sparsified | 499 | 23.1 % | 0.576 | 2.293963e+03 |
+| e29_s1_teacher/obd_sparsified | 499 | 23.1 % | 0.569 | 3.805032e+01 |
+| e29_s1_teacher/sparsified | 499 | 23.1 % | 0.569 | 3.804575e+01 |
+| e30_s2_planted/magnitude_sparsified | 499 | 23.1 % | 0.800 | 1.058812e+03 |
+| e30_s2_planted/obd_sparsified | 499 | 23.1 % | 0.801 | 1.035167e+00 |
+| e30_s2_planted/sparsified | 499 | 23.1 % | 0.801 | 2.247713e-01 |
+| e31_s1_neuron_noise/neuron_sparsified | 14 | 70.0 % | 0.233 | 1.683401e+05 |
+| e32_s1_neuron_data/neuron_sparsified | 14 | 70.0 % | 0.332 | 6.916703e+04 |
+| e33_neuron_data/neuron_sparsified | 14 | 70.0 % | 0.449 | 1.421884e+05 |
+| e41_w50_full_seed_0/magnitude_sparsified | 2919 | 22.8 % | 0.945 | 3.722889e+02 |
+
+```
+[supervise 17:02:43] launch [/home/simon/venv/general/bin/python3 scripts/train.py experiments/e41_w50_full_seed_4.json] (attempt 0/10)
+[supervise 17:03:24] DONE experiments/e41_w50_full_seed_4.json rc=0
+[supervise 17:03:24] launch [/home/simon/venv/general/bin/python3 -m sparsifier.magnitude_sparsifier experiments/e41_w50_full_seed_0.json] (attempt 0/10)
+```
+
+**2026-10-04 21:22** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e27_kmnist/magnitude_sparsified | 499 | 23.1 % | 0.709 | 3.403265e+03 |
+| e27_kmnist/obd_sparsified | 499 | 23.1 % | 0.536 | 3.280454e+03 |
+| e27_kmnist/sparsified | 499 | 23.1 % | 0.532 | 3.732659e+03 |
+| e28_usps/magnitude_sparsified | 499 | 23.1 % | 0.918 | 8.651375e+02 |
+| e28_usps/obd_sparsified | 499 | 23.1 % | 0.918 | 5.271754e+01 |
+| e28_usps/sparsified | 499 | 23.1 % | 0.917 | 3.622925e+01 |
+| e29_s1_teacher/magnitude_sparsified | 499 | 23.1 % | 0.576 | 2.293963e+03 |
+| e29_s1_teacher/obd_sparsified | 499 | 23.1 % | 0.569 | 3.805032e+01 |
+| e29_s1_teacher/sparsified | 499 | 23.1 % | 0.569 | 3.804575e+01 |
+| e30_s2_planted/magnitude_sparsified | 499 | 23.1 % | 0.800 | 1.058812e+03 |
+| e30_s2_planted/obd_sparsified | 499 | 23.1 % | 0.801 | 1.035167e+00 |
+| e30_s2_planted/sparsified | 499 | 23.1 % | 0.801 | 2.247713e-01 |
+| e31_s1_neuron_noise/neuron_sparsified | 14 | 70.0 % | 0.233 | 1.683401e+05 |
+| e32_s1_neuron_data/neuron_sparsified | 14 | 70.0 % | 0.332 | 6.916703e+04 |
+| e33_neuron_data/neuron_sparsified | 14 | 70.0 % | 0.449 | 1.421884e+05 |
+| e41_w50_full_seed_0/magnitude_sparsified | 3337 | 26.1 % | 0.946 | 5.528312e+02 |
+
+```
+[supervise 17:02:43] launch [/home/simon/venv/general/bin/python3 scripts/train.py experiments/e41_w50_full_seed_4.json] (attempt 0/10)
+[supervise 17:03:24] DONE experiments/e41_w50_full_seed_4.json rc=0
+[supervise 17:03:24] launch [/home/simon/venv/general/bin/python3 -m sparsifier.magnitude_sparsifier experiments/e41_w50_full_seed_0.json] (attempt 0/10)
+```
+
+**e27b result (2026-10-04 21:45) — the KMNIST failure is Ω alone.** Same dense net, same
+exhaustive d_W search, Ω = 10 000 KMNIST training images instead of uniform noise: accuracy
+0.703 at every logged step through 23.1 % sparsity (min 0.701), identical to magnitude and to
+dense. With noise Ω the same search was at 0.583 by step 50 and 0.532 at step 499. The
+criterion is sound; the uniform-noise domain is not. This closes HB2's "opposite sign": with a
+task-distribution Ω the exhaustive search ties magnitude on KMNIST as it does everywhere else
+at this sparsity. Manuscript consequence: replace "data-free" by "label-free" throughout, and
+report the noise-Ω runs as the ablation that shows why.
+
+**Block C timing (2026-10-04 21:45) — plan estimate was 4–5× too low.** Magnitude seed 0 runs at
+~750 steps/h (adjustment-bound at 12 800 weights): 17 h per magnitude run, not 2. Projected:
+magnitude 5 × 17 h, exhaustive 5 × ~25 h (3.7 s search + 4.8 s adjust per step, search shrinking
+with N), OBD 2 × ~85 h → **≈ 370 h (15 days)** for the block as queued, against 75 h planned.
+Decision referred to the author (options: full; seeds 0–1 only ≈ 85 h; magnitude + exhaustive
+seeds 0–1 and no OBD ≈ 60 h; drop C and cite the existing 500-step width sweep).
