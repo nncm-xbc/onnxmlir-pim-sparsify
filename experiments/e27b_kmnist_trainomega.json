@@ -1,0 +1,33 @@
+{
+  "name": "e27b_kmnist_trainomega",
+  "topology": [
+    196,
+    10,
+    10,
+    10
+  ],
+  "hidden_activation": "relu",
+  "data": {
+    "x_train": "data/kmnist/X_train_small.csv",
+    "y_train": "data/kmnist/Y_train_small.csv",
+    "x_test": "data/kmnist/X_test_small.csv",
+    "y_test": "data/kmnist/Y_test_small.csv"
+  },
+  "train": {
+    "epochs": 1000,
+    "batch_size": 128,
+    "seed": 0
+  },
+  "sparsify": {
+    "steps": 500,
+    "do_adjust": true,
+    "omega_samples": 10000,
+    "checkpoint_every": 50,
+    "omega_source": "train"
+  },
+  "_experiment": {
+    "id": "e27b",
+    "description": "Block B follow-up: identical to e27_kmnist (same dense net, copied) but Omega = 10 000 KMNIST training images instead of uniform noise. Decides whether the 17-point loss of the exhaustive search at 23.1% sparsity on KMNIST is caused by the noise Omega or by the criterion.",
+    "literature": []
+  }
+}
