@@ -1730,3 +1730,113 @@ magnitude 5 × 17 h, exhaustive 5 × ~25 h (3.7 s search + 4.8 s adjust per step
 with N), OBD 2 × ~85 h → **≈ 370 h (15 days)** for the block as queued, against 75 h planned.
 Decision referred to the author (options: full; seeds 0–1 only ≈ 85 h; magnitude + exhaustive
 seeds 0–1 and no OBD ≈ 60 h; drop C and cite the existing 500-step width sweep).
+
+**2026-10-04 21:52** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e27_kmnist/magnitude_sparsified | 499 | 23.1 % | 0.709 | 3.403265e+03 |
+| e27_kmnist/obd_sparsified | 499 | 23.1 % | 0.536 | 3.280454e+03 |
+| e27_kmnist/sparsified | 499 | 23.1 % | 0.532 | 3.732659e+03 |
+| e28_usps/magnitude_sparsified | 499 | 23.1 % | 0.918 | 8.651375e+02 |
+| e28_usps/obd_sparsified | 499 | 23.1 % | 0.918 | 5.271754e+01 |
+| e28_usps/sparsified | 499 | 23.1 % | 0.917 | 3.622925e+01 |
+| e29_s1_teacher/magnitude_sparsified | 499 | 23.1 % | 0.576 | 2.293963e+03 |
+| e29_s1_teacher/obd_sparsified | 499 | 23.1 % | 0.569 | 3.805032e+01 |
+| e29_s1_teacher/sparsified | 499 | 23.1 % | 0.569 | 3.804575e+01 |
+| e30_s2_planted/magnitude_sparsified | 499 | 23.1 % | 0.800 | 1.058812e+03 |
+| e30_s2_planted/obd_sparsified | 499 | 23.1 % | 0.801 | 1.035167e+00 |
+| e30_s2_planted/sparsified | 499 | 23.1 % | 0.801 | 2.247713e-01 |
+| e31_s1_neuron_noise/neuron_sparsified | 14 | 70.0 % | 0.233 | 1.683401e+05 |
+| e32_s1_neuron_data/neuron_sparsified | 14 | 70.0 % | 0.332 | 6.916703e+04 |
+| e33_neuron_data/neuron_sparsified | 14 | 70.0 % | 0.449 | 1.421884e+05 |
+| e41_w50_full_seed_0/magnitude_sparsified | 3756 | 29.3 % | 0.945 | 7.291982e+02 |
+
+```
+[supervise 17:02:43] launch [/home/simon/venv/general/bin/python3 scripts/train.py experiments/e41_w50_full_seed_4.json] (attempt 0/10)
+[supervise 17:03:24] DONE experiments/e41_w50_full_seed_4.json rc=0
+[supervise 17:03:24] launch [/home/simon/venv/general/bin/python3 -m sparsifier.magnitude_sparsifier experiments/e41_w50_full_seed_0.json] (attempt 0/10)
+```
+
+**2026-10-04 22:22** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e27_kmnist/magnitude_sparsified | 499 | 23.1 % | 0.709 | 3.403265e+03 |
+| e27_kmnist/obd_sparsified | 499 | 23.1 % | 0.536 | 3.280454e+03 |
+| e27_kmnist/sparsified | 499 | 23.1 % | 0.532 | 3.732659e+03 |
+| e28_usps/magnitude_sparsified | 499 | 23.1 % | 0.918 | 8.651375e+02 |
+| e28_usps/obd_sparsified | 499 | 23.1 % | 0.918 | 5.271754e+01 |
+| e28_usps/sparsified | 499 | 23.1 % | 0.917 | 3.622925e+01 |
+| e29_s1_teacher/magnitude_sparsified | 499 | 23.1 % | 0.576 | 2.293963e+03 |
+| e29_s1_teacher/obd_sparsified | 499 | 23.1 % | 0.569 | 3.805032e+01 |
+| e29_s1_teacher/sparsified | 499 | 23.1 % | 0.569 | 3.804575e+01 |
+| e30_s2_planted/magnitude_sparsified | 499 | 23.1 % | 0.800 | 1.058812e+03 |
+| e30_s2_planted/obd_sparsified | 499 | 23.1 % | 0.801 | 1.035167e+00 |
+| e30_s2_planted/sparsified | 499 | 23.1 % | 0.801 | 2.247713e-01 |
+| e31_s1_neuron_noise/neuron_sparsified | 14 | 70.0 % | 0.233 | 1.683401e+05 |
+| e32_s1_neuron_data/neuron_sparsified | 14 | 70.0 % | 0.332 | 6.916703e+04 |
+| e33_neuron_data/neuron_sparsified | 14 | 70.0 % | 0.449 | 1.421884e+05 |
+| e41_w50_full_seed_0/magnitude_sparsified | 4173 | 32.6 % | 0.944 | 1.020949e+03 |
+
+```
+[supervise 17:02:43] launch [/home/simon/venv/general/bin/python3 scripts/train.py experiments/e41_w50_full_seed_4.json] (attempt 0/10)
+[supervise 17:03:24] DONE experiments/e41_w50_full_seed_4.json rc=0
+[supervise 17:03:24] launch [/home/simon/venv/general/bin/python3 -m sparsifier.magnitude_sparsifier experiments/e41_w50_full_seed_0.json] (attempt 0/10)
+```
+
+**2026-10-04 22:52** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e27_kmnist/magnitude_sparsified | 499 | 23.1 % | 0.709 | 3.403265e+03 |
+| e27_kmnist/obd_sparsified | 499 | 23.1 % | 0.536 | 3.280454e+03 |
+| e27_kmnist/sparsified | 499 | 23.1 % | 0.532 | 3.732659e+03 |
+| e28_usps/magnitude_sparsified | 499 | 23.1 % | 0.918 | 8.651375e+02 |
+| e28_usps/obd_sparsified | 499 | 23.1 % | 0.918 | 5.271754e+01 |
+| e28_usps/sparsified | 499 | 23.1 % | 0.917 | 3.622925e+01 |
+| e29_s1_teacher/magnitude_sparsified | 499 | 23.1 % | 0.576 | 2.293963e+03 |
+| e29_s1_teacher/obd_sparsified | 499 | 23.1 % | 0.569 | 3.805032e+01 |
+| e29_s1_teacher/sparsified | 499 | 23.1 % | 0.569 | 3.804575e+01 |
+| e30_s2_planted/magnitude_sparsified | 499 | 23.1 % | 0.800 | 1.058812e+03 |
+| e30_s2_planted/obd_sparsified | 499 | 23.1 % | 0.801 | 1.035167e+00 |
+| e30_s2_planted/sparsified | 499 | 23.1 % | 0.801 | 2.247713e-01 |
+| e31_s1_neuron_noise/neuron_sparsified | 14 | 70.0 % | 0.233 | 1.683401e+05 |
+| e32_s1_neuron_data/neuron_sparsified | 14 | 70.0 % | 0.332 | 6.916703e+04 |
+| e33_neuron_data/neuron_sparsified | 14 | 70.0 % | 0.449 | 1.421884e+05 |
+| e41_w50_full_seed_0/magnitude_sparsified | 4592 | 35.9 % | 0.941 | 1.440282e+03 |
+
+```
+[supervise 17:02:43] launch [/home/simon/venv/general/bin/python3 scripts/train.py experiments/e41_w50_full_seed_4.json] (attempt 0/10)
+[supervise 17:03:24] DONE experiments/e41_w50_full_seed_4.json rc=0
+[supervise 17:03:24] launch [/home/simon/venv/general/bin/python3 -m sparsifier.magnitude_sparsifier experiments/e41_w50_full_seed_0.json] (attempt 0/10)
+```
+
+**2026-10-04 23:22** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e27_kmnist/magnitude_sparsified | 499 | 23.1 % | 0.709 | 3.403265e+03 |
+| e27_kmnist/obd_sparsified | 499 | 23.1 % | 0.536 | 3.280454e+03 |
+| e27_kmnist/sparsified | 499 | 23.1 % | 0.532 | 3.732659e+03 |
+| e28_usps/magnitude_sparsified | 499 | 23.1 % | 0.918 | 8.651375e+02 |
+| e28_usps/obd_sparsified | 499 | 23.1 % | 0.918 | 5.271754e+01 |
+| e28_usps/sparsified | 499 | 23.1 % | 0.917 | 3.622925e+01 |
+| e29_s1_teacher/magnitude_sparsified | 499 | 23.1 % | 0.576 | 2.293963e+03 |
+| e29_s1_teacher/obd_sparsified | 499 | 23.1 % | 0.569 | 3.805032e+01 |
+| e29_s1_teacher/sparsified | 499 | 23.1 % | 0.569 | 3.804575e+01 |
+| e30_s2_planted/magnitude_sparsified | 499 | 23.1 % | 0.800 | 1.058812e+03 |
+| e30_s2_planted/obd_sparsified | 499 | 23.1 % | 0.801 | 1.035167e+00 |
+| e30_s2_planted/sparsified | 499 | 23.1 % | 0.801 | 2.247713e-01 |
+| e31_s1_neuron_noise/neuron_sparsified | 14 | 70.0 % | 0.233 | 1.683401e+05 |
+| e32_s1_neuron_data/neuron_sparsified | 14 | 70.0 % | 0.332 | 6.916703e+04 |
+| e33_neuron_data/neuron_sparsified | 14 | 70.0 % | 0.449 | 1.421884e+05 |
+| e41_w50_full_seed_0/magnitude_sparsified | 5011 | 39.1 % | 0.946 | 1.864417e+03 |
+
+```
+[supervise 17:02:43] launch [/home/simon/venv/general/bin/python3 scripts/train.py experiments/e41_w50_full_seed_4.json] (attempt 0/10)
+[supervise 17:03:24] DONE experiments/e41_w50_full_seed_4.json rc=0
+[supervise 17:03:24] launch [/home/simon/venv/general/bin/python3 -m sparsifier.magnitude_sparsifier experiments/e41_w50_full_seed_0.json] (attempt 0/10)
+```
+
+**2026-10-04 23:25** — queue INTERRUPTED for the night (Block C magnitude seed 0 at step 5044, last checkpoint step_5000, resumes from it; @reboot hook removed). Blocks A and B complete and analysed. Pending decision: Block C scope (see 21:45 note).
