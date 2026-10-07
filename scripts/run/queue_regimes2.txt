@@ -1,0 +1,42 @@
+# Resumed queue 2026-10-07: Block D (784x512x512 structured) first, then Block C reduced.
+# Launch after queue_regimes completes: scripts/run/seedband_launch.sh scripts/run/queue_regimesD.txt docs/experiments/2026-10-regimes.md
+# D0: budget control on the width-200 net (must reproduce e38 seed 0 within 1 point at 7 and 4 crossbars)
+python -m sparsifier.neuron_sparsifier experiments/e44_w200_B2000_seed_0.json
+# D1: controls first (cheap, 15 trainings)
+python scripts/train.py experiments/e43_m784_scratch_33xb_seed_0.json
+python scripts/train.py experiments/e43_m784_scratch_20xb_seed_0.json
+python scripts/train.py experiments/e43_m784_scratch_9xb_seed_0.json
+python scripts/train.py experiments/e43_m784_scratch_33xb_seed_1.json
+python scripts/train.py experiments/e43_m784_scratch_20xb_seed_1.json
+python scripts/train.py experiments/e43_m784_scratch_9xb_seed_1.json
+python scripts/train.py experiments/e43_m784_scratch_33xb_seed_2.json
+python scripts/train.py experiments/e43_m784_scratch_20xb_seed_2.json
+python scripts/train.py experiments/e43_m784_scratch_9xb_seed_2.json
+python scripts/train.py experiments/e43_m784_scratch_33xb_seed_3.json
+python scripts/train.py experiments/e43_m784_scratch_20xb_seed_3.json
+python scripts/train.py experiments/e43_m784_scratch_9xb_seed_3.json
+python scripts/train.py experiments/e43_m784_scratch_33xb_seed_4.json
+python scripts/train.py experiments/e43_m784_scratch_20xb_seed_4.json
+python scripts/train.py experiments/e43_m784_scratch_9xb_seed_4.json
+# D2: search + magnitude per seed (seed 0 dense net already trained)
+python scripts/train.py experiments/e42_m784_neuron_data_seed_0.json
+python -m sparsifier.neuron_sparsifier experiments/e42_m784_neuron_data_seed_0.json
+python -m sparsifier.neuron_magnitude_sparsifier experiments/e42_m784_neuron_data_seed_0.json
+python scripts/train.py experiments/e42_m784_neuron_data_seed_1.json
+python -m sparsifier.neuron_sparsifier experiments/e42_m784_neuron_data_seed_1.json
+python -m sparsifier.neuron_magnitude_sparsifier experiments/e42_m784_neuron_data_seed_1.json
+python scripts/train.py experiments/e42_m784_neuron_data_seed_2.json
+python -m sparsifier.neuron_sparsifier experiments/e42_m784_neuron_data_seed_2.json
+python -m sparsifier.neuron_magnitude_sparsifier experiments/e42_m784_neuron_data_seed_2.json
+python scripts/train.py experiments/e42_m784_neuron_data_seed_3.json
+python -m sparsifier.neuron_sparsifier experiments/e42_m784_neuron_data_seed_3.json
+python -m sparsifier.neuron_magnitude_sparsifier experiments/e42_m784_neuron_data_seed_3.json
+python scripts/train.py experiments/e42_m784_neuron_data_seed_4.json
+python -m sparsifier.neuron_sparsifier experiments/e42_m784_neuron_data_seed_4.json
+python -m sparsifier.neuron_magnitude_sparsifier experiments/e42_m784_neuron_data_seed_4.json
+
+# ---- C (reduced 2026-10-07, author decision pending; full block was ~370 h): magnitude + exhaustive, seeds 0-1
+python -m sparsifier.magnitude_sparsifier experiments/e41_w50_full_seed_0.json
+python -m sparsifier.magnitude_sparsifier experiments/e41_w50_full_seed_1.json
+python -m sparsifier.sparsifier experiments/e41_w50_full_seed_0.json
+python -m sparsifier.sparsifier experiments/e41_w50_full_seed_1.json

@@ -1840,3 +1840,10 @@ seeds 0–1 and no OBD ≈ 60 h; drop C and cite the existing 500-step width swe
 ```
 
 **2026-10-04 23:25** — queue INTERRUPTED for the night (Block C magnitude seed 0 at step 5044, last checkpoint step_5000, resumes from it; @reboot hook removed). Blocks A and B complete and analysed. Pending decision: Block C scope (see 21:45 note).
+
+**2026-10-07 — resumed as `queue_regimes2.txt`: Block D first, then Block C reduced.** No scope
+decision was given for Block C, so the recommended cut is applied (reversible): magnitude and
+exhaustive search on seeds 0–1 only (~77 h incl. the 60 % of magnitude seed 0 already done), no
+OBD, no seeds 2–4; HC1 is tested on two paired seeds. Block D (D0 budget control, 15 controls,
+5 × search + magnitude, ≈ 80 h) runs before it. `analyze_crossbar.py` now reads the input width
+from `W_0.npy` so it covers the 784-input runs.
