@@ -1920,3 +1920,178 @@ seed 0 (Ω = 10 000), same dense net: 7 crossbars 0.970 vs 0.970 (`[148,128]` vs
 4 crossbars 0.967 vs 0.970 (`[128,98]` vs `[128,102]`) — within 0.3 points at both counts. The
 B = 2 000 budget is valid for structured data-Ω pruning; Block D proceeds with it. Block D search
 rate on the 784 net: ~42 s/step (step 101 after 71 min), i.e. ≈ 9.3 h per 800-step run.
+
+**2026-10-07 10:36** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e41_w50_full_seed_0/magnitude_sparsified | 5043 | 39.4 % | 0.946 | 1.922181e+03 |
+| e42_m784_neuron_data_seed_0/neuron_sparsified | 137 | 13.4 % | 0.956 | 4.593549e+01 |
+| e44_w200_B2000_seed_0/neuron_sparsified | 399 | 100.0 % | 0.107 | 8.998479e+05 |
+
+```
+[supervise 08:58:23] launch [/home/simon/venv/general/bin/python3 scripts/train.py experiments/e43_m784_scratch_9xb_seed_4.json] (attempt 0/10)
+[supervise 08:59:38] DONE experiments/e43_m784_scratch_9xb_seed_4.json rc=0
+[supervise 08:59:38] launch [/home/simon/venv/general/bin/python3 -m sparsifier.neuron_sparsifier experiments/e42_m784_neuron_data_seed_0.json] (attempt 0/10)
+```
+
+**2026-10-07 11:06** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e41_w50_full_seed_0/magnitude_sparsified | 5043 | 39.4 % | 0.946 | 1.922181e+03 |
+| e42_m784_neuron_data_seed_0/neuron_sparsified | 183 | 17.9 % | 0.952 | 1.096363e+02 |
+| e44_w200_B2000_seed_0/neuron_sparsified | 399 | 100.0 % | 0.107 | 8.998479e+05 |
+
+```
+[supervise 08:58:23] launch [/home/simon/venv/general/bin/python3 scripts/train.py experiments/e43_m784_scratch_9xb_seed_4.json] (attempt 0/10)
+[supervise 08:59:38] DONE experiments/e43_m784_scratch_9xb_seed_4.json rc=0
+[supervise 08:59:38] launch [/home/simon/venv/general/bin/python3 -m sparsifier.neuron_sparsifier experiments/e42_m784_neuron_data_seed_0.json] (attempt 0/10)
+```
+
+**2026-10-07 11:36** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e41_w50_full_seed_0/magnitude_sparsified | 5043 | 39.4 % | 0.946 | 1.922181e+03 |
+| e42_m784_neuron_data_seed_0/neuron_sparsified | 231 | 22.6 % | 0.955 | 1.485522e+02 |
+| e44_w200_B2000_seed_0/neuron_sparsified | 399 | 100.0 % | 0.107 | 8.998479e+05 |
+
+```
+[supervise 08:58:23] launch [/home/simon/venv/general/bin/python3 scripts/train.py experiments/e43_m784_scratch_9xb_seed_4.json] (attempt 0/10)
+[supervise 08:59:38] DONE experiments/e43_m784_scratch_9xb_seed_4.json rc=0
+[supervise 08:59:38] launch [/home/simon/venv/general/bin/python3 -m sparsifier.neuron_sparsifier experiments/e42_m784_neuron_data_seed_0.json] (attempt 0/10)
+```
+
+**2026-10-07 12:06** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e41_w50_full_seed_0/magnitude_sparsified | 5043 | 39.4 % | 0.946 | 1.922181e+03 |
+| e42_m784_neuron_data_seed_0/neuron_sparsified | 280 | 27.3 % | 0.952 | 1.944342e+02 |
+| e44_w200_B2000_seed_0/neuron_sparsified | 399 | 100.0 % | 0.107 | 8.998479e+05 |
+
+```
+[supervise 08:58:23] launch [/home/simon/venv/general/bin/python3 scripts/train.py experiments/e43_m784_scratch_9xb_seed_4.json] (attempt 0/10)
+[supervise 08:59:38] DONE experiments/e43_m784_scratch_9xb_seed_4.json rc=0
+[supervise 08:59:38] launch [/home/simon/venv/general/bin/python3 -m sparsifier.neuron_sparsifier experiments/e42_m784_neuron_data_seed_0.json] (attempt 0/10)
+```
+
+**2026-10-07 12:36** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e41_w50_full_seed_0/magnitude_sparsified | 5043 | 39.4 % | 0.946 | 1.922181e+03 |
+| e42_m784_neuron_data_seed_0/neuron_sparsified | 331 | 32.3 % | 0.952 | 2.515217e+02 |
+| e44_w200_B2000_seed_0/neuron_sparsified | 399 | 100.0 % | 0.107 | 8.998479e+05 |
+
+```
+[supervise 08:58:23] launch [/home/simon/venv/general/bin/python3 scripts/train.py experiments/e43_m784_scratch_9xb_seed_4.json] (attempt 0/10)
+[supervise 08:59:38] DONE experiments/e43_m784_scratch_9xb_seed_4.json rc=0
+[supervise 08:59:38] launch [/home/simon/venv/general/bin/python3 -m sparsifier.neuron_sparsifier experiments/e42_m784_neuron_data_seed_0.json] (attempt 0/10)
+```
+
+**2026-10-07 13:06** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e41_w50_full_seed_0/magnitude_sparsified | 5043 | 39.4 % | 0.946 | 1.922181e+03 |
+| e42_m784_neuron_data_seed_0/neuron_sparsified | 384 | 37.5 % | 0.952 | 3.449559e+02 |
+| e44_w200_B2000_seed_0/neuron_sparsified | 399 | 100.0 % | 0.107 | 8.998479e+05 |
+
+```
+[supervise 08:58:23] launch [/home/simon/venv/general/bin/python3 scripts/train.py experiments/e43_m784_scratch_9xb_seed_4.json] (attempt 0/10)
+[supervise 08:59:38] DONE experiments/e43_m784_scratch_9xb_seed_4.json rc=0
+[supervise 08:59:38] launch [/home/simon/venv/general/bin/python3 -m sparsifier.neuron_sparsifier experiments/e42_m784_neuron_data_seed_0.json] (attempt 0/10)
+```
+
+**2026-10-07 13:36** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e41_w50_full_seed_0/magnitude_sparsified | 5043 | 39.4 % | 0.946 | 1.922181e+03 |
+| e42_m784_neuron_data_seed_0/neuron_sparsified | 440 | 43.0 % | 0.954 | 4.332530e+02 |
+| e44_w200_B2000_seed_0/neuron_sparsified | 399 | 100.0 % | 0.107 | 8.998479e+05 |
+
+```
+[supervise 08:58:23] launch [/home/simon/venv/general/bin/python3 scripts/train.py experiments/e43_m784_scratch_9xb_seed_4.json] (attempt 0/10)
+[supervise 08:59:38] DONE experiments/e43_m784_scratch_9xb_seed_4.json rc=0
+[supervise 08:59:38] launch [/home/simon/venv/general/bin/python3 -m sparsifier.neuron_sparsifier experiments/e42_m784_neuron_data_seed_0.json] (attempt 0/10)
+```
+
+**2026-10-07 14:06** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e41_w50_full_seed_0/magnitude_sparsified | 5043 | 39.4 % | 0.946 | 1.922181e+03 |
+| e42_m784_neuron_data_seed_0/neuron_sparsified | 499 | 48.7 % | 0.950 | 5.198013e+02 |
+| e44_w200_B2000_seed_0/neuron_sparsified | 399 | 100.0 % | 0.107 | 8.998479e+05 |
+
+```
+[supervise 08:58:23] launch [/home/simon/venv/general/bin/python3 scripts/train.py experiments/e43_m784_scratch_9xb_seed_4.json] (attempt 0/10)
+[supervise 08:59:38] DONE experiments/e43_m784_scratch_9xb_seed_4.json rc=0
+[supervise 08:59:38] launch [/home/simon/venv/general/bin/python3 -m sparsifier.neuron_sparsifier experiments/e42_m784_neuron_data_seed_0.json] (attempt 0/10)
+```
+
+**2026-10-07 14:36** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e41_w50_full_seed_0/magnitude_sparsified | 5043 | 39.4 % | 0.946 | 1.922181e+03 |
+| e42_m784_neuron_data_seed_0/neuron_sparsified | 562 | 54.9 % | 0.951 | 7.089788e+02 |
+| e44_w200_B2000_seed_0/neuron_sparsified | 399 | 100.0 % | 0.107 | 8.998479e+05 |
+
+```
+[supervise 08:58:23] launch [/home/simon/venv/general/bin/python3 scripts/train.py experiments/e43_m784_scratch_9xb_seed_4.json] (attempt 0/10)
+[supervise 08:59:38] DONE experiments/e43_m784_scratch_9xb_seed_4.json rc=0
+[supervise 08:59:38] launch [/home/simon/venv/general/bin/python3 -m sparsifier.neuron_sparsifier experiments/e42_m784_neuron_data_seed_0.json] (attempt 0/10)
+```
+
+**2026-10-07 15:06** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e41_w50_full_seed_0/magnitude_sparsified | 5043 | 39.4 % | 0.946 | 1.922181e+03 |
+| e42_m784_neuron_data_seed_0/neuron_sparsified | 628 | 61.3 % | 0.947 | 9.763666e+02 |
+| e44_w200_B2000_seed_0/neuron_sparsified | 399 | 100.0 % | 0.107 | 8.998479e+05 |
+
+```
+[supervise 08:58:23] launch [/home/simon/venv/general/bin/python3 scripts/train.py experiments/e43_m784_scratch_9xb_seed_4.json] (attempt 0/10)
+[supervise 08:59:38] DONE experiments/e43_m784_scratch_9xb_seed_4.json rc=0
+[supervise 08:59:38] launch [/home/simon/venv/general/bin/python3 -m sparsifier.neuron_sparsifier experiments/e42_m784_neuron_data_seed_0.json] (attempt 0/10)
+```
+
+**2026-10-07 15:36** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e41_w50_full_seed_0/magnitude_sparsified | 5043 | 39.4 % | 0.946 | 1.922181e+03 |
+| e42_m784_neuron_data_seed_0/neuron_sparsified | 700 | 68.4 % | 0.944 | 1.291154e+03 |
+| e44_w200_B2000_seed_0/neuron_sparsified | 399 | 100.0 % | 0.107 | 8.998479e+05 |
+
+```
+[supervise 08:58:23] launch [/home/simon/venv/general/bin/python3 scripts/train.py experiments/e43_m784_scratch_9xb_seed_4.json] (attempt 0/10)
+[supervise 08:59:38] DONE experiments/e43_m784_scratch_9xb_seed_4.json rc=0
+[supervise 08:59:38] launch [/home/simon/venv/general/bin/python3 -m sparsifier.neuron_sparsifier experiments/e42_m784_neuron_data_seed_0.json] (attempt 0/10)
+```
+
+**2026-10-07 16:06** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e41_w50_full_seed_0/magnitude_sparsified | 5043 | 39.4 % | 0.946 | 1.922181e+03 |
+| e42_m784_neuron_data_seed_0/neuron_sparsified | 778 | 76.0 % | 0.945 | 2.094708e+03 |
+| e44_w200_B2000_seed_0/neuron_sparsified | 399 | 100.0 % | 0.107 | 8.998479e+05 |
+
+```
+[supervise 08:58:23] launch [/home/simon/venv/general/bin/python3 scripts/train.py experiments/e43_m784_scratch_9xb_seed_4.json] (attempt 0/10)
+[supervise 08:59:38] DONE experiments/e43_m784_scratch_9xb_seed_4.json rc=0
+[supervise 08:59:38] launch [/home/simon/venv/general/bin/python3 -m sparsifier.neuron_sparsifier experiments/e42_m784_neuron_data_seed_0.json] (attempt 0/10)
+```
+
+**2026-10-07 16:30 — Block D step budget raised 800 → 900.** The seed-0 search ended step 799 at
+`[136,95]` (17 crossbars, 0.944): the layers are pruned unevenly, so 800 removals do not bring
+both widths to ≤ 128. All e42 configs set to 900 steps; supervisor restarted so the launcher
+extends the seed-0 search from its checkpoint (resumable) rather than re-running it, and the
+seed-0 magnitude run (killed at its first steps) restarts with the same budget. Seed-0 search so
+far: 0.955 at 43 xb, 0.953 at 33, 0.953 at 29, 0.950 at 20, 0.944 at 17 (dense 0.958).
