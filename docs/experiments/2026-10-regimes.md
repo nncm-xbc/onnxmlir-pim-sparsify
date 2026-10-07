@@ -1847,3 +1847,76 @@ exhaustive search on seeds 0–1 only (~77 h incl. the 60 % of magnitude seed 0 
 OBD, no seeds 2–4; HC1 is tested on two paired seeds. Block D (D0 budget control, 15 controls,
 5 × search + magnitude, ≈ 80 h) runs before it. `analyze_crossbar.py` now reads the input width
 from `W_0.npy` so it covers the 784-input runs.
+
+**2026-10-07 08:06** — (re)launch of `scripts/run/queue_regimes2.txt`: 34 commands queued
+
+**2026-10-07 08:06** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e41_w50_full_seed_0/magnitude_sparsified | 5043 | 39.4 % | 0.946 | 1.922181e+03 |
+
+```
+[supervise 08:06:02] launch [/home/simon/venv/general/bin/python3 -m sparsifier.neuron_sparsifier experiments/e44_w200_B2000_seed_0.json] (attempt 0/10)
+```
+
+**2026-10-07 08:36** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e41_w50_full_seed_0/magnitude_sparsified | 5043 | 39.4 % | 0.946 | 1.922181e+03 |
+| e44_w200_B2000_seed_0/neuron_sparsified | 399 | 100.0 % | 0.107 | 8.998479e+05 |
+
+```
+[supervise 08:06:02] launch [/home/simon/venv/general/bin/python3 -m sparsifier.neuron_sparsifier experiments/e44_w200_B2000_seed_0.json] (attempt 0/10)
+[supervise 08:34:29] DONE experiments/e44_w200_B2000_seed_0.json rc=0
+[supervise 08:34:29] launch [/home/simon/venv/general/bin/python3 scripts/train.py experiments/e43_m784_scratch_33xb_seed_0.json] (attempt 0/10)
+```
+
+**2026-10-07 09:06** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e41_w50_full_seed_0/magnitude_sparsified | 5043 | 39.4 % | 0.946 | 1.922181e+03 |
+| e42_m784_neuron_data_seed_0/neuron_sparsified | 8 | 0.8 % | 0.958 | 4.134498e-02 |
+| e44_w200_B2000_seed_0/neuron_sparsified | 399 | 100.0 % | 0.107 | 8.998479e+05 |
+
+```
+[supervise 08:58:23] launch [/home/simon/venv/general/bin/python3 scripts/train.py experiments/e43_m784_scratch_9xb_seed_4.json] (attempt 0/10)
+[supervise 08:59:38] DONE experiments/e43_m784_scratch_9xb_seed_4.json rc=0
+[supervise 08:59:38] launch [/home/simon/venv/general/bin/python3 -m sparsifier.neuron_sparsifier experiments/e42_m784_neuron_data_seed_0.json] (attempt 0/10)
+```
+
+**2026-10-07 09:36** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e41_w50_full_seed_0/magnitude_sparsified | 5043 | 39.4 % | 0.946 | 1.922181e+03 |
+| e42_m784_neuron_data_seed_0/neuron_sparsified | 50 | 4.9 % | 0.958 | 2.533434e+00 |
+| e44_w200_B2000_seed_0/neuron_sparsified | 399 | 100.0 % | 0.107 | 8.998479e+05 |
+
+```
+[supervise 08:58:23] launch [/home/simon/venv/general/bin/python3 scripts/train.py experiments/e43_m784_scratch_9xb_seed_4.json] (attempt 0/10)
+[supervise 08:59:38] DONE experiments/e43_m784_scratch_9xb_seed_4.json rc=0
+[supervise 08:59:38] launch [/home/simon/venv/general/bin/python3 -m sparsifier.neuron_sparsifier experiments/e42_m784_neuron_data_seed_0.json] (attempt 0/10)
+```
+
+**2026-10-07 10:06** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e41_w50_full_seed_0/magnitude_sparsified | 5043 | 39.4 % | 0.946 | 1.922181e+03 |
+| e42_m784_neuron_data_seed_0/neuron_sparsified | 93 | 9.1 % | 0.958 | 2.148072e+01 |
+| e44_w200_B2000_seed_0/neuron_sparsified | 399 | 100.0 % | 0.107 | 8.998479e+05 |
+
+```
+[supervise 08:58:23] launch [/home/simon/venv/general/bin/python3 scripts/train.py experiments/e43_m784_scratch_9xb_seed_4.json] (attempt 0/10)
+[supervise 08:59:38] DONE experiments/e43_m784_scratch_9xb_seed_4.json rc=0
+[supervise 08:59:38] launch [/home/simon/venv/general/bin/python3 -m sparsifier.neuron_sparsifier experiments/e42_m784_neuron_data_seed_0.json] (attempt 0/10)
+```
+
+**2026-10-07 10:15 — HD0 supported.** e44 (width-200 seed 0, Ω = 2 000 training images) vs e38
+seed 0 (Ω = 10 000), same dense net: 7 crossbars 0.970 vs 0.970 (`[148,128]` vs `[146,128]`),
+4 crossbars 0.967 vs 0.970 (`[128,98]` vs `[128,102]`) — within 0.3 points at both counts. The
+B = 2 000 budget is valid for structured data-Ω pruning; Block D proceeds with it. Block D search
+rate on the 784 net: ~42 s/step (step 101 after 71 min), i.e. ≈ 9.3 h per 800-step run.
