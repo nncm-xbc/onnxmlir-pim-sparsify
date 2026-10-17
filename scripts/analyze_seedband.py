@@ -20,6 +20,9 @@ SEL = {  # selector: (seed-0 run, seed-k run prefix, subdir/log)
     'magnitude': ('e15_magnitude_full', 'e35_magnitude_full_seed_', 'magnitude_sparsified/magnitude_sparsification_log.csv'),
     'kwon': ('e16_kwon_full', 'e36_kwon_full_seed_', 'kwon_sparsified/kwon_sparsification_log.csv'),
     'obs': ('e18_obs_full', 'e37_obs_full_seed_', 'obs_sparsified/obs_sparsification_log.csv'),
+    # Block C (regimes log §5.C): width-50 net, 12 800 weights, seeds 0-1 only
+    'w50_exhaustive': ('e41_w50_full_seed_0', 'e41_w50_full_seed_', 'sparsified/sparsification_log.csv'),
+    'w50_magnitude': ('e41_w50_full_seed_0', 'e41_w50_full_seed_', 'magnitude_sparsified/magnitude_sparsification_log.csv'),
 }
 RUNS = [(sel, s, run0 if s == 0 else f'{pre}{s}', log)
         for sel, (run0, pre, log) in SEL.items() for s in range(5)]

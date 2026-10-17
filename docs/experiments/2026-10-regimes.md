@@ -324,6 +324,75 @@ inputs from the task distribution, and the manuscript should say so.
 on the identical dense net. If it recovers magnitude's 0.70, the failure is attributable to Ω
 alone; if not, to the criterion. Result appended below when done.
 
+### 5.C Block C — `[196,50,50,10]`, full-budget weight-level, seeds 0–1 (complete 2026-10-17 15:39)
+
+Reduced scope (§6, 2026-10-07): magnitude and exhaustive search on two paired dense nets, 12 800
+steps each (every prunable weight), Ω = 10 000 uniform-noise inputs as in the seed band; OBD and
+seeds 2–4 not run. Four runs, all rc = 0, across three host power-downs (resumed from
+checkpoints). Numbers = `scripts/analyze_seedband.py` (`SEL` extended with the e41 prefixes),
+definitions as in the seed band; accuracies at a sparsity are 25-step rolling medians; dense
+test accuracy 0.945 / 0.949.
+
+| seed 0 / seed 1 | exhaustive d_W search | magnitude | baseline net, 5 seeds (§E.5) |
+|---|---|---|---|
+| acc at step 500 (3.9 %) | 0.930 / 0.893 | 0.945 / 0.949 | 0.884 ± 0.057 vs 0.913 ± 0.006 |
+| acc at 10 % | 0.929 / 0.887 | 0.945 / 0.949 | — |
+| acc at 30 % | 0.927 / 0.804 | 0.944 / 0.949 | — |
+| acc at 50 % | 0.894 / 0.762 | 0.943 / 0.947 | — |
+| acc at 70 % | 0.805 / 0.676 | 0.933 / 0.938 | — |
+| acc at 80 % | 0.755 / 0.681 | 0.893 / 0.904 | 0.713 ± 0.112 vs 0.743 ± 0.062 |
+| acc at 90 % | 0.587 / 0.544 | 0.602 / 0.735 | 0.400 ± 0.103 vs 0.403 ± 0.086 |
+| last sparsity with acc ≥ 0.85 | 58.5 / 22.3 % | 83.6 / 87.0 % | 52.8 ± 27.4 vs 73.6 ± 4.2 |
+| last sparsity with acc ≥ 0.5 | 96.0 / 93.1 % | 95.8 / 94.8 % | 88.3 ± 1.4 vs 88.2 ± 2.1 |
+| collapse (acc < 0.5 for good) | 94.7 / 93.0 % (steps 12125 / 11898) | 92.8 / 94.8 % (steps 11876 / 12134) | 88.4 ± 1.4 vs 88.1 ± 2.0 |
+| d_W stop rule fires at | 98.0 / 97.3 % | 18.1 / 19.9 % | 57 ± 36 vs 74.2 ± 1.6 |
+
+Zero-cost fraction on the width-50 seed-0 net (`e03_width_50_seed_0/zero_cost.json`, noise Ω,
+B = 10⁴): **716 of 12 800 = 5.6 %**, against 10.4 % (seed 0) and 3.0 ± 4.2 % (five seeds) on the
+baseline net.
+
+**Paired differences (exhaustive − magnitude), seeds 0 / 1:** at 10 % −1.6 / −6.2; at 30 %
+−1.7 / −14.5; at 50 % −4.9 / −18.5; at 70 % −12.8 / −26.2; at 80 % −13.8 / −22.3; collapse
++1.9 / −1.8 points.
+
+#### 5.C.1 Verdict
+
+- **HC1 — supported on its stated criterion, and the criterion missed the result.** The two
+  collapses are within 2 points of each other (93.8 ± 1.3 vs 93.8 ± 1.4 %), and the exhaustive
+  search does not collapse later than magnitude on either seed, so six times the width does not
+  separate the selectors at collapse; the width-50 zero-cost fraction (5.6 %) is above the
+  baseline's five-seed mean (3.0 %) though below its seed-0 value, so the "room" clause holds
+  in the mean. What the pre-registered criterion did not anticipate is that on this net the
+  exhaustive noise-Ω search is **worse than magnitude at every sparsity on both seeds**: it
+  gives up 1.6 and 6.2 points in the first 10 % of removals (seed 1 is at 0.900 after 200
+  removals, 1.6 % sparsity, against 0.949 dense), 5–19 points at 50 % and 14–22 points at
+  80 %, where magnitude is still within 5 points of dense. On the baseline net the two were
+  tied to 70–75 % sparsity.
+- **Stop rule — fails for both selectors here.** The displacement blow-up fires at 18–20 %
+  sparsity under magnitude (steps 2321 / 2551, 70 points of accuracy before collapse) and at
+  97–98 % under the search (after collapse). The seed band's "reliable under magnitude" reading
+  does not transfer to the wider net; the 10× baseline threshold is calibrated to the
+  2 160-weight trajectory.
+
+#### 5.C.2 What Block C means
+
+Block C was designed as the control for Block A: if width alone had let the exhaustive search
+pull ahead, Block A's advantage could have been a capacity effect rather than a structure
+effect. It is not: at the weight level, width does nothing for the search at collapse and
+hurts it before. The early loss is the signature already seen in Block B (noise-Ω selectors
+17 points behind magnitude on KMNIST, repaired by train-Ω in e27b) and in Block A (HA2): the
+adjustment minimises d_W on uniform noise, and with 12 800 free parameters instead of 2 160 it
+has far more room to move the function on the data manifold while holding it on noise. Width
+widens the noise/data gap just as task hardness does. The consistent reading across A, B, C and
+D is therefore unchanged and sharpened: **the semantic discrepancy is the right objective and
+uniform noise is the wrong domain for it** as soon as the network has spare capacity or the
+task is harder than MNIST at width 10; the manuscript's "data-free" must become "label-free",
+and the weight-level deep-sparsity claims should be stated for the baseline net only.
+
+**Open (not queued):** one e41 seed with `omega_source: train` (≈ 20 h) would show whether
+train-Ω repairs the width-50 search as it repaired KMNIST; the tile-aware magnitude baseline of
+§5.D.2 remains the missing hardware control.
+
 ### 5.D Block D — structured pruning of `[784,512,512,10]` on full-resolution MNIST (complete 2026-10-11 07:19)
 
 10 neuron runs × 900 steps (e42, search + magnitude on one dense net per seed, Ω = 2 000
@@ -4035,3 +4104,1730 @@ step  672 | acc=0.9450 | neurons_pruned= 672/1024 | sparsity=0.6562 | d_m=1.2206
 ```
 
 **2026-10-11 17:32** — queue stopped by user (supervisor killed; @reboot hook removed). e41_w50_full_seed_1 partial; resumes from its latest checkpoint on relaunch.
+
+**2026-10-11 17:55** — supervisor exited
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e41_w50_full_seed_0/magnitude_sparsified | 12799 | 100.0 % | 0.087 | 1.255670e+06 |
+| e41_w50_full_seed_1/magnitude_sparsified | 799 | 6.2 % | 0.949 | 5.432802e+00 |
+| e42_m784_neuron_data_seed_3/neuron_magnitude_sparsified | 899 | 100.0 % | 0.099 | 4.686116e+06 |
+| e42_m784_neuron_data_seed_3/neuron_sparsified | 899 | 87.8 % | 0.934 | 7.489949e+03 |
+| e42_m784_neuron_data_seed_4/neuron_magnitude_sparsified | 899 | 100.0 % | 0.099 | 4.567531e+06 |
+| e42_m784_neuron_data_seed_4/neuron_sparsified | 899 | 87.8 % | 0.938 | 6.791067e+03 |
+
+```
+[supervise 07:19:04] launch [/home/simon/venv/general/bin/python3 -m sparsifier.magnitude_sparsifier experiments/e41_w50_full_seed_0.json] (attempt 0/10)
+[supervise 16:34:00] DONE experiments/e41_w50_full_seed_0.json rc=0
+[supervise 16:34:00] launch [/home/simon/venv/general/bin/python3 -m sparsifier.magnitude_sparsifier experiments/e41_w50_full_seed_1.json] (attempt 0/10)
+```
+
+**2026-10-11 22:11** — (re)launch of `scripts/run/queue_regimes2.txt`: 3 commands queued
+
+**2026-10-11 22:11** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e41_w50_full_seed_0/magnitude_sparsified | 12799 | 100.0 % | 0.087 | 1.255670e+06 |
+| e41_w50_full_seed_1/magnitude_sparsified | 799 | 6.2 % | 0.949 | 5.432802e+00 |
+
+```
+[supervise 07:19:04] launch [/home/simon/venv/general/bin/python3 -m sparsifier.magnitude_sparsifier experiments/e41_w50_full_seed_0.json] (attempt 0/10)
+[supervise 16:34:00] DONE experiments/e41_w50_full_seed_0.json rc=0
+[supervise 16:34:00] launch [/home/simon/venv/general/bin/python3 -m sparsifier.magnitude_sparsifier experiments/e41_w50_full_seed_1.json] (attempt 0/10)
+```
+
+**2026-10-11 22:41** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e41_w50_full_seed_0/magnitude_sparsified | 12799 | 100.0 % | 0.087 | 1.255670e+06 |
+| e41_w50_full_seed_1/magnitude_sparsified | 1018 | 8.0 % | 0.949 | 1.016892e+01 |
+
+```
+[supervise 16:34:00] DONE experiments/e41_w50_full_seed_0.json rc=0
+[supervise 16:34:00] launch [/home/simon/venv/general/bin/python3 -m sparsifier.magnitude_sparsifier experiments/e41_w50_full_seed_1.json] (attempt 0/10)
+step  703 | acc=0.9490 | NZ= 12097 | sparsity=0.0549 | d_m=3.7540e+00[supervise 22:11:04] launch [/home/simon/venv/general/bin/python3 -m sparsifier.magnitude_sparsifier experiments/e41_w50_full_seed_
+```
+
+**2026-10-11 23:11** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e41_w50_full_seed_0/magnitude_sparsified | 12799 | 100.0 % | 0.087 | 1.255670e+06 |
+| e41_w50_full_seed_1/magnitude_sparsified | 1437 | 11.2 % | 0.949 | 2.957378e+01 |
+
+```
+[supervise 16:34:00] DONE experiments/e41_w50_full_seed_0.json rc=0
+[supervise 16:34:00] launch [/home/simon/venv/general/bin/python3 -m sparsifier.magnitude_sparsifier experiments/e41_w50_full_seed_1.json] (attempt 0/10)
+step  703 | acc=0.9490 | NZ= 12097 | sparsity=0.0549 | d_m=3.7540e+00[supervise 22:11:04] launch [/home/simon/venv/general/bin/python3 -m sparsifier.magnitude_sparsifier experiments/e41_w50_full_seed_
+```
+
+**2026-10-11 23:41** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e41_w50_full_seed_0/magnitude_sparsified | 12799 | 100.0 % | 0.087 | 1.255670e+06 |
+| e41_w50_full_seed_1/magnitude_sparsified | 1856 | 14.5 % | 0.949 | 5.917642e+01 |
+
+```
+[supervise 16:34:00] DONE experiments/e41_w50_full_seed_0.json rc=0
+[supervise 16:34:00] launch [/home/simon/venv/general/bin/python3 -m sparsifier.magnitude_sparsifier experiments/e41_w50_full_seed_1.json] (attempt 0/10)
+step  703 | acc=0.9490 | NZ= 12097 | sparsity=0.0549 | d_m=3.7540e+00[supervise 22:11:04] launch [/home/simon/venv/general/bin/python3 -m sparsifier.magnitude_sparsifier experiments/e41_w50_full_seed_
+```
+
+**2026-10-12 00:11** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e41_w50_full_seed_0/magnitude_sparsified | 12799 | 100.0 % | 0.087 | 1.255670e+06 |
+| e41_w50_full_seed_1/magnitude_sparsified | 2274 | 17.8 % | 0.949 | 1.041745e+02 |
+
+```
+[supervise 16:34:00] DONE experiments/e41_w50_full_seed_0.json rc=0
+[supervise 16:34:00] launch [/home/simon/venv/general/bin/python3 -m sparsifier.magnitude_sparsifier experiments/e41_w50_full_seed_1.json] (attempt 0/10)
+step  703 | acc=0.9490 | NZ= 12097 | sparsity=0.0549 | d_m=3.7540e+00[supervise 22:11:04] launch [/home/simon/venv/general/bin/python3 -m sparsifier.magnitude_sparsifier experiments/e41_w50_full_seed_
+```
+
+**2026-10-12 00:41** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e41_w50_full_seed_0/magnitude_sparsified | 12799 | 100.0 % | 0.087 | 1.255670e+06 |
+| e41_w50_full_seed_1/magnitude_sparsified | 2692 | 21.0 % | 0.950 | 1.684011e+02 |
+
+```
+[supervise 16:34:00] DONE experiments/e41_w50_full_seed_0.json rc=0
+[supervise 16:34:00] launch [/home/simon/venv/general/bin/python3 -m sparsifier.magnitude_sparsifier experiments/e41_w50_full_seed_1.json] (attempt 0/10)
+step  703 | acc=0.9490 | NZ= 12097 | sparsity=0.0549 | d_m=3.7540e+00[supervise 22:11:04] launch [/home/simon/venv/general/bin/python3 -m sparsifier.magnitude_sparsifier experiments/e41_w50_full_seed_
+```
+
+**2026-10-12 01:11** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e41_w50_full_seed_0/magnitude_sparsified | 12799 | 100.0 % | 0.087 | 1.255670e+06 |
+| e41_w50_full_seed_1/magnitude_sparsified | 3110 | 24.3 % | 0.948 | 2.614776e+02 |
+
+```
+[supervise 16:34:00] DONE experiments/e41_w50_full_seed_0.json rc=0
+[supervise 16:34:00] launch [/home/simon/venv/general/bin/python3 -m sparsifier.magnitude_sparsifier experiments/e41_w50_full_seed_1.json] (attempt 0/10)
+step  703 | acc=0.9490 | NZ= 12097 | sparsity=0.0549 | d_m=3.7540e+00[supervise 22:11:04] launch [/home/simon/venv/general/bin/python3 -m sparsifier.magnitude_sparsifier experiments/e41_w50_full_seed_
+```
+
+**2026-10-12 01:41** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e41_w50_full_seed_0/magnitude_sparsified | 12799 | 100.0 % | 0.087 | 1.255670e+06 |
+| e41_w50_full_seed_1/magnitude_sparsified | 3525 | 27.5 % | 0.948 | 3.586482e+02 |
+
+```
+[supervise 16:34:00] DONE experiments/e41_w50_full_seed_0.json rc=0
+[supervise 16:34:00] launch [/home/simon/venv/general/bin/python3 -m sparsifier.magnitude_sparsifier experiments/e41_w50_full_seed_1.json] (attempt 0/10)
+step  703 | acc=0.9490 | NZ= 12097 | sparsity=0.0549 | d_m=3.7540e+00[supervise 22:11:04] launch [/home/simon/venv/general/bin/python3 -m sparsifier.magnitude_sparsifier experiments/e41_w50_full_seed_
+```
+
+**2026-10-12 02:11** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e41_w50_full_seed_0/magnitude_sparsified | 12799 | 100.0 % | 0.087 | 1.255670e+06 |
+| e41_w50_full_seed_1/magnitude_sparsified | 3939 | 30.8 % | 0.948 | 5.257485e+02 |
+
+```
+[supervise 16:34:00] DONE experiments/e41_w50_full_seed_0.json rc=0
+[supervise 16:34:00] launch [/home/simon/venv/general/bin/python3 -m sparsifier.magnitude_sparsifier experiments/e41_w50_full_seed_1.json] (attempt 0/10)
+step  703 | acc=0.9490 | NZ= 12097 | sparsity=0.0549 | d_m=3.7540e+00[supervise 22:11:04] launch [/home/simon/venv/general/bin/python3 -m sparsifier.magnitude_sparsifier experiments/e41_w50_full_seed_
+```
+
+**2026-10-12 02:41** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e41_w50_full_seed_0/magnitude_sparsified | 12799 | 100.0 % | 0.087 | 1.255670e+06 |
+| e41_w50_full_seed_1/magnitude_sparsified | 4357 | 34.0 % | 0.947 | 7.856088e+02 |
+
+```
+[supervise 16:34:00] DONE experiments/e41_w50_full_seed_0.json rc=0
+[supervise 16:34:00] launch [/home/simon/venv/general/bin/python3 -m sparsifier.magnitude_sparsifier experiments/e41_w50_full_seed_1.json] (attempt 0/10)
+step  703 | acc=0.9490 | NZ= 12097 | sparsity=0.0549 | d_m=3.7540e+00[supervise 22:11:04] launch [/home/simon/venv/general/bin/python3 -m sparsifier.magnitude_sparsifier experiments/e41_w50_full_seed_
+```
+
+**2026-10-12 03:11** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e41_w50_full_seed_0/magnitude_sparsified | 12799 | 100.0 % | 0.087 | 1.255670e+06 |
+| e41_w50_full_seed_1/magnitude_sparsified | 4771 | 37.3 % | 0.947 | 9.443164e+02 |
+
+```
+[supervise 16:34:00] DONE experiments/e41_w50_full_seed_0.json rc=0
+[supervise 16:34:00] launch [/home/simon/venv/general/bin/python3 -m sparsifier.magnitude_sparsifier experiments/e41_w50_full_seed_1.json] (attempt 0/10)
+step  703 | acc=0.9490 | NZ= 12097 | sparsity=0.0549 | d_m=3.7540e+00[supervise 22:11:04] launch [/home/simon/venv/general/bin/python3 -m sparsifier.magnitude_sparsifier experiments/e41_w50_full_seed_
+```
+
+**2026-10-12 03:41** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e41_w50_full_seed_0/magnitude_sparsified | 12799 | 100.0 % | 0.087 | 1.255670e+06 |
+| e41_w50_full_seed_1/magnitude_sparsified | 5185 | 40.5 % | 0.947 | 1.209904e+03 |
+
+```
+[supervise 16:34:00] DONE experiments/e41_w50_full_seed_0.json rc=0
+[supervise 16:34:00] launch [/home/simon/venv/general/bin/python3 -m sparsifier.magnitude_sparsifier experiments/e41_w50_full_seed_1.json] (attempt 0/10)
+step  703 | acc=0.9490 | NZ= 12097 | sparsity=0.0549 | d_m=3.7540e+00[supervise 22:11:04] launch [/home/simon/venv/general/bin/python3 -m sparsifier.magnitude_sparsifier experiments/e41_w50_full_seed_
+```
+
+**2026-10-12 04:11** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e41_w50_full_seed_0/magnitude_sparsified | 12799 | 100.0 % | 0.087 | 1.255670e+06 |
+| e41_w50_full_seed_1/magnitude_sparsified | 5601 | 43.8 % | 0.944 | 1.493422e+03 |
+
+```
+[supervise 16:34:00] DONE experiments/e41_w50_full_seed_0.json rc=0
+[supervise 16:34:00] launch [/home/simon/venv/general/bin/python3 -m sparsifier.magnitude_sparsifier experiments/e41_w50_full_seed_1.json] (attempt 0/10)
+step  703 | acc=0.9490 | NZ= 12097 | sparsity=0.0549 | d_m=3.7540e+00[supervise 22:11:04] launch [/home/simon/venv/general/bin/python3 -m sparsifier.magnitude_sparsifier experiments/e41_w50_full_seed_
+```
+
+**2026-10-12 04:41** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e41_w50_full_seed_0/magnitude_sparsified | 12799 | 100.0 % | 0.087 | 1.255670e+06 |
+| e41_w50_full_seed_1/magnitude_sparsified | 6016 | 47.0 % | 0.946 | 1.754727e+03 |
+
+```
+[supervise 16:34:00] DONE experiments/e41_w50_full_seed_0.json rc=0
+[supervise 16:34:00] launch [/home/simon/venv/general/bin/python3 -m sparsifier.magnitude_sparsifier experiments/e41_w50_full_seed_1.json] (attempt 0/10)
+step  703 | acc=0.9490 | NZ= 12097 | sparsity=0.0549 | d_m=3.7540e+00[supervise 22:11:04] launch [/home/simon/venv/general/bin/python3 -m sparsifier.magnitude_sparsifier experiments/e41_w50_full_seed_
+```
+
+**2026-10-12 05:11** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e41_w50_full_seed_0/magnitude_sparsified | 12799 | 100.0 % | 0.087 | 1.255670e+06 |
+| e41_w50_full_seed_1/magnitude_sparsified | 6433 | 50.3 % | 0.949 | 2.202044e+03 |
+
+```
+[supervise 16:34:00] DONE experiments/e41_w50_full_seed_0.json rc=0
+[supervise 16:34:00] launch [/home/simon/venv/general/bin/python3 -m sparsifier.magnitude_sparsifier experiments/e41_w50_full_seed_1.json] (attempt 0/10)
+step  703 | acc=0.9490 | NZ= 12097 | sparsity=0.0549 | d_m=3.7540e+00[supervise 22:11:04] launch [/home/simon/venv/general/bin/python3 -m sparsifier.magnitude_sparsifier experiments/e41_w50_full_seed_
+```
+
+**2026-10-12 05:41** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e41_w50_full_seed_0/magnitude_sparsified | 12799 | 100.0 % | 0.087 | 1.255670e+06 |
+| e41_w50_full_seed_1/magnitude_sparsified | 6846 | 53.5 % | 0.944 | 2.693877e+03 |
+
+```
+[supervise 16:34:00] DONE experiments/e41_w50_full_seed_0.json rc=0
+[supervise 16:34:00] launch [/home/simon/venv/general/bin/python3 -m sparsifier.magnitude_sparsifier experiments/e41_w50_full_seed_1.json] (attempt 0/10)
+step  703 | acc=0.9490 | NZ= 12097 | sparsity=0.0549 | d_m=3.7540e+00[supervise 22:11:04] launch [/home/simon/venv/general/bin/python3 -m sparsifier.magnitude_sparsifier experiments/e41_w50_full_seed_
+```
+
+**2026-10-12 06:11** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e41_w50_full_seed_0/magnitude_sparsified | 12799 | 100.0 % | 0.087 | 1.255670e+06 |
+| e41_w50_full_seed_1/magnitude_sparsified | 7259 | 56.7 % | 0.947 | 3.167799e+03 |
+
+```
+[supervise 16:34:00] DONE experiments/e41_w50_full_seed_0.json rc=0
+[supervise 16:34:00] launch [/home/simon/venv/general/bin/python3 -m sparsifier.magnitude_sparsifier experiments/e41_w50_full_seed_1.json] (attempt 0/10)
+step  703 | acc=0.9490 | NZ= 12097 | sparsity=0.0549 | d_m=3.7540e+00[supervise 22:11:04] launch [/home/simon/venv/general/bin/python3 -m sparsifier.magnitude_sparsifier experiments/e41_w50_full_seed_
+```
+
+**2026-10-12 06:41** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e41_w50_full_seed_0/magnitude_sparsified | 12799 | 100.0 % | 0.087 | 1.255670e+06 |
+| e41_w50_full_seed_1/magnitude_sparsified | 7676 | 60.0 % | 0.948 | 3.941131e+03 |
+
+```
+[supervise 16:34:00] DONE experiments/e41_w50_full_seed_0.json rc=0
+[supervise 16:34:00] launch [/home/simon/venv/general/bin/python3 -m sparsifier.magnitude_sparsifier experiments/e41_w50_full_seed_1.json] (attempt 0/10)
+step  703 | acc=0.9490 | NZ= 12097 | sparsity=0.0549 | d_m=3.7540e+00[supervise 22:11:04] launch [/home/simon/venv/general/bin/python3 -m sparsifier.magnitude_sparsifier experiments/e41_w50_full_seed_
+```
+
+**2026-10-12 07:11** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e41_w50_full_seed_0/magnitude_sparsified | 12799 | 100.0 % | 0.087 | 1.255670e+06 |
+| e41_w50_full_seed_1/magnitude_sparsified | 8092 | 63.2 % | 0.942 | 4.947655e+03 |
+
+```
+[supervise 16:34:00] DONE experiments/e41_w50_full_seed_0.json rc=0
+[supervise 16:34:00] launch [/home/simon/venv/general/bin/python3 -m sparsifier.magnitude_sparsifier experiments/e41_w50_full_seed_1.json] (attempt 0/10)
+step  703 | acc=0.9490 | NZ= 12097 | sparsity=0.0549 | d_m=3.7540e+00[supervise 22:11:04] launch [/home/simon/venv/general/bin/python3 -m sparsifier.magnitude_sparsifier experiments/e41_w50_full_seed_
+```
+
+**2026-10-12 07:41** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e41_w50_full_seed_0/magnitude_sparsified | 12799 | 100.0 % | 0.087 | 1.255670e+06 |
+| e41_w50_full_seed_1/magnitude_sparsified | 8510 | 66.5 % | 0.942 | 5.936375e+03 |
+
+```
+[supervise 16:34:00] DONE experiments/e41_w50_full_seed_0.json rc=0
+[supervise 16:34:00] launch [/home/simon/venv/general/bin/python3 -m sparsifier.magnitude_sparsifier experiments/e41_w50_full_seed_1.json] (attempt 0/10)
+step  703 | acc=0.9490 | NZ= 12097 | sparsity=0.0549 | d_m=3.7540e+00[supervise 22:11:04] launch [/home/simon/venv/general/bin/python3 -m sparsifier.magnitude_sparsifier experiments/e41_w50_full_seed_
+```
+
+**2026-10-12 08:11** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e41_w50_full_seed_0/magnitude_sparsified | 12799 | 100.0 % | 0.087 | 1.255670e+06 |
+| e41_w50_full_seed_1/magnitude_sparsified | 8928 | 69.8 % | 0.938 | 7.897877e+03 |
+
+```
+[supervise 16:34:00] DONE experiments/e41_w50_full_seed_0.json rc=0
+[supervise 16:34:00] launch [/home/simon/venv/general/bin/python3 -m sparsifier.magnitude_sparsifier experiments/e41_w50_full_seed_1.json] (attempt 0/10)
+step  703 | acc=0.9490 | NZ= 12097 | sparsity=0.0549 | d_m=3.7540e+00[supervise 22:11:04] launch [/home/simon/venv/general/bin/python3 -m sparsifier.magnitude_sparsifier experiments/e41_w50_full_seed_
+```
+
+**2026-10-12 08:41** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e41_w50_full_seed_0/magnitude_sparsified | 12799 | 100.0 % | 0.087 | 1.255670e+06 |
+| e41_w50_full_seed_1/magnitude_sparsified | 9345 | 73.0 % | 0.939 | 1.010645e+04 |
+
+```
+[supervise 16:34:00] DONE experiments/e41_w50_full_seed_0.json rc=0
+[supervise 16:34:00] launch [/home/simon/venv/general/bin/python3 -m sparsifier.magnitude_sparsifier experiments/e41_w50_full_seed_1.json] (attempt 0/10)
+step  703 | acc=0.9490 | NZ= 12097 | sparsity=0.0549 | d_m=3.7540e+00[supervise 22:11:04] launch [/home/simon/venv/general/bin/python3 -m sparsifier.magnitude_sparsifier experiments/e41_w50_full_seed_
+```
+
+**2026-10-12 09:11** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e41_w50_full_seed_0/magnitude_sparsified | 12799 | 100.0 % | 0.087 | 1.255670e+06 |
+| e41_w50_full_seed_1/magnitude_sparsified | 9763 | 76.3 % | 0.919 | 1.243583e+04 |
+
+```
+[supervise 16:34:00] DONE experiments/e41_w50_full_seed_0.json rc=0
+[supervise 16:34:00] launch [/home/simon/venv/general/bin/python3 -m sparsifier.magnitude_sparsifier experiments/e41_w50_full_seed_1.json] (attempt 0/10)
+step  703 | acc=0.9490 | NZ= 12097 | sparsity=0.0549 | d_m=3.7540e+00[supervise 22:11:04] launch [/home/simon/venv/general/bin/python3 -m sparsifier.magnitude_sparsifier experiments/e41_w50_full_seed_
+```
+
+**2026-10-12 09:41** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e41_w50_full_seed_0/magnitude_sparsified | 12799 | 100.0 % | 0.087 | 1.255670e+06 |
+| e41_w50_full_seed_1/magnitude_sparsified | 10181 | 79.5 % | 0.909 | 1.788321e+04 |
+
+```
+[supervise 16:34:00] DONE experiments/e41_w50_full_seed_0.json rc=0
+[supervise 16:34:00] launch [/home/simon/venv/general/bin/python3 -m sparsifier.magnitude_sparsifier experiments/e41_w50_full_seed_1.json] (attempt 0/10)
+step  703 | acc=0.9490 | NZ= 12097 | sparsity=0.0549 | d_m=3.7540e+00[supervise 22:11:04] launch [/home/simon/venv/general/bin/python3 -m sparsifier.magnitude_sparsifier experiments/e41_w50_full_seed_
+```
+
+**2026-10-12 10:11** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e41_w50_full_seed_0/magnitude_sparsified | 12799 | 100.0 % | 0.087 | 1.255670e+06 |
+| e41_w50_full_seed_1/magnitude_sparsified | 10598 | 82.8 % | 0.897 | 2.596890e+04 |
+
+```
+[supervise 16:34:00] DONE experiments/e41_w50_full_seed_0.json rc=0
+[supervise 16:34:00] launch [/home/simon/venv/general/bin/python3 -m sparsifier.magnitude_sparsifier experiments/e41_w50_full_seed_1.json] (attempt 0/10)
+step  703 | acc=0.9490 | NZ= 12097 | sparsity=0.0549 | d_m=3.7540e+00[supervise 22:11:04] launch [/home/simon/venv/general/bin/python3 -m sparsifier.magnitude_sparsifier experiments/e41_w50_full_seed_
+```
+
+**2026-10-12 10:41** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e41_w50_full_seed_0/magnitude_sparsified | 12799 | 100.0 % | 0.087 | 1.255670e+06 |
+| e41_w50_full_seed_1/magnitude_sparsified | 11015 | 86.1 % | 0.872 | 4.804803e+04 |
+
+```
+[supervise 16:34:00] DONE experiments/e41_w50_full_seed_0.json rc=0
+[supervise 16:34:00] launch [/home/simon/venv/general/bin/python3 -m sparsifier.magnitude_sparsifier experiments/e41_w50_full_seed_1.json] (attempt 0/10)
+step  703 | acc=0.9490 | NZ= 12097 | sparsity=0.0549 | d_m=3.7540e+00[supervise 22:11:04] launch [/home/simon/venv/general/bin/python3 -m sparsifier.magnitude_sparsifier experiments/e41_w50_full_seed_
+```
+
+**2026-10-12 11:11** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e41_w50_full_seed_0/magnitude_sparsified | 12799 | 100.0 % | 0.087 | 1.255670e+06 |
+| e41_w50_full_seed_1/magnitude_sparsified | 11431 | 89.3 % | 0.778 | 9.356395e+04 |
+
+```
+[supervise 16:34:00] DONE experiments/e41_w50_full_seed_0.json rc=0
+[supervise 16:34:00] launch [/home/simon/venv/general/bin/python3 -m sparsifier.magnitude_sparsifier experiments/e41_w50_full_seed_1.json] (attempt 0/10)
+step  703 | acc=0.9490 | NZ= 12097 | sparsity=0.0549 | d_m=3.7540e+00[supervise 22:11:04] launch [/home/simon/venv/general/bin/python3 -m sparsifier.magnitude_sparsifier experiments/e41_w50_full_seed_
+```
+
+**2026-10-12 11:41** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e41_w50_full_seed_0/magnitude_sparsified | 12799 | 100.0 % | 0.087 | 1.255670e+06 |
+| e41_w50_full_seed_1/magnitude_sparsified | 11848 | 92.6 % | 0.610 | 1.501336e+05 |
+
+```
+[supervise 16:34:00] DONE experiments/e41_w50_full_seed_0.json rc=0
+[supervise 16:34:00] launch [/home/simon/venv/general/bin/python3 -m sparsifier.magnitude_sparsifier experiments/e41_w50_full_seed_1.json] (attempt 0/10)
+step  703 | acc=0.9490 | NZ= 12097 | sparsity=0.0549 | d_m=3.7540e+00[supervise 22:11:04] launch [/home/simon/venv/general/bin/python3 -m sparsifier.magnitude_sparsifier experiments/e41_w50_full_seed_
+```
+
+**2026-10-12 12:11** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e41_w50_full_seed_0/magnitude_sparsified | 12799 | 100.0 % | 0.087 | 1.255670e+06 |
+| e41_w50_full_seed_1/magnitude_sparsified | 12266 | 95.8 % | 0.355 | 3.350416e+05 |
+
+```
+[supervise 16:34:00] DONE experiments/e41_w50_full_seed_0.json rc=0
+[supervise 16:34:00] launch [/home/simon/venv/general/bin/python3 -m sparsifier.magnitude_sparsifier experiments/e41_w50_full_seed_1.json] (attempt 0/10)
+step  703 | acc=0.9490 | NZ= 12097 | sparsity=0.0549 | d_m=3.7540e+00[supervise 22:11:04] launch [/home/simon/venv/general/bin/python3 -m sparsifier.magnitude_sparsifier experiments/e41_w50_full_seed_
+```
+
+**2026-10-12 12:41** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e41_w50_full_seed_0/magnitude_sparsified | 12799 | 100.0 % | 0.087 | 1.255670e+06 |
+| e41_w50_full_seed_1/magnitude_sparsified | 12683 | 99.1 % | 0.115 | 1.558410e+06 |
+
+```
+[supervise 16:34:00] DONE experiments/e41_w50_full_seed_0.json rc=0
+[supervise 16:34:00] launch [/home/simon/venv/general/bin/python3 -m sparsifier.magnitude_sparsifier experiments/e41_w50_full_seed_1.json] (attempt 0/10)
+step  703 | acc=0.9490 | NZ= 12097 | sparsity=0.0549 | d_m=3.7540e+00[supervise 22:11:04] launch [/home/simon/venv/general/bin/python3 -m sparsifier.magnitude_sparsifier experiments/e41_w50_full_seed_
+```
+
+**2026-10-12 13:11** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e41_w50_full_seed_0/magnitude_sparsified | 12799 | 100.0 % | 0.087 | 1.255670e+06 |
+| e41_w50_full_seed_0/sparsified | 376 | 2.9 % | 0.930 | 0.000000e+00 |
+| e41_w50_full_seed_1/magnitude_sparsified | 12799 | 100.0 % | 0.107 | 1.470543e+06 |
+
+```
+step  703 | acc=0.9490 | NZ= 12097 | sparsity=0.0549 | d_m=3.7540e+00[supervise 22:11:04] launch [/home/simon/venv/general/bin/python3 -m sparsifier.magnitude_sparsifier experiments/e41_w50_full_seed_
+[supervise 12:46:36] DONE experiments/e41_w50_full_seed_1.json rc=0
+[supervise 12:46:36] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_0.json] (attempt 0/10)
+```
+
+**2026-10-12 13:41** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e41_w50_full_seed_0/magnitude_sparsified | 12799 | 100.0 % | 0.087 | 1.255670e+06 |
+| e41_w50_full_seed_0/sparsified | 822 | 6.4 % | 0.929 | 6.636461e-07 |
+| e41_w50_full_seed_1/magnitude_sparsified | 12799 | 100.0 % | 0.107 | 1.470543e+06 |
+
+```
+step  703 | acc=0.9490 | NZ= 12097 | sparsity=0.0549 | d_m=3.7540e+00[supervise 22:11:04] launch [/home/simon/venv/general/bin/python3 -m sparsifier.magnitude_sparsifier experiments/e41_w50_full_seed_
+[supervise 12:46:36] DONE experiments/e41_w50_full_seed_1.json rc=0
+[supervise 12:46:36] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_0.json] (attempt 0/10)
+```
+
+**2026-10-12 14:11** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e41_w50_full_seed_0/magnitude_sparsified | 12799 | 100.0 % | 0.087 | 1.255670e+06 |
+| e41_w50_full_seed_0/sparsified | 1045 | 8.2 % | 0.929 | 2.989777e-03 |
+| e41_w50_full_seed_1/magnitude_sparsified | 12799 | 100.0 % | 0.107 | 1.470543e+06 |
+
+```
+step  703 | acc=0.9490 | NZ= 12097 | sparsity=0.0549 | d_m=3.7540e+00[supervise 22:11:04] launch [/home/simon/venv/general/bin/python3 -m sparsifier.magnitude_sparsifier experiments/e41_w50_full_seed_
+[supervise 12:46:36] DONE experiments/e41_w50_full_seed_1.json rc=0
+[supervise 12:46:36] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_0.json] (attempt 0/10)
+```
+
+**2026-10-12 14:41** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e41_w50_full_seed_0/magnitude_sparsified | 12799 | 100.0 % | 0.087 | 1.255670e+06 |
+| e41_w50_full_seed_0/sparsified | 1267 | 9.9 % | 0.929 | 2.671119e-02 |
+| e41_w50_full_seed_1/magnitude_sparsified | 12799 | 100.0 % | 0.107 | 1.470543e+06 |
+
+```
+step  703 | acc=0.9490 | NZ= 12097 | sparsity=0.0549 | d_m=3.7540e+00[supervise 22:11:04] launch [/home/simon/venv/general/bin/python3 -m sparsifier.magnitude_sparsifier experiments/e41_w50_full_seed_
+[supervise 12:46:36] DONE experiments/e41_w50_full_seed_1.json rc=0
+[supervise 12:46:36] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_0.json] (attempt 0/10)
+```
+
+**2026-10-12 15:11** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e41_w50_full_seed_0/magnitude_sparsified | 12799 | 100.0 % | 0.087 | 1.255670e+06 |
+| e41_w50_full_seed_0/sparsified | 1491 | 11.6 % | 0.929 | 1.797499e-01 |
+| e41_w50_full_seed_1/magnitude_sparsified | 12799 | 100.0 % | 0.107 | 1.470543e+06 |
+
+```
+step  703 | acc=0.9490 | NZ= 12097 | sparsity=0.0549 | d_m=3.7540e+00[supervise 22:11:04] launch [/home/simon/venv/general/bin/python3 -m sparsifier.magnitude_sparsifier experiments/e41_w50_full_seed_
+[supervise 12:46:36] DONE experiments/e41_w50_full_seed_1.json rc=0
+[supervise 12:46:36] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_0.json] (attempt 0/10)
+```
+
+**2026-10-12 15:41** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e41_w50_full_seed_0/magnitude_sparsified | 12799 | 100.0 % | 0.087 | 1.255670e+06 |
+| e41_w50_full_seed_0/sparsified | 1714 | 13.4 % | 0.928 | 6.127603e-01 |
+| e41_w50_full_seed_1/magnitude_sparsified | 12799 | 100.0 % | 0.107 | 1.470543e+06 |
+
+```
+step  703 | acc=0.9490 | NZ= 12097 | sparsity=0.0549 | d_m=3.7540e+00[supervise 22:11:04] launch [/home/simon/venv/general/bin/python3 -m sparsifier.magnitude_sparsifier experiments/e41_w50_full_seed_
+[supervise 12:46:36] DONE experiments/e41_w50_full_seed_1.json rc=0
+[supervise 12:46:36] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_0.json] (attempt 0/10)
+```
+
+**2026-10-12 16:11** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e41_w50_full_seed_0/magnitude_sparsified | 12799 | 100.0 % | 0.087 | 1.255670e+06 |
+| e41_w50_full_seed_0/sparsified | 1938 | 15.1 % | 0.928 | 1.480352e+00 |
+| e41_w50_full_seed_1/magnitude_sparsified | 12799 | 100.0 % | 0.107 | 1.470543e+06 |
+
+```
+step  703 | acc=0.9490 | NZ= 12097 | sparsity=0.0549 | d_m=3.7540e+00[supervise 22:11:04] launch [/home/simon/venv/general/bin/python3 -m sparsifier.magnitude_sparsifier experiments/e41_w50_full_seed_
+[supervise 12:46:36] DONE experiments/e41_w50_full_seed_1.json rc=0
+[supervise 12:46:36] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_0.json] (attempt 0/10)
+```
+
+**2026-10-12 16:41** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e41_w50_full_seed_0/magnitude_sparsified | 12799 | 100.0 % | 0.087 | 1.255670e+06 |
+| e41_w50_full_seed_0/sparsified | 2162 | 16.9 % | 0.928 | 2.846064e+00 |
+| e41_w50_full_seed_1/magnitude_sparsified | 12799 | 100.0 % | 0.107 | 1.470543e+06 |
+
+```
+step  703 | acc=0.9490 | NZ= 12097 | sparsity=0.0549 | d_m=3.7540e+00[supervise 22:11:04] launch [/home/simon/venv/general/bin/python3 -m sparsifier.magnitude_sparsifier experiments/e41_w50_full_seed_
+[supervise 12:46:36] DONE experiments/e41_w50_full_seed_1.json rc=0
+[supervise 12:46:36] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_0.json] (attempt 0/10)
+```
+
+**2026-10-12 17:11** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e41_w50_full_seed_0/magnitude_sparsified | 12799 | 100.0 % | 0.087 | 1.255670e+06 |
+| e41_w50_full_seed_0/sparsified | 2386 | 18.6 % | 0.928 | 4.619791e+00 |
+| e41_w50_full_seed_1/magnitude_sparsified | 12799 | 100.0 % | 0.107 | 1.470543e+06 |
+
+```
+step  703 | acc=0.9490 | NZ= 12097 | sparsity=0.0549 | d_m=3.7540e+00[supervise 22:11:04] launch [/home/simon/venv/general/bin/python3 -m sparsifier.magnitude_sparsifier experiments/e41_w50_full_seed_
+[supervise 12:46:36] DONE experiments/e41_w50_full_seed_1.json rc=0
+[supervise 12:46:36] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_0.json] (attempt 0/10)
+```
+
+**2026-10-12 17:41** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e41_w50_full_seed_0/magnitude_sparsified | 12799 | 100.0 % | 0.087 | 1.255670e+06 |
+| e41_w50_full_seed_0/sparsified | 2611 | 20.4 % | 0.928 | 6.824587e+00 |
+| e41_w50_full_seed_1/magnitude_sparsified | 12799 | 100.0 % | 0.107 | 1.470543e+06 |
+
+```
+step  703 | acc=0.9490 | NZ= 12097 | sparsity=0.0549 | d_m=3.7540e+00[supervise 22:11:04] launch [/home/simon/venv/general/bin/python3 -m sparsifier.magnitude_sparsifier experiments/e41_w50_full_seed_
+[supervise 12:46:36] DONE experiments/e41_w50_full_seed_1.json rc=0
+[supervise 12:46:36] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_0.json] (attempt 0/10)
+```
+
+**2026-10-12 18:11** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e41_w50_full_seed_0/magnitude_sparsified | 12799 | 100.0 % | 0.087 | 1.255670e+06 |
+| e41_w50_full_seed_0/sparsified | 2837 | 22.2 % | 0.928 | 9.544283e+00 |
+| e41_w50_full_seed_1/magnitude_sparsified | 12799 | 100.0 % | 0.107 | 1.470543e+06 |
+
+```
+step  703 | acc=0.9490 | NZ= 12097 | sparsity=0.0549 | d_m=3.7540e+00[supervise 22:11:04] launch [/home/simon/venv/general/bin/python3 -m sparsifier.magnitude_sparsifier experiments/e41_w50_full_seed_
+[supervise 12:46:36] DONE experiments/e41_w50_full_seed_1.json rc=0
+[supervise 12:46:36] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_0.json] (attempt 0/10)
+```
+
+**2026-10-12 18:41** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e41_w50_full_seed_0/magnitude_sparsified | 12799 | 100.0 % | 0.087 | 1.255670e+06 |
+| e41_w50_full_seed_0/sparsified | 3063 | 23.9 % | 0.929 | 1.480049e+01 |
+| e41_w50_full_seed_1/magnitude_sparsified | 12799 | 100.0 % | 0.107 | 1.470543e+06 |
+
+```
+step  703 | acc=0.9490 | NZ= 12097 | sparsity=0.0549 | d_m=3.7540e+00[supervise 22:11:04] launch [/home/simon/venv/general/bin/python3 -m sparsifier.magnitude_sparsifier experiments/e41_w50_full_seed_
+[supervise 12:46:36] DONE experiments/e41_w50_full_seed_1.json rc=0
+[supervise 12:46:36] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_0.json] (attempt 0/10)
+```
+
+**2026-10-12 19:11** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e41_w50_full_seed_0/magnitude_sparsified | 12799 | 100.0 % | 0.087 | 1.255670e+06 |
+| e41_w50_full_seed_0/sparsified | 3291 | 25.7 % | 0.930 | 2.844103e+01 |
+| e41_w50_full_seed_1/magnitude_sparsified | 12799 | 100.0 % | 0.107 | 1.470543e+06 |
+
+```
+step  703 | acc=0.9490 | NZ= 12097 | sparsity=0.0549 | d_m=3.7540e+00[supervise 22:11:04] launch [/home/simon/venv/general/bin/python3 -m sparsifier.magnitude_sparsifier experiments/e41_w50_full_seed_
+[supervise 12:46:36] DONE experiments/e41_w50_full_seed_1.json rc=0
+[supervise 12:46:36] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_0.json] (attempt 0/10)
+```
+
+**2026-10-12 19:41** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e41_w50_full_seed_0/magnitude_sparsified | 12799 | 100.0 % | 0.087 | 1.255670e+06 |
+| e41_w50_full_seed_0/sparsified | 3520 | 27.5 % | 0.929 | 4.814711e+01 |
+| e41_w50_full_seed_1/magnitude_sparsified | 12799 | 100.0 % | 0.107 | 1.470543e+06 |
+
+```
+step  703 | acc=0.9490 | NZ= 12097 | sparsity=0.0549 | d_m=3.7540e+00[supervise 22:11:04] launch [/home/simon/venv/general/bin/python3 -m sparsifier.magnitude_sparsifier experiments/e41_w50_full_seed_
+[supervise 12:46:36] DONE experiments/e41_w50_full_seed_1.json rc=0
+[supervise 12:46:36] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_0.json] (attempt 0/10)
+```
+
+**2026-10-12 20:11** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e41_w50_full_seed_0/magnitude_sparsified | 12799 | 100.0 % | 0.087 | 1.255670e+06 |
+| e41_w50_full_seed_0/sparsified | 3752 | 29.3 % | 0.928 | 7.551727e+01 |
+| e41_w50_full_seed_1/magnitude_sparsified | 12799 | 100.0 % | 0.107 | 1.470543e+06 |
+
+```
+step  703 | acc=0.9490 | NZ= 12097 | sparsity=0.0549 | d_m=3.7540e+00[supervise 22:11:04] launch [/home/simon/venv/general/bin/python3 -m sparsifier.magnitude_sparsifier experiments/e41_w50_full_seed_
+[supervise 12:46:36] DONE experiments/e41_w50_full_seed_1.json rc=0
+[supervise 12:46:36] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_0.json] (attempt 0/10)
+```
+
+**2026-10-12 20:41** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e41_w50_full_seed_0/magnitude_sparsified | 12799 | 100.0 % | 0.087 | 1.255670e+06 |
+| e41_w50_full_seed_0/sparsified | 3986 | 31.1 % | 0.931 | 1.108710e+02 |
+| e41_w50_full_seed_1/magnitude_sparsified | 12799 | 100.0 % | 0.107 | 1.470543e+06 |
+
+```
+step  703 | acc=0.9490 | NZ= 12097 | sparsity=0.0549 | d_m=3.7540e+00[supervise 22:11:04] launch [/home/simon/venv/general/bin/python3 -m sparsifier.magnitude_sparsifier experiments/e41_w50_full_seed_
+[supervise 12:46:36] DONE experiments/e41_w50_full_seed_1.json rc=0
+[supervise 12:46:36] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_0.json] (attempt 0/10)
+```
+
+**2026-10-12 21:11** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e41_w50_full_seed_0/magnitude_sparsified | 12799 | 100.0 % | 0.087 | 1.255670e+06 |
+| e41_w50_full_seed_0/sparsified | 4221 | 33.0 % | 0.922 | 1.557636e+02 |
+| e41_w50_full_seed_1/magnitude_sparsified | 12799 | 100.0 % | 0.107 | 1.470543e+06 |
+
+```
+step  703 | acc=0.9490 | NZ= 12097 | sparsity=0.0549 | d_m=3.7540e+00[supervise 22:11:04] launch [/home/simon/venv/general/bin/python3 -m sparsifier.magnitude_sparsifier experiments/e41_w50_full_seed_
+[supervise 12:46:36] DONE experiments/e41_w50_full_seed_1.json rc=0
+[supervise 12:46:36] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_0.json] (attempt 0/10)
+```
+
+**2026-10-12 21:41** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e41_w50_full_seed_0/magnitude_sparsified | 12799 | 100.0 % | 0.087 | 1.255670e+06 |
+| e41_w50_full_seed_0/sparsified | 4459 | 34.8 % | 0.928 | 2.150619e+02 |
+| e41_w50_full_seed_1/magnitude_sparsified | 12799 | 100.0 % | 0.107 | 1.470543e+06 |
+
+```
+step  703 | acc=0.9490 | NZ= 12097 | sparsity=0.0549 | d_m=3.7540e+00[supervise 22:11:04] launch [/home/simon/venv/general/bin/python3 -m sparsifier.magnitude_sparsifier experiments/e41_w50_full_seed_
+[supervise 12:46:36] DONE experiments/e41_w50_full_seed_1.json rc=0
+[supervise 12:46:36] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_0.json] (attempt 0/10)
+```
+
+**2026-10-13 21:41** — (re)launch of `scripts/run/queue_regimes2.txt`: 2 commands queued
+
+**2026-10-13 21:41** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e41_w50_full_seed_0/magnitude_sparsified | 12799 | 100.0 % | 0.087 | 1.255670e+06 |
+| e41_w50_full_seed_0/sparsified | 4611 | 36.0 % | 0.926 | 2.615960e+02 |
+| e41_w50_full_seed_1/magnitude_sparsified | 12799 | 100.0 % | 0.107 | 1.470543e+06 |
+
+```
+step  703 | acc=0.9490 | NZ= 12097 | sparsity=0.0549 | d_m=3.7540e+00[supervise 22:11:04] launch [/home/simon/venv/general/bin/python3 -m sparsifier.magnitude_sparsifier experiments/e41_w50_full_seed_
+[supervise 12:46:36] DONE experiments/e41_w50_full_seed_1.json rc=0
+[supervise 12:46:36] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_0.json] (attempt 0/10)
+```
+
+**2026-10-13 22:11** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e41_w50_full_seed_0/magnitude_sparsified | 12799 | 100.0 % | 0.087 | 1.255670e+06 |
+| e41_w50_full_seed_0/sparsified | 4837 | 37.8 % | 0.924 | 3.542859e+02 |
+| e41_w50_full_seed_1/magnitude_sparsified | 12799 | 100.0 % | 0.107 | 1.470543e+06 |
+
+```
+[supervise 12:46:36] DONE experiments/e41_w50_full_seed_1.json rc=0
+[supervise 12:46:36] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_0.json] (attempt 0/10)
+step 4597 | acc=0.9280 | NZ=  8203 | sparsity=0.3591 | d_m=2.5206e+02[supervise 21:41:27] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_0.json] (a
+```
+
+**2026-10-13 22:41** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e41_w50_full_seed_0/magnitude_sparsified | 12799 | 100.0 % | 0.087 | 1.255670e+06 |
+| e41_w50_full_seed_0/sparsified | 5063 | 39.6 % | 0.906 | 4.956590e+02 |
+| e41_w50_full_seed_1/magnitude_sparsified | 12799 | 100.0 % | 0.107 | 1.470543e+06 |
+
+```
+[supervise 12:46:36] DONE experiments/e41_w50_full_seed_1.json rc=0
+[supervise 12:46:36] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_0.json] (attempt 0/10)
+step 4597 | acc=0.9280 | NZ=  8203 | sparsity=0.3591 | d_m=2.5206e+02[supervise 21:41:27] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_0.json] (a
+```
+
+**2026-10-13 23:11** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e41_w50_full_seed_0/magnitude_sparsified | 12799 | 100.0 % | 0.087 | 1.255670e+06 |
+| e41_w50_full_seed_0/sparsified | 5270 | 41.2 % | 0.905 | 6.489641e+02 |
+| e41_w50_full_seed_1/magnitude_sparsified | 12799 | 100.0 % | 0.107 | 1.470543e+06 |
+
+```
+[supervise 12:46:36] DONE experiments/e41_w50_full_seed_1.json rc=0
+[supervise 12:46:36] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_0.json] (attempt 0/10)
+step 4597 | acc=0.9280 | NZ=  8203 | sparsity=0.3591 | d_m=2.5206e+02[supervise 21:41:27] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_0.json] (a
+```
+
+**2026-10-13 23:41** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e41_w50_full_seed_0/magnitude_sparsified | 12799 | 100.0 % | 0.087 | 1.255670e+06 |
+| e41_w50_full_seed_0/sparsified | 5479 | 42.8 % | 0.904 | 8.319458e+02 |
+| e41_w50_full_seed_1/magnitude_sparsified | 12799 | 100.0 % | 0.107 | 1.470543e+06 |
+
+```
+[supervise 12:46:36] DONE experiments/e41_w50_full_seed_1.json rc=0
+[supervise 12:46:36] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_0.json] (attempt 0/10)
+step 4597 | acc=0.9280 | NZ=  8203 | sparsity=0.3591 | d_m=2.5206e+02[supervise 21:41:27] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_0.json] (a
+```
+
+**2026-10-15 08:03** — (re)launch of `scripts/run/queue_regimes2.txt`: 2 commands queued
+
+**2026-10-15 08:03** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e41_w50_full_seed_0/magnitude_sparsified | 12799 | 100.0 % | 0.087 | 1.255670e+06 |
+| e41_w50_full_seed_0/sparsified | 5687 | 44.4 % | 0.902 | 1.145798e+03 |
+| e41_w50_full_seed_1/magnitude_sparsified | 12799 | 100.0 % | 0.107 | 1.470543e+06 |
+
+```
+[supervise 12:46:36] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_0.json] (attempt 0/10)
+step 4597 | acc=0.9280 | NZ=  8203 | sparsity=0.3591 | d_m=2.5206e+02[supervise 21:41:27] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_0.json] (a
+step 5655 | acc=0.9080 | NZ=  7145 | sparsity=0.4418 | d_m=1.0748e+03[supervise 08:03:14] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_0.json] (a
+```
+
+**2026-10-15 08:33** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e41_w50_full_seed_0/magnitude_sparsified | 12799 | 100.0 % | 0.087 | 1.255670e+06 |
+| e41_w50_full_seed_0/sparsified | 5855 | 45.7 % | 0.903 | 1.243736e+03 |
+| e41_w50_full_seed_1/magnitude_sparsified | 12799 | 100.0 % | 0.107 | 1.470543e+06 |
+
+```
+[supervise 12:46:36] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_0.json] (attempt 0/10)
+step 4597 | acc=0.9280 | NZ=  8203 | sparsity=0.3591 | d_m=2.5206e+02[supervise 21:41:27] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_0.json] (a
+step 5655 | acc=0.9080 | NZ=  7145 | sparsity=0.4418 | d_m=1.0748e+03[supervise 08:03:14] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_0.json] (a
+```
+
+**2026-10-15 09:03** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e41_w50_full_seed_0/magnitude_sparsified | 12799 | 100.0 % | 0.087 | 1.255670e+06 |
+| e41_w50_full_seed_0/sparsified | 6113 | 47.8 % | 0.905 | 1.522967e+03 |
+| e41_w50_full_seed_1/magnitude_sparsified | 12799 | 100.0 % | 0.107 | 1.470543e+06 |
+
+```
+[supervise 12:46:36] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_0.json] (attempt 0/10)
+step 4597 | acc=0.9280 | NZ=  8203 | sparsity=0.3591 | d_m=2.5206e+02[supervise 21:41:27] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_0.json] (a
+step 5655 | acc=0.9080 | NZ=  7145 | sparsity=0.4418 | d_m=1.0748e+03[supervise 08:03:14] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_0.json] (a
+```
+
+**2026-10-15 09:33** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e41_w50_full_seed_0/magnitude_sparsified | 12799 | 100.0 % | 0.087 | 1.255670e+06 |
+| e41_w50_full_seed_0/sparsified | 6375 | 49.8 % | 0.894 | 1.858478e+03 |
+| e41_w50_full_seed_1/magnitude_sparsified | 12799 | 100.0 % | 0.107 | 1.470543e+06 |
+
+```
+[supervise 12:46:36] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_0.json] (attempt 0/10)
+step 4597 | acc=0.9280 | NZ=  8203 | sparsity=0.3591 | d_m=2.5206e+02[supervise 21:41:27] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_0.json] (a
+step 5655 | acc=0.9080 | NZ=  7145 | sparsity=0.4418 | d_m=1.0748e+03[supervise 08:03:14] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_0.json] (a
+```
+
+**2026-10-15 10:03** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e41_w50_full_seed_0/magnitude_sparsified | 12799 | 100.0 % | 0.087 | 1.255670e+06 |
+| e41_w50_full_seed_0/sparsified | 6641 | 51.9 % | 0.870 | 2.255003e+03 |
+| e41_w50_full_seed_1/magnitude_sparsified | 12799 | 100.0 % | 0.107 | 1.470543e+06 |
+
+```
+[supervise 12:46:36] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_0.json] (attempt 0/10)
+step 4597 | acc=0.9280 | NZ=  8203 | sparsity=0.3591 | d_m=2.5206e+02[supervise 21:41:27] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_0.json] (a
+step 5655 | acc=0.9080 | NZ=  7145 | sparsity=0.4418 | d_m=1.0748e+03[supervise 08:03:14] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_0.json] (a
+```
+
+**2026-10-15 10:33** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e41_w50_full_seed_0/magnitude_sparsified | 12799 | 100.0 % | 0.087 | 1.255670e+06 |
+| e41_w50_full_seed_0/sparsified | 6910 | 54.0 % | 0.880 | 2.825693e+03 |
+| e41_w50_full_seed_1/magnitude_sparsified | 12799 | 100.0 % | 0.107 | 1.470543e+06 |
+
+```
+[supervise 12:46:36] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_0.json] (attempt 0/10)
+step 4597 | acc=0.9280 | NZ=  8203 | sparsity=0.3591 | d_m=2.5206e+02[supervise 21:41:27] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_0.json] (a
+step 5655 | acc=0.9080 | NZ=  7145 | sparsity=0.4418 | d_m=1.0748e+03[supervise 08:03:14] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_0.json] (a
+```
+
+**2026-10-15 11:03** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e41_w50_full_seed_0/magnitude_sparsified | 12799 | 100.0 % | 0.087 | 1.255670e+06 |
+| e41_w50_full_seed_0/sparsified | 7183 | 56.1 % | 0.853 | 3.387018e+03 |
+| e41_w50_full_seed_1/magnitude_sparsified | 12799 | 100.0 % | 0.107 | 1.470543e+06 |
+
+```
+[supervise 12:46:36] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_0.json] (attempt 0/10)
+step 4597 | acc=0.9280 | NZ=  8203 | sparsity=0.3591 | d_m=2.5206e+02[supervise 21:41:27] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_0.json] (a
+step 5655 | acc=0.9080 | NZ=  7145 | sparsity=0.4418 | d_m=1.0748e+03[supervise 08:03:14] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_0.json] (a
+```
+
+**2026-10-15 11:33** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e41_w50_full_seed_0/magnitude_sparsified | 12799 | 100.0 % | 0.087 | 1.255670e+06 |
+| e41_w50_full_seed_0/sparsified | 7462 | 58.3 % | 0.849 | 3.899101e+03 |
+| e41_w50_full_seed_1/magnitude_sparsified | 12799 | 100.0 % | 0.107 | 1.470543e+06 |
+
+```
+[supervise 12:46:36] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_0.json] (attempt 0/10)
+step 4597 | acc=0.9280 | NZ=  8203 | sparsity=0.3591 | d_m=2.5206e+02[supervise 21:41:27] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_0.json] (a
+step 5655 | acc=0.9080 | NZ=  7145 | sparsity=0.4418 | d_m=1.0748e+03[supervise 08:03:14] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_0.json] (a
+```
+
+**2026-10-15 12:03** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e41_w50_full_seed_0/magnitude_sparsified | 12799 | 100.0 % | 0.087 | 1.255670e+06 |
+| e41_w50_full_seed_0/sparsified | 7743 | 60.5 % | 0.825 | 4.675003e+03 |
+| e41_w50_full_seed_1/magnitude_sparsified | 12799 | 100.0 % | 0.107 | 1.470543e+06 |
+
+```
+[supervise 12:46:36] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_0.json] (attempt 0/10)
+step 4597 | acc=0.9280 | NZ=  8203 | sparsity=0.3591 | d_m=2.5206e+02[supervise 21:41:27] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_0.json] (a
+step 5655 | acc=0.9080 | NZ=  7145 | sparsity=0.4418 | d_m=1.0748e+03[supervise 08:03:14] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_0.json] (a
+```
+
+**2026-10-15 12:33** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e41_w50_full_seed_0/magnitude_sparsified | 12799 | 100.0 % | 0.087 | 1.255670e+06 |
+| e41_w50_full_seed_0/sparsified | 8029 | 62.7 % | 0.824 | 5.488214e+03 |
+| e41_w50_full_seed_1/magnitude_sparsified | 12799 | 100.0 % | 0.107 | 1.470543e+06 |
+
+```
+[supervise 12:46:36] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_0.json] (attempt 0/10)
+step 4597 | acc=0.9280 | NZ=  8203 | sparsity=0.3591 | d_m=2.5206e+02[supervise 21:41:27] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_0.json] (a
+step 5655 | acc=0.9080 | NZ=  7145 | sparsity=0.4418 | d_m=1.0748e+03[supervise 08:03:14] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_0.json] (a
+```
+
+**2026-10-15 13:03** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e41_w50_full_seed_0/magnitude_sparsified | 12799 | 100.0 % | 0.087 | 1.255670e+06 |
+| e41_w50_full_seed_0/sparsified | 8321 | 65.0 % | 0.816 | 6.212730e+03 |
+| e41_w50_full_seed_1/magnitude_sparsified | 12799 | 100.0 % | 0.107 | 1.470543e+06 |
+
+```
+[supervise 12:46:36] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_0.json] (attempt 0/10)
+step 4597 | acc=0.9280 | NZ=  8203 | sparsity=0.3591 | d_m=2.5206e+02[supervise 21:41:27] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_0.json] (a
+step 5655 | acc=0.9080 | NZ=  7145 | sparsity=0.4418 | d_m=1.0748e+03[supervise 08:03:14] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_0.json] (a
+```
+
+**2026-10-15 13:33** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e41_w50_full_seed_0/magnitude_sparsified | 12799 | 100.0 % | 0.087 | 1.255670e+06 |
+| e41_w50_full_seed_0/sparsified | 8618 | 67.3 % | 0.816 | 7.777802e+03 |
+| e41_w50_full_seed_1/magnitude_sparsified | 12799 | 100.0 % | 0.107 | 1.470543e+06 |
+
+```
+[supervise 12:46:36] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_0.json] (attempt 0/10)
+step 4597 | acc=0.9280 | NZ=  8203 | sparsity=0.3591 | d_m=2.5206e+02[supervise 21:41:27] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_0.json] (a
+step 5655 | acc=0.9080 | NZ=  7145 | sparsity=0.4418 | d_m=1.0748e+03[supervise 08:03:14] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_0.json] (a
+```
+
+**2026-10-15 14:03** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e41_w50_full_seed_0/magnitude_sparsified | 12799 | 100.0 % | 0.087 | 1.255670e+06 |
+| e41_w50_full_seed_0/sparsified | 8921 | 69.7 % | 0.799 | 9.182071e+03 |
+| e41_w50_full_seed_1/magnitude_sparsified | 12799 | 100.0 % | 0.107 | 1.470543e+06 |
+
+```
+[supervise 12:46:36] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_0.json] (attempt 0/10)
+step 4597 | acc=0.9280 | NZ=  8203 | sparsity=0.3591 | d_m=2.5206e+02[supervise 21:41:27] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_0.json] (a
+step 5655 | acc=0.9080 | NZ=  7145 | sparsity=0.4418 | d_m=1.0748e+03[supervise 08:03:14] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_0.json] (a
+```
+
+**2026-10-15 14:33** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e41_w50_full_seed_0/magnitude_sparsified | 12799 | 100.0 % | 0.087 | 1.255670e+06 |
+| e41_w50_full_seed_0/sparsified | 9230 | 72.1 % | 0.807 | 1.087709e+04 |
+| e41_w50_full_seed_1/magnitude_sparsified | 12799 | 100.0 % | 0.107 | 1.470543e+06 |
+
+```
+[supervise 12:46:36] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_0.json] (attempt 0/10)
+step 4597 | acc=0.9280 | NZ=  8203 | sparsity=0.3591 | d_m=2.5206e+02[supervise 21:41:27] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_0.json] (a
+step 5655 | acc=0.9080 | NZ=  7145 | sparsity=0.4418 | d_m=1.0748e+03[supervise 08:03:14] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_0.json] (a
+```
+
+**2026-10-15 15:03** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e41_w50_full_seed_0/magnitude_sparsified | 12799 | 100.0 % | 0.087 | 1.255670e+06 |
+| e41_w50_full_seed_0/sparsified | 9545 | 74.6 % | 0.763 | 1.351589e+04 |
+| e41_w50_full_seed_1/magnitude_sparsified | 12799 | 100.0 % | 0.107 | 1.470543e+06 |
+
+```
+[supervise 12:46:36] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_0.json] (attempt 0/10)
+step 4597 | acc=0.9280 | NZ=  8203 | sparsity=0.3591 | d_m=2.5206e+02[supervise 21:41:27] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_0.json] (a
+step 5655 | acc=0.9080 | NZ=  7145 | sparsity=0.4418 | d_m=1.0748e+03[supervise 08:03:14] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_0.json] (a
+```
+
+**2026-10-15 15:33** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e41_w50_full_seed_0/magnitude_sparsified | 12799 | 100.0 % | 0.087 | 1.255670e+06 |
+| e41_w50_full_seed_0/sparsified | 9866 | 77.1 % | 0.767 | 1.570616e+04 |
+| e41_w50_full_seed_1/magnitude_sparsified | 12799 | 100.0 % | 0.107 | 1.470543e+06 |
+
+```
+[supervise 12:46:36] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_0.json] (attempt 0/10)
+step 4597 | acc=0.9280 | NZ=  8203 | sparsity=0.3591 | d_m=2.5206e+02[supervise 21:41:27] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_0.json] (a
+step 5655 | acc=0.9080 | NZ=  7145 | sparsity=0.4418 | d_m=1.0748e+03[supervise 08:03:14] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_0.json] (a
+```
+
+**2026-10-15 16:03** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e41_w50_full_seed_0/magnitude_sparsified | 12799 | 100.0 % | 0.087 | 1.255670e+06 |
+| e41_w50_full_seed_0/sparsified | 10198 | 79.7 % | 0.757 | 1.819260e+04 |
+| e41_w50_full_seed_1/magnitude_sparsified | 12799 | 100.0 % | 0.107 | 1.470543e+06 |
+
+```
+[supervise 12:46:36] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_0.json] (attempt 0/10)
+step 4597 | acc=0.9280 | NZ=  8203 | sparsity=0.3591 | d_m=2.5206e+02[supervise 21:41:27] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_0.json] (a
+step 5655 | acc=0.9080 | NZ=  7145 | sparsity=0.4418 | d_m=1.0748e+03[supervise 08:03:14] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_0.json] (a
+```
+
+**2026-10-15 16:33** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e41_w50_full_seed_0/magnitude_sparsified | 12799 | 100.0 % | 0.087 | 1.255670e+06 |
+| e41_w50_full_seed_0/sparsified | 10537 | 82.3 % | 0.731 | 2.348717e+04 |
+| e41_w50_full_seed_1/magnitude_sparsified | 12799 | 100.0 % | 0.107 | 1.470543e+06 |
+
+```
+[supervise 12:46:36] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_0.json] (attempt 0/10)
+step 4597 | acc=0.9280 | NZ=  8203 | sparsity=0.3591 | d_m=2.5206e+02[supervise 21:41:27] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_0.json] (a
+step 5655 | acc=0.9080 | NZ=  7145 | sparsity=0.4418 | d_m=1.0748e+03[supervise 08:03:14] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_0.json] (a
+```
+
+**2026-10-15 17:03** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e41_w50_full_seed_0/magnitude_sparsified | 12799 | 100.0 % | 0.087 | 1.255670e+06 |
+| e41_w50_full_seed_0/sparsified | 10887 | 85.1 % | 0.679 | 2.917529e+04 |
+| e41_w50_full_seed_1/magnitude_sparsified | 12799 | 100.0 % | 0.107 | 1.470543e+06 |
+
+```
+[supervise 12:46:36] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_0.json] (attempt 0/10)
+step 4597 | acc=0.9280 | NZ=  8203 | sparsity=0.3591 | d_m=2.5206e+02[supervise 21:41:27] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_0.json] (a
+step 5655 | acc=0.9080 | NZ=  7145 | sparsity=0.4418 | d_m=1.0748e+03[supervise 08:03:14] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_0.json] (a
+```
+
+**2026-10-15 17:33** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e41_w50_full_seed_0/magnitude_sparsified | 12799 | 100.0 % | 0.087 | 1.255670e+06 |
+| e41_w50_full_seed_0/sparsified | 11247 | 87.9 % | 0.647 | 4.185316e+04 |
+| e41_w50_full_seed_1/magnitude_sparsified | 12799 | 100.0 % | 0.107 | 1.470543e+06 |
+
+```
+[supervise 12:46:36] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_0.json] (attempt 0/10)
+step 4597 | acc=0.9280 | NZ=  8203 | sparsity=0.3591 | d_m=2.5206e+02[supervise 21:41:27] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_0.json] (a
+step 5655 | acc=0.9080 | NZ=  7145 | sparsity=0.4418 | d_m=1.0748e+03[supervise 08:03:14] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_0.json] (a
+```
+
+**2026-10-15 18:03** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e41_w50_full_seed_0/magnitude_sparsified | 12799 | 100.0 % | 0.087 | 1.255670e+06 |
+| e41_w50_full_seed_0/sparsified | 11617 | 90.8 % | 0.585 | 7.565349e+04 |
+| e41_w50_full_seed_1/magnitude_sparsified | 12799 | 100.0 % | 0.107 | 1.470543e+06 |
+
+```
+[supervise 12:46:36] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_0.json] (attempt 0/10)
+step 4597 | acc=0.9280 | NZ=  8203 | sparsity=0.3591 | d_m=2.5206e+02[supervise 21:41:27] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_0.json] (a
+step 5655 | acc=0.9080 | NZ=  7145 | sparsity=0.4418 | d_m=1.0748e+03[supervise 08:03:14] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_0.json] (a
+```
+
+**2026-10-15 18:33** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e41_w50_full_seed_0/magnitude_sparsified | 12799 | 100.0 % | 0.087 | 1.255670e+06 |
+| e41_w50_full_seed_0/sparsified | 11999 | 93.7 % | 0.526 | 1.241410e+05 |
+| e41_w50_full_seed_1/magnitude_sparsified | 12799 | 100.0 % | 0.107 | 1.470543e+06 |
+
+```
+[supervise 12:46:36] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_0.json] (attempt 0/10)
+step 4597 | acc=0.9280 | NZ=  8203 | sparsity=0.3591 | d_m=2.5206e+02[supervise 21:41:27] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_0.json] (a
+step 5655 | acc=0.9080 | NZ=  7145 | sparsity=0.4418 | d_m=1.0748e+03[supervise 08:03:14] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_0.json] (a
+```
+
+**2026-10-15 19:03** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e41_w50_full_seed_0/magnitude_sparsified | 12799 | 100.0 % | 0.087 | 1.255670e+06 |
+| e41_w50_full_seed_0/sparsified | 12394 | 96.8 % | 0.480 | 3.359169e+05 |
+| e41_w50_full_seed_1/magnitude_sparsified | 12799 | 100.0 % | 0.107 | 1.470543e+06 |
+
+```
+[supervise 12:46:36] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_0.json] (attempt 0/10)
+step 4597 | acc=0.9280 | NZ=  8203 | sparsity=0.3591 | d_m=2.5206e+02[supervise 21:41:27] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_0.json] (a
+step 5655 | acc=0.9080 | NZ=  7145 | sparsity=0.4418 | d_m=1.0748e+03[supervise 08:03:14] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_0.json] (a
+```
+
+**2026-10-15 19:33** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e41_w50_full_seed_0/magnitude_sparsified | 12799 | 100.0 % | 0.087 | 1.255670e+06 |
+| e41_w50_full_seed_0/sparsified | 12799 | 100.0 % | 0.087 | 1.255679e+06 |
+| e41_w50_full_seed_1/magnitude_sparsified | 12799 | 100.0 % | 0.107 | 1.470543e+06 |
+| e41_w50_full_seed_1/sparsified | 0 | 0.0 % | 0.949 | 0.000000e+00 |
+
+```
+step 5655 | acc=0.9080 | NZ=  7145 | sparsity=0.4418 | d_m=1.0748e+03[supervise 08:03:14] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_0.json] (a
+[supervise 19:33:05] DONE experiments/e41_w50_full_seed_0.json rc=0
+[supervise 19:33:05] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_1.json] (attempt 0/10)
+```
+
+**2026-10-15 20:03** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e41_w50_full_seed_0/magnitude_sparsified | 12799 | 100.0 % | 0.087 | 1.255670e+06 |
+| e41_w50_full_seed_0/sparsified | 12799 | 100.0 % | 0.087 | 1.255679e+06 |
+| e41_w50_full_seed_1/magnitude_sparsified | 12799 | 100.0 % | 0.107 | 1.470543e+06 |
+| e41_w50_full_seed_1/sparsified | 420 | 3.3 % | 0.893 | 0.000000e+00 |
+
+```
+step 5655 | acc=0.9080 | NZ=  7145 | sparsity=0.4418 | d_m=1.0748e+03[supervise 08:03:14] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_0.json] (a
+[supervise 19:33:05] DONE experiments/e41_w50_full_seed_0.json rc=0
+[supervise 19:33:05] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_1.json] (attempt 0/10)
+```
+
+**2026-10-15 20:33** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e41_w50_full_seed_0/magnitude_sparsified | 12799 | 100.0 % | 0.087 | 1.255670e+06 |
+| e41_w50_full_seed_0/sparsified | 12799 | 100.0 % | 0.087 | 1.255679e+06 |
+| e41_w50_full_seed_1/magnitude_sparsified | 12799 | 100.0 % | 0.107 | 1.470543e+06 |
+| e41_w50_full_seed_1/sparsified | 705 | 5.5 % | 0.893 | 1.800551e-03 |
+
+```
+step 5655 | acc=0.9080 | NZ=  7145 | sparsity=0.4418 | d_m=1.0748e+03[supervise 08:03:14] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_0.json] (a
+[supervise 19:33:05] DONE experiments/e41_w50_full_seed_0.json rc=0
+[supervise 19:33:05] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_1.json] (attempt 0/10)
+```
+
+**2026-10-15 21:03** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e41_w50_full_seed_0/magnitude_sparsified | 12799 | 100.0 % | 0.087 | 1.255670e+06 |
+| e41_w50_full_seed_0/sparsified | 12799 | 100.0 % | 0.087 | 1.255679e+06 |
+| e41_w50_full_seed_1/magnitude_sparsified | 12799 | 100.0 % | 0.107 | 1.470543e+06 |
+| e41_w50_full_seed_1/sparsified | 917 | 7.2 % | 0.890 | 5.173193e-02 |
+
+```
+step 5655 | acc=0.9080 | NZ=  7145 | sparsity=0.4418 | d_m=1.0748e+03[supervise 08:03:14] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_0.json] (a
+[supervise 19:33:05] DONE experiments/e41_w50_full_seed_0.json rc=0
+[supervise 19:33:05] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_1.json] (attempt 0/10)
+```
+
+**2026-10-15 21:33** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e41_w50_full_seed_0/magnitude_sparsified | 12799 | 100.0 % | 0.087 | 1.255670e+06 |
+| e41_w50_full_seed_0/sparsified | 12799 | 100.0 % | 0.087 | 1.255679e+06 |
+| e41_w50_full_seed_1/magnitude_sparsified | 12799 | 100.0 % | 0.107 | 1.470543e+06 |
+| e41_w50_full_seed_1/sparsified | 1130 | 8.8 % | 0.892 | 2.136672e-01 |
+
+```
+step 5655 | acc=0.9080 | NZ=  7145 | sparsity=0.4418 | d_m=1.0748e+03[supervise 08:03:14] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_0.json] (a
+[supervise 19:33:05] DONE experiments/e41_w50_full_seed_0.json rc=0
+[supervise 19:33:05] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_1.json] (attempt 0/10)
+```
+
+**2026-10-15 22:03** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e41_w50_full_seed_0/magnitude_sparsified | 12799 | 100.0 % | 0.087 | 1.255670e+06 |
+| e41_w50_full_seed_0/sparsified | 12799 | 100.0 % | 0.087 | 1.255679e+06 |
+| e41_w50_full_seed_1/magnitude_sparsified | 12799 | 100.0 % | 0.107 | 1.470543e+06 |
+| e41_w50_full_seed_1/sparsified | 1344 | 10.5 % | 0.887 | 1.011675e+00 |
+
+```
+step 5655 | acc=0.9080 | NZ=  7145 | sparsity=0.4418 | d_m=1.0748e+03[supervise 08:03:14] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_0.json] (a
+[supervise 19:33:05] DONE experiments/e41_w50_full_seed_0.json rc=0
+[supervise 19:33:05] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_1.json] (attempt 0/10)
+```
+
+**2026-10-15 22:33** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e41_w50_full_seed_0/magnitude_sparsified | 12799 | 100.0 % | 0.087 | 1.255670e+06 |
+| e41_w50_full_seed_0/sparsified | 12799 | 100.0 % | 0.087 | 1.255679e+06 |
+| e41_w50_full_seed_1/magnitude_sparsified | 12799 | 100.0 % | 0.107 | 1.470543e+06 |
+| e41_w50_full_seed_1/sparsified | 1559 | 12.2 % | 0.884 | 2.043910e+00 |
+
+```
+step 5655 | acc=0.9080 | NZ=  7145 | sparsity=0.4418 | d_m=1.0748e+03[supervise 08:03:14] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_0.json] (a
+[supervise 19:33:05] DONE experiments/e41_w50_full_seed_0.json rc=0
+[supervise 19:33:05] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_1.json] (attempt 0/10)
+```
+
+**2026-10-15 23:03** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e41_w50_full_seed_0/magnitude_sparsified | 12799 | 100.0 % | 0.087 | 1.255670e+06 |
+| e41_w50_full_seed_0/sparsified | 12799 | 100.0 % | 0.087 | 1.255679e+06 |
+| e41_w50_full_seed_1/magnitude_sparsified | 12799 | 100.0 % | 0.107 | 1.470543e+06 |
+| e41_w50_full_seed_1/sparsified | 1774 | 13.9 % | 0.875 | 4.133368e+00 |
+
+```
+step 5655 | acc=0.9080 | NZ=  7145 | sparsity=0.4418 | d_m=1.0748e+03[supervise 08:03:14] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_0.json] (a
+[supervise 19:33:05] DONE experiments/e41_w50_full_seed_0.json rc=0
+[supervise 19:33:05] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_1.json] (attempt 0/10)
+```
+
+**2026-10-16 19:15** — (re)launch of `scripts/run/queue_regimes2.txt`: 1 commands queued
+
+**2026-10-16 19:15** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e41_w50_full_seed_1/magnitude_sparsified | 12799 | 100.0 % | 0.107 | 1.470543e+06 |
+| e41_w50_full_seed_1/sparsified | 1798 | 14.0 % | 0.876 | 4.327878e+00 |
+
+```
+step 5655 | acc=0.9080 | NZ=  7145 | sparsity=0.4418 | d_m=1.0748e+03[supervise 08:03:14] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_0.json] (a
+[supervise 19:33:05] DONE experiments/e41_w50_full_seed_0.json rc=0
+[supervise 19:33:05] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_1.json] (attempt 0/10)
+```
+
+**2026-10-16 19:45** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e41_w50_full_seed_1/magnitude_sparsified | 12799 | 100.0 % | 0.107 | 1.470543e+06 |
+| e41_w50_full_seed_1/sparsified | 1812 | 14.2 % | 0.876 | 4.851496e+00 |
+
+```
+[supervise 19:33:05] DONE experiments/e41_w50_full_seed_0.json rc=0
+[supervise 19:33:05] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_1.json] (attempt 0/10)
+step 1765 | acc=0.8760 | NZ= 11035 | sparsity=0.1379 | d_m=4.2462e+00[supervise 19:15:59] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_1.json] (a
+```
+
+**2026-10-16 20:15** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e41_w50_full_seed_1/magnitude_sparsified | 12799 | 100.0 % | 0.107 | 1.470543e+06 |
+| e41_w50_full_seed_1/sparsified | 2029 | 15.9 % | 0.862 | 8.993167e+00 |
+
+```
+[supervise 19:33:05] DONE experiments/e41_w50_full_seed_0.json rc=0
+[supervise 19:33:05] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_1.json] (attempt 0/10)
+step 1765 | acc=0.8760 | NZ= 11035 | sparsity=0.1379 | d_m=4.2462e+00[supervise 19:15:59] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_1.json] (a
+```
+
+**2026-10-16 20:45** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e41_w50_full_seed_1/magnitude_sparsified | 12799 | 100.0 % | 0.107 | 1.470543e+06 |
+| e41_w50_full_seed_1/sparsified | 2247 | 17.6 % | 0.850 | 1.731881e+01 |
+
+```
+[supervise 19:33:05] DONE experiments/e41_w50_full_seed_0.json rc=0
+[supervise 19:33:05] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_1.json] (attempt 0/10)
+step 1765 | acc=0.8760 | NZ= 11035 | sparsity=0.1379 | d_m=4.2462e+00[supervise 19:15:59] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_1.json] (a
+```
+
+**2026-10-16 21:15** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e41_w50_full_seed_1/magnitude_sparsified | 12799 | 100.0 % | 0.107 | 1.470543e+06 |
+| e41_w50_full_seed_1/sparsified | 2465 | 19.3 % | 0.848 | 2.718590e+01 |
+
+```
+[supervise 19:33:05] DONE experiments/e41_w50_full_seed_0.json rc=0
+[supervise 19:33:05] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_1.json] (attempt 0/10)
+step 1765 | acc=0.8760 | NZ= 11035 | sparsity=0.1379 | d_m=4.2462e+00[supervise 19:15:59] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_1.json] (a
+```
+
+**2026-10-16 21:45** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e41_w50_full_seed_1/magnitude_sparsified | 12799 | 100.0 % | 0.107 | 1.470543e+06 |
+| e41_w50_full_seed_1/sparsified | 2685 | 21.0 % | 0.849 | 4.148823e+01 |
+
+```
+[supervise 19:33:05] DONE experiments/e41_w50_full_seed_0.json rc=0
+[supervise 19:33:05] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_1.json] (attempt 0/10)
+step 1765 | acc=0.8760 | NZ= 11035 | sparsity=0.1379 | d_m=4.2462e+00[supervise 19:15:59] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_1.json] (a
+```
+
+**2026-10-16 22:15** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e41_w50_full_seed_1/magnitude_sparsified | 12799 | 100.0 % | 0.107 | 1.470543e+06 |
+| e41_w50_full_seed_1/sparsified | 2907 | 22.7 % | 0.849 | 5.738828e+01 |
+
+```
+[supervise 19:33:05] DONE experiments/e41_w50_full_seed_0.json rc=0
+[supervise 19:33:05] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_1.json] (attempt 0/10)
+step 1765 | acc=0.8760 | NZ= 11035 | sparsity=0.1379 | d_m=4.2462e+00[supervise 19:15:59] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_1.json] (a
+```
+
+**2026-10-16 22:45** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e41_w50_full_seed_1/magnitude_sparsified | 12799 | 100.0 % | 0.107 | 1.470543e+06 |
+| e41_w50_full_seed_1/sparsified | 3130 | 24.5 % | 0.838 | 8.459101e+01 |
+
+```
+[supervise 19:33:05] DONE experiments/e41_w50_full_seed_0.json rc=0
+[supervise 19:33:05] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_1.json] (attempt 0/10)
+step 1765 | acc=0.8760 | NZ= 11035 | sparsity=0.1379 | d_m=4.2462e+00[supervise 19:15:59] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_1.json] (a
+```
+
+**2026-10-16 23:15** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e41_w50_full_seed_1/magnitude_sparsified | 12799 | 100.0 % | 0.107 | 1.470543e+06 |
+| e41_w50_full_seed_1/sparsified | 3356 | 26.2 % | 0.830 | 1.282390e+02 |
+
+```
+[supervise 19:33:05] DONE experiments/e41_w50_full_seed_0.json rc=0
+[supervise 19:33:05] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_1.json] (attempt 0/10)
+step 1765 | acc=0.8760 | NZ= 11035 | sparsity=0.1379 | d_m=4.2462e+00[supervise 19:15:59] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_1.json] (a
+```
+
+**2026-10-16 23:45** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e41_w50_full_seed_1/magnitude_sparsified | 12799 | 100.0 % | 0.107 | 1.470543e+06 |
+| e41_w50_full_seed_1/sparsified | 3583 | 28.0 % | 0.821 | 1.796651e+02 |
+
+```
+[supervise 19:33:05] DONE experiments/e41_w50_full_seed_0.json rc=0
+[supervise 19:33:05] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_1.json] (attempt 0/10)
+step 1765 | acc=0.8760 | NZ= 11035 | sparsity=0.1379 | d_m=4.2462e+00[supervise 19:15:59] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_1.json] (a
+```
+
+**2026-10-17 00:15** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e41_w50_full_seed_1/magnitude_sparsified | 12799 | 100.0 % | 0.107 | 1.470543e+06 |
+| e41_w50_full_seed_1/sparsified | 3812 | 29.8 % | 0.804 | 2.336049e+02 |
+
+```
+[supervise 19:33:05] DONE experiments/e41_w50_full_seed_0.json rc=0
+[supervise 19:33:05] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_1.json] (attempt 0/10)
+step 1765 | acc=0.8760 | NZ= 11035 | sparsity=0.1379 | d_m=4.2462e+00[supervise 19:15:59] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_1.json] (a
+```
+
+**2026-10-17 00:46** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e41_w50_full_seed_1/magnitude_sparsified | 12799 | 100.0 % | 0.107 | 1.470543e+06 |
+| e41_w50_full_seed_1/sparsified | 4042 | 31.6 % | 0.806 | 2.951497e+02 |
+
+```
+[supervise 19:33:05] DONE experiments/e41_w50_full_seed_0.json rc=0
+[supervise 19:33:05] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_1.json] (attempt 0/10)
+step 1765 | acc=0.8760 | NZ= 11035 | sparsity=0.1379 | d_m=4.2462e+00[supervise 19:15:59] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_1.json] (a
+```
+
+**2026-10-17 01:16** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e41_w50_full_seed_1/magnitude_sparsified | 12799 | 100.0 % | 0.107 | 1.470543e+06 |
+| e41_w50_full_seed_1/sparsified | 4275 | 33.4 % | 0.809 | 3.718109e+02 |
+
+```
+[supervise 19:33:05] DONE experiments/e41_w50_full_seed_0.json rc=0
+[supervise 19:33:05] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_1.json] (attempt 0/10)
+step 1765 | acc=0.8760 | NZ= 11035 | sparsity=0.1379 | d_m=4.2462e+00[supervise 19:15:59] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_1.json] (a
+```
+
+**2026-10-17 01:46** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e41_w50_full_seed_1/magnitude_sparsified | 12799 | 100.0 % | 0.107 | 1.470543e+06 |
+| e41_w50_full_seed_1/sparsified | 4509 | 35.2 % | 0.811 | 4.783014e+02 |
+
+```
+[supervise 19:33:05] DONE experiments/e41_w50_full_seed_0.json rc=0
+[supervise 19:33:05] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_1.json] (attempt 0/10)
+step 1765 | acc=0.8760 | NZ= 11035 | sparsity=0.1379 | d_m=4.2462e+00[supervise 19:15:59] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_1.json] (a
+```
+
+**2026-10-17 02:16** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e41_w50_full_seed_1/magnitude_sparsified | 12799 | 100.0 % | 0.107 | 1.470543e+06 |
+| e41_w50_full_seed_1/sparsified | 4746 | 37.1 % | 0.800 | 5.834608e+02 |
+
+```
+[supervise 19:33:05] DONE experiments/e41_w50_full_seed_0.json rc=0
+[supervise 19:33:05] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_1.json] (attempt 0/10)
+step 1765 | acc=0.8760 | NZ= 11035 | sparsity=0.1379 | d_m=4.2462e+00[supervise 19:15:59] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_1.json] (a
+```
+
+**2026-10-17 02:46** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e41_w50_full_seed_1/magnitude_sparsified | 12799 | 100.0 % | 0.107 | 1.470543e+06 |
+| e41_w50_full_seed_1/sparsified | 4985 | 38.9 % | 0.794 | 8.421390e+02 |
+
+```
+[supervise 19:33:05] DONE experiments/e41_w50_full_seed_0.json rc=0
+[supervise 19:33:05] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_1.json] (attempt 0/10)
+step 1765 | acc=0.8760 | NZ= 11035 | sparsity=0.1379 | d_m=4.2462e+00[supervise 19:15:59] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_1.json] (a
+```
+
+**2026-10-17 03:16** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e41_w50_full_seed_1/magnitude_sparsified | 12799 | 100.0 % | 0.107 | 1.470543e+06 |
+| e41_w50_full_seed_1/sparsified | 5227 | 40.8 % | 0.793 | 9.881586e+02 |
+
+```
+[supervise 19:33:05] DONE experiments/e41_w50_full_seed_0.json rc=0
+[supervise 19:33:05] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_1.json] (attempt 0/10)
+step 1765 | acc=0.8760 | NZ= 11035 | sparsity=0.1379 | d_m=4.2462e+00[supervise 19:15:59] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_1.json] (a
+```
+
+**2026-10-17 03:46** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e41_w50_full_seed_1/magnitude_sparsified | 12799 | 100.0 % | 0.107 | 1.470543e+06 |
+| e41_w50_full_seed_1/sparsified | 5470 | 42.7 % | 0.788 | 1.185658e+03 |
+
+```
+[supervise 19:33:05] DONE experiments/e41_w50_full_seed_0.json rc=0
+[supervise 19:33:05] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_1.json] (attempt 0/10)
+step 1765 | acc=0.8760 | NZ= 11035 | sparsity=0.1379 | d_m=4.2462e+00[supervise 19:15:59] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_1.json] (a
+```
+
+**2026-10-17 04:16** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e41_w50_full_seed_1/magnitude_sparsified | 12799 | 100.0 % | 0.107 | 1.470543e+06 |
+| e41_w50_full_seed_1/sparsified | 5717 | 44.7 % | 0.786 | 1.424791e+03 |
+
+```
+[supervise 19:33:05] DONE experiments/e41_w50_full_seed_0.json rc=0
+[supervise 19:33:05] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_1.json] (attempt 0/10)
+step 1765 | acc=0.8760 | NZ= 11035 | sparsity=0.1379 | d_m=4.2462e+00[supervise 19:15:59] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_1.json] (a
+```
+
+**2026-10-17 04:46** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e41_w50_full_seed_1/magnitude_sparsified | 12799 | 100.0 % | 0.107 | 1.470543e+06 |
+| e41_w50_full_seed_1/sparsified | 5966 | 46.6 % | 0.783 | 1.680799e+03 |
+
+```
+[supervise 19:33:05] DONE experiments/e41_w50_full_seed_0.json rc=0
+[supervise 19:33:05] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_1.json] (attempt 0/10)
+step 1765 | acc=0.8760 | NZ= 11035 | sparsity=0.1379 | d_m=4.2462e+00[supervise 19:15:59] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_1.json] (a
+```
+
+**2026-10-17 05:16** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e41_w50_full_seed_1/magnitude_sparsified | 12799 | 100.0 % | 0.107 | 1.470543e+06 |
+| e41_w50_full_seed_1/sparsified | 6218 | 48.6 % | 0.774 | 1.924646e+03 |
+
+```
+[supervise 19:33:05] DONE experiments/e41_w50_full_seed_0.json rc=0
+[supervise 19:33:05] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_1.json] (attempt 0/10)
+step 1765 | acc=0.8760 | NZ= 11035 | sparsity=0.1379 | d_m=4.2462e+00[supervise 19:15:59] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_1.json] (a
+```
+
+**2026-10-17 05:46** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e41_w50_full_seed_1/magnitude_sparsified | 12799 | 100.0 % | 0.107 | 1.470543e+06 |
+| e41_w50_full_seed_1/sparsified | 6473 | 50.6 % | 0.765 | 2.170200e+03 |
+
+```
+[supervise 19:33:05] DONE experiments/e41_w50_full_seed_0.json rc=0
+[supervise 19:33:05] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_1.json] (attempt 0/10)
+step 1765 | acc=0.8760 | NZ= 11035 | sparsity=0.1379 | d_m=4.2462e+00[supervise 19:15:59] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_1.json] (a
+```
+
+**2026-10-17 06:16** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e41_w50_full_seed_1/magnitude_sparsified | 12799 | 100.0 % | 0.107 | 1.470543e+06 |
+| e41_w50_full_seed_1/sparsified | 6733 | 52.6 % | 0.767 | 2.371391e+03 |
+
+```
+[supervise 19:33:05] DONE experiments/e41_w50_full_seed_0.json rc=0
+[supervise 19:33:05] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_1.json] (attempt 0/10)
+step 1765 | acc=0.8760 | NZ= 11035 | sparsity=0.1379 | d_m=4.2462e+00[supervise 19:15:59] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_1.json] (a
+```
+
+**2026-10-17 06:46** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e41_w50_full_seed_1/magnitude_sparsified | 12799 | 100.0 % | 0.107 | 1.470543e+06 |
+| e41_w50_full_seed_1/sparsified | 6997 | 54.7 % | 0.745 | 2.624542e+03 |
+
+```
+[supervise 19:33:05] DONE experiments/e41_w50_full_seed_0.json rc=0
+[supervise 19:33:05] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_1.json] (attempt 0/10)
+step 1765 | acc=0.8760 | NZ= 11035 | sparsity=0.1379 | d_m=4.2462e+00[supervise 19:15:59] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_1.json] (a
+```
+
+**2026-10-17 07:16** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e41_w50_full_seed_1/magnitude_sparsified | 12799 | 100.0 % | 0.107 | 1.470543e+06 |
+| e41_w50_full_seed_1/sparsified | 7264 | 56.8 % | 0.731 | 3.277856e+03 |
+
+```
+[supervise 19:33:05] DONE experiments/e41_w50_full_seed_0.json rc=0
+[supervise 19:33:05] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_1.json] (attempt 0/10)
+step 1765 | acc=0.8760 | NZ= 11035 | sparsity=0.1379 | d_m=4.2462e+00[supervise 19:15:59] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_1.json] (a
+```
+
+**2026-10-17 07:46** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e41_w50_full_seed_1/magnitude_sparsified | 12799 | 100.0 % | 0.107 | 1.470543e+06 |
+| e41_w50_full_seed_1/sparsified | 7537 | 58.9 % | 0.730 | 3.672044e+03 |
+
+```
+[supervise 19:33:05] DONE experiments/e41_w50_full_seed_0.json rc=0
+[supervise 19:33:05] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_1.json] (attempt 0/10)
+step 1765 | acc=0.8760 | NZ= 11035 | sparsity=0.1379 | d_m=4.2462e+00[supervise 19:15:59] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_1.json] (a
+```
+
+**2026-10-17 08:16** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e41_w50_full_seed_1/magnitude_sparsified | 12799 | 100.0 % | 0.107 | 1.470543e+06 |
+| e41_w50_full_seed_1/sparsified | 7815 | 61.1 % | 0.732 | 4.072033e+03 |
+
+```
+[supervise 19:33:05] DONE experiments/e41_w50_full_seed_0.json rc=0
+[supervise 19:33:05] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_1.json] (attempt 0/10)
+step 1765 | acc=0.8760 | NZ= 11035 | sparsity=0.1379 | d_m=4.2462e+00[supervise 19:15:59] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_1.json] (a
+```
+
+**2026-10-17 08:46** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e41_w50_full_seed_1/magnitude_sparsified | 12799 | 100.0 % | 0.107 | 1.470543e+06 |
+| e41_w50_full_seed_1/sparsified | 8097 | 63.3 % | 0.739 | 4.815344e+03 |
+
+```
+[supervise 19:33:05] DONE experiments/e41_w50_full_seed_0.json rc=0
+[supervise 19:33:05] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_1.json] (attempt 0/10)
+step 1765 | acc=0.8760 | NZ= 11035 | sparsity=0.1379 | d_m=4.2462e+00[supervise 19:15:59] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_1.json] (a
+```
+
+**2026-10-17 09:16** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e41_w50_full_seed_1/magnitude_sparsified | 12799 | 100.0 % | 0.107 | 1.470543e+06 |
+| e41_w50_full_seed_1/sparsified | 8384 | 65.5 % | 0.707 | 5.494623e+03 |
+
+```
+[supervise 19:33:05] DONE experiments/e41_w50_full_seed_0.json rc=0
+[supervise 19:33:05] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_1.json] (attempt 0/10)
+step 1765 | acc=0.8760 | NZ= 11035 | sparsity=0.1379 | d_m=4.2462e+00[supervise 19:15:59] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_1.json] (a
+```
+
+**2026-10-17 09:46** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e41_w50_full_seed_1/magnitude_sparsified | 12799 | 100.0 % | 0.107 | 1.470543e+06 |
+| e41_w50_full_seed_1/sparsified | 8677 | 67.8 % | 0.693 | 5.948060e+03 |
+
+```
+[supervise 19:33:05] DONE experiments/e41_w50_full_seed_0.json rc=0
+[supervise 19:33:05] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_1.json] (attempt 0/10)
+step 1765 | acc=0.8760 | NZ= 11035 | sparsity=0.1379 | d_m=4.2462e+00[supervise 19:15:59] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_1.json] (a
+```
+
+**2026-10-17 10:16** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e41_w50_full_seed_1/magnitude_sparsified | 12799 | 100.0 % | 0.107 | 1.470543e+06 |
+| e41_w50_full_seed_1/sparsified | 8977 | 70.1 % | 0.676 | 6.530792e+03 |
+
+```
+[supervise 19:33:05] DONE experiments/e41_w50_full_seed_0.json rc=0
+[supervise 19:33:05] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_1.json] (attempt 0/10)
+step 1765 | acc=0.8760 | NZ= 11035 | sparsity=0.1379 | d_m=4.2462e+00[supervise 19:15:59] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_1.json] (a
+```
+
+**2026-10-17 10:46** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e41_w50_full_seed_1/magnitude_sparsified | 12799 | 100.0 % | 0.107 | 1.470543e+06 |
+| e41_w50_full_seed_1/sparsified | 9284 | 72.5 % | 0.679 | 7.105916e+03 |
+
+```
+[supervise 19:33:05] DONE experiments/e41_w50_full_seed_0.json rc=0
+[supervise 19:33:05] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_1.json] (attempt 0/10)
+step 1765 | acc=0.8760 | NZ= 11035 | sparsity=0.1379 | d_m=4.2462e+00[supervise 19:15:59] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_1.json] (a
+```
+
+**2026-10-17 11:16** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e41_w50_full_seed_1/magnitude_sparsified | 12799 | 100.0 % | 0.107 | 1.470543e+06 |
+| e41_w50_full_seed_1/sparsified | 9600 | 75.0 % | 0.681 | 8.037995e+03 |
+
+```
+[supervise 19:33:05] DONE experiments/e41_w50_full_seed_0.json rc=0
+[supervise 19:33:05] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_1.json] (attempt 0/10)
+step 1765 | acc=0.8760 | NZ= 11035 | sparsity=0.1379 | d_m=4.2462e+00[supervise 19:15:59] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_1.json] (a
+```
+
+**2026-10-17 11:46** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e41_w50_full_seed_1/magnitude_sparsified | 12799 | 100.0 % | 0.107 | 1.470543e+06 |
+| e41_w50_full_seed_1/sparsified | 9924 | 77.5 % | 0.676 | 9.331154e+03 |
+
+```
+[supervise 19:33:05] DONE experiments/e41_w50_full_seed_0.json rc=0
+[supervise 19:33:05] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_1.json] (attempt 0/10)
+step 1765 | acc=0.8760 | NZ= 11035 | sparsity=0.1379 | d_m=4.2462e+00[supervise 19:15:59] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_1.json] (a
+```
+
+**2026-10-17 12:16** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e41_w50_full_seed_1/magnitude_sparsified | 12799 | 100.0 % | 0.107 | 1.470543e+06 |
+| e41_w50_full_seed_1/sparsified | 10258 | 80.1 % | 0.685 | 1.234603e+04 |
+
+```
+[supervise 19:33:05] DONE experiments/e41_w50_full_seed_0.json rc=0
+[supervise 19:33:05] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_1.json] (attempt 0/10)
+step 1765 | acc=0.8760 | NZ= 11035 | sparsity=0.1379 | d_m=4.2462e+00[supervise 19:15:59] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_1.json] (a
+```
+
+**2026-10-17 12:46** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e41_w50_full_seed_1/magnitude_sparsified | 12799 | 100.0 % | 0.107 | 1.470543e+06 |
+| e41_w50_full_seed_1/sparsified | 10600 | 82.8 % | 0.692 | 1.770498e+04 |
+
+```
+[supervise 19:33:05] DONE experiments/e41_w50_full_seed_0.json rc=0
+[supervise 19:33:05] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_1.json] (attempt 0/10)
+step 1765 | acc=0.8760 | NZ= 11035 | sparsity=0.1379 | d_m=4.2462e+00[supervise 19:15:59] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_1.json] (a
+```
+
+**2026-10-17 13:16** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e41_w50_full_seed_1/magnitude_sparsified | 12799 | 100.0 % | 0.107 | 1.470543e+06 |
+| e41_w50_full_seed_1/sparsified | 10952 | 85.6 % | 0.655 | 2.485431e+04 |
+
+```
+[supervise 19:33:05] DONE experiments/e41_w50_full_seed_0.json rc=0
+[supervise 19:33:05] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_1.json] (attempt 0/10)
+step 1765 | acc=0.8760 | NZ= 11035 | sparsity=0.1379 | d_m=4.2462e+00[supervise 19:15:59] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_1.json] (a
+```
+
+**2026-10-17 13:46** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e41_w50_full_seed_1/magnitude_sparsified | 12799 | 100.0 % | 0.107 | 1.470543e+06 |
+| e41_w50_full_seed_1/sparsified | 11315 | 88.4 % | 0.571 | 3.451841e+04 |
+
+```
+[supervise 19:33:05] DONE experiments/e41_w50_full_seed_0.json rc=0
+[supervise 19:33:05] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_1.json] (attempt 0/10)
+step 1765 | acc=0.8760 | NZ= 11035 | sparsity=0.1379 | d_m=4.2462e+00[supervise 19:15:59] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_1.json] (a
+```
+
+**2026-10-17 14:16** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e41_w50_full_seed_1/magnitude_sparsified | 12799 | 100.0 % | 0.107 | 1.470543e+06 |
+| e41_w50_full_seed_1/sparsified | 11690 | 91.3 % | 0.521 | 5.862572e+04 |
+
+```
+[supervise 19:33:05] DONE experiments/e41_w50_full_seed_0.json rc=0
+[supervise 19:33:05] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_1.json] (attempt 0/10)
+step 1765 | acc=0.8760 | NZ= 11035 | sparsity=0.1379 | d_m=4.2462e+00[supervise 19:15:59] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_1.json] (a
+```
+
+**2026-10-17 14:46** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e41_w50_full_seed_1/magnitude_sparsified | 12799 | 100.0 % | 0.107 | 1.470543e+06 |
+| e41_w50_full_seed_1/sparsified | 12075 | 94.3 % | 0.443 | 1.290481e+05 |
+
+```
+[supervise 19:33:05] DONE experiments/e41_w50_full_seed_0.json rc=0
+[supervise 19:33:05] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_1.json] (attempt 0/10)
+step 1765 | acc=0.8760 | NZ= 11035 | sparsity=0.1379 | d_m=4.2462e+00[supervise 19:15:59] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_1.json] (a
+```
+
+**2026-10-17 15:16** — supervisor running
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e41_w50_full_seed_1/magnitude_sparsified | 12799 | 100.0 % | 0.107 | 1.470543e+06 |
+| e41_w50_full_seed_1/sparsified | 12475 | 97.5 % | 0.293 | 4.042708e+05 |
+
+```
+[supervise 19:33:05] DONE experiments/e41_w50_full_seed_0.json rc=0
+[supervise 19:33:05] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_1.json] (attempt 0/10)
+step 1765 | acc=0.8760 | NZ= 11035 | sparsity=0.1379 | d_m=4.2462e+00[supervise 19:15:59] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_1.json] (a
+```
+
+**2026-10-17 15:46** — supervisor exited
+
+| run | step | sparsity | acc | d_manifold |
+|---|---|---|---|---|
+| e41_w50_full_seed_1/magnitude_sparsified | 12799 | 100.0 % | 0.107 | 1.470543e+06 |
+| e41_w50_full_seed_1/sparsified | 12799 | 100.0 % | 0.107 | 1.470544e+06 |
+
+```
+step 1765 | acc=0.8760 | NZ= 11035 | sparsity=0.1379 | d_m=4.2462e+00[supervise 19:15:59] launch [/home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_1.json] (a
+[supervise 15:39:42] DONE experiments/e41_w50_full_seed_1.json rc=0
+[supervise 15:39:42] QUEUE COMPLETE: /home/simon/venv/general/bin/python3 -m sparsifier.sparsifier experiments/e41_w50_full_seed_1.json=ok
+```
+
+**2026-10-17 16:13** — QUEUE COMPLETE (35/35). Cron check-ins and @reboot hook removed; telemetry loggers stopped.
